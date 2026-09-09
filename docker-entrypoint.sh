@@ -29,11 +29,12 @@ echo "--- apache2ctl -M (actual modules Apache will load) ---"
 apache2ctl -M 2>&1 || echo "  apache2ctl -M failed to run"
 
 echo "--- DB env vars actually seen by this container (password redacted) ---"
-echo "  database.default.hostname = [$(printenv 'database.default.hostname')]"
-echo "  database.default.database = [$(printenv 'database.default.database')]"
-echo "  database.default.username = [$(printenv 'database.default.username')]"
-echo "  database.default.port     = [$(printenv 'database.default.port')]"
-echo "  database.default.password is set: $([ -n "$(printenv 'database.default.password')" ] && echo yes || echo NO)"
+echo "  database_default_hostname = [$(printenv 'database_default_hostname')]"
+echo "  database_default_database = [$(printenv 'database_default_database')]"
+echo "  database_default_username = [$(printenv 'database_default_username')]"
+echo "  database_default_port     = [$(printenv 'database_default_port')]"
+echo "  database_default_password is set: $([ -n "$(printenv 'database_default_password')" ] && echo yes || echo NO)"
+echo "  (for comparison) dotted database.default.hostname = [$(printenv 'database.default.hostname')]"
 echo "=================================================="
 
 # Railway assigns a random $PORT at container start (not known at image
