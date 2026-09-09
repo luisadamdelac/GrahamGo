@@ -3,3 +3,4 @@
 # builds, regardless of what line endings look right on Windows.
 *.sh text eol=lf
 Dockerfile text eol=lf
+docker-entrypoint.sh text eol=lf
