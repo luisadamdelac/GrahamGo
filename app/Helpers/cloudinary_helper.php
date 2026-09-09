@@ -2,14 +2,22 @@
 
 if (! function_exists('cloudinary_configured')) {
     /**
-     * True once all three Cloudinary env vars are set (cloudinary.cloudName,
-     * cloudinary.apiKey, cloudinary.apiSecret) — until then, uploads fall
-     * back to local disk (see save_avatar_upload/save_product_image_upload),
-     * so local XAMPP development never needs a Cloudinary account.
+     * True once all three Cloudinary env vars are set — until then,
+     * uploads fall back to local disk (see save_avatar_upload/
+     * save_product_image_upload), so local XAMPP development never needs
+     * a Cloudinary account.
+     *
+     * All-caps underscore names on purpose: unlike CodeIgniter's own
+     * Config classes (which fall back to an underscore form
+     * automatically — see system/Config/BaseConfig.php's
+     * getEnvValue()), the plain env() helper does a literal key lookup
+     * with no such fallback. Dotted names (cloudinary.cloudName) turned
+     * out not to survive Railway's env var injection into the
+     * container at all — only the underscore form does.
      */
     function cloudinary_configured(): bool
     {
-        return (bool) env('cloudinary.cloudName') && (bool) env('cloudinary.apiKey') && (bool) env('cloudinary.apiSecret');
+        return (bool) env('CLOUDINARY_CLOUD_NAME') && (bool) env('CLOUDINARY_API_KEY') && (bool) env('CLOUDINARY_API_SECRET');
     }
 }
 
@@ -22,9 +30,9 @@ if (! function_exists('cloudinary_upload_image')) {
      */
     function cloudinary_upload_image(string $localFilePath, string $folder): ?string
     {
-        $cloudName = env('cloudinary.cloudName');
-        $apiKey    = env('cloudinary.apiKey');
-        $apiSecret = env('cloudinary.apiSecret');
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey    = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
 
         $timestamp    = time();
         $paramsToSign = ['folder' => $folder, 'timestamp' => $timestamp];
