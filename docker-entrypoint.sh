@@ -1,18 +1,40 @@
 #!/bin/sh
-set -e
+# No `set -e` here on purpose — this script's own diagnostic/fix commands
+# must never be the reason Apache doesn't get to attempt starting.
 
-# Belt-and-suspenders re-run of the MPM fix from the Dockerfile, at
-# container start rather than build time — the build-time version alone
-# wasn't enough (still hit "More than one MPM loaded" with it in place),
-# so this runs right before Apache does, every single start, guaranteeing
-# it's the last thing to touch these symlinks. Logs what's actually
-# enabled afterward so the real state is visible in the deploy logs.
+echo "=================================================="
+echo "GRAHAMGO ENTRYPOINT DIAGNOSTICS"
+echo "=================================================="
+
+# The symlink-only fix (removing mods-enabled/mpm_event.* etc.) wasn't
+# enough — "More than one MPM loaded" persisted. That means a second
+# LoadModule line for an MPM exists somewhere Apache reads that ISN'T
+# the mods-enabled symlink set, so this instead searches every config
+# file under /etc/apache2/ and strips any mpm_event/mpm_worker
+# LoadModule line, wherever it is.
+echo "--- Files containing mpm_event/mpm_worker LoadModule, before ---"
+grep -rl "LoadModule mpm_event_module\|LoadModule mpm_worker_module" /etc/apache2/ 2>/dev/null || echo "  none found"
+
+grep -rl "LoadModule mpm_event_module\|LoadModule mpm_worker_module" /etc/apache2/ 2>/dev/null | while IFS= read -r f; do
+  sed -i '/LoadModule mpm_event_module/d; /LoadModule mpm_worker_module/d' "$f"
+  echo "  stripped conflicting LoadModule line(s) from: $f"
+done
+
 rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
        /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf
 ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load
 ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
-echo "mods-enabled MPM files after fix:"
-ls -la /etc/apache2/mods-enabled/ | grep -i mpm || echo "  (none matched 'mpm' — unexpected)"
+
+echo "--- apache2ctl -M (actual modules Apache will load) ---"
+apache2ctl -M 2>&1 || echo "  apache2ctl -M failed to run"
+
+echo "--- DB env vars actually seen by this container (password redacted) ---"
+echo "  database.default.hostname = [$(printenv 'database.default.hostname')]"
+echo "  database.default.database = [$(printenv 'database.default.database')]"
+echo "  database.default.username = [$(printenv 'database.default.username')]"
+echo "  database.default.port     = [$(printenv 'database.default.port')]"
+echo "  database.default.password is set: $([ -n "$(printenv 'database.default.password')" ] && echo yes || echo NO)"
+echo "=================================================="
 
 # Railway assigns a random $PORT at container start (not known at image
 # build time) and expects the app to listen on it — Apache's stock config
