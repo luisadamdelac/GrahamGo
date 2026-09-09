@@ -1,0 +1,5 @@
+# Shell scripts must keep LF line endings — a CRLF shebang line
+# (#!/bin/sh\r) fails to execute inside the Linux container Railway
+# builds, regardless of what line endings look right on Windows.
+*.sh text eol=lf
+Dockerfile text eol=lf
