@@ -22,6 +22,14 @@ RUN sed -ri -e "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" /etc/apache2/sites-av
     && sed -ri -e "s!/var/www/!${APACHE_DOCUMENT_ROOT}!g" /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 RUN a2enmod rewrite headers
 
+# mod_php only works under the prefork MPM (it isn't thread-safe), which
+# is what this base image ships enabled by default — but installing more
+# packages above can trigger Debian's apache2 postinst to re-enable its
+# own default (mpm_event) alongside it, and Apache refuses to start with
+# two MPMs loaded at once ("More than one MPM loaded"). Force it back to
+# prefork-only, unconditionally.
+RUN a2dismod mpm_event mpm_worker >/dev/null 2>&1; a2enmod mpm_prefork
+
 # Debian's default Apache config sets AllowOverride None on /var/www/ —
 # without this, the app's public/.htaccess (which routes every request
 # through index.php) is silently ignored and everything 404s except the
