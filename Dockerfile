@@ -26,9 +26,14 @@ RUN a2enmod rewrite headers
 # is what this base image ships enabled by default — but installing more
 # packages above can trigger Debian's apache2 postinst to re-enable its
 # own default (mpm_event) alongside it, and Apache refuses to start with
-# two MPMs loaded at once ("More than one MPM loaded"). Force it back to
-# prefork-only, unconditionally.
-RUN a2dismod mpm_event mpm_worker >/dev/null 2>&1; a2enmod mpm_prefork
+# two MPMs loaded at once ("More than one MPM loaded"). a2enmod/a2dismod
+# proved unreliable here, so this goes straight at what they themselves
+# edit — the mods-enabled symlinks — removing any other MPM's and
+# pointing prefork's at mods-available directly.
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
+           /etc/apache2/mods-enabled/mpm_worker.load /etc/apache2/mods-enabled/mpm_worker.conf \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Debian's default Apache config sets AllowOverride None on /var/www/ —
 # without this, the app's public/.htaccess (which routes every request
