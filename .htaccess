@@ -1,0 +1,14 @@
+# This root-level .htaccess is only needed on hosts where you can't
+# point the domain's document root directly at the /public folder
+# (common on shared hosting like Hostinger, InfinityFree, etc., where
+# you upload the whole project into public_html). It quietly forwards
+# every request into /public, so the app works the same either way.
+#
+# If your host DOES let you set the document root to /public itself,
+# this file is simply never reached and can stay — it's harmless.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L]
+</IfModule>

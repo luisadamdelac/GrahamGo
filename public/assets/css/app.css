@@ -1,0 +1,621 @@
+/* =========================================================
+   GrahamGo Design System — mobile-first
+   ========================================================= */
+
+:root {
+  --gg-primary: #E08A3E;
+  --gg-primary-dark: #C46F26;
+  --gg-primary-light: #FCEEDD;
+  --gg-cocoa: #4A3324;
+  --gg-cocoa-light: #6B4A34;
+  --gg-bg: #FFFAF4;
+  --gg-surface: #FFFFFF;
+  --gg-text: #2C2116;
+  /* Muted/status colors below are deliberately darker than the original
+     palette — the lighter originals (#8A7A6A muted text, and especially
+     the badge/alert foreground colors on their own tint backgrounds)
+     measured under WCAG AA's 4.5:1 text-contrast minimum, worst case
+     the old warning color at ~2.1:1. These shades keep the same hue but
+     are readable at actual badge/label sizes, on both the customer and
+     admin sides (all badges, alerts, and stat-icons pull from these same
+     variables). */
+  --gg-muted: #7A6858;
+  --gg-border: #F0E4D6;
+
+  --gg-success: #1F7A4A;
+  --gg-success-bg: #E6F6EE;
+  --gg-warning: #8A5A12;
+  --gg-warning-bg: #FDF3E1;
+  --gg-info: #1D5FAE;
+  --gg-info-bg: #E9F2FD;
+  --gg-danger: #B7362D;
+  --gg-danger-bg: #FCEBEA;
+  --gg-secondary: #7A6858;
+  --gg-secondary-bg: #F1ECE5;
+
+  --gg-radius-sm: .65rem;
+  --gg-radius: 1.1rem;
+  --gg-radius-lg: 1.5rem;
+  --gg-radius-pill: 50px;
+  --gg-shadow-sm: 0 2px 10px rgba(74, 51, 36, .07);
+  --gg-shadow: 0 10px 30px -4px rgba(74, 51, 36, .14);
+  --gg-shadow-lg: 0 24px 55px -10px rgba(74, 51, 36, .22);
+  --gg-glow: 0 0 0 1px rgba(224, 138, 62, .08), 0 10px 30px -6px rgba(224, 138, 62, .28);
+  --gg-ease: cubic-bezier(.22, 1, .36, 1);
+  --gg-bottomnav-h: 62px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+/* Themed scrollbar — small detail, but a default gray scrollbar next to
+   a warm custom palette is one of the first things that reads as
+   "unfinished" on a wide desktop screen. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gg-border); border-radius: 10px; border: 2px solid var(--gg-bg); }
+::-webkit-scrollbar-thumb:hover { background: #e2cdb0; }
+* { scrollbar-width: thin; scrollbar-color: var(--gg-border) transparent; }
+
+body {
+  background: var(--gg-bg);
+  color: var(--gg-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: .95rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-graham, .navbar-brand, .sidebar .brand {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--gg-cocoa);
+}
+
+a { color: var(--gg-primary-dark); text-decoration: none; }
+a:hover { color: var(--gg-cocoa); }
+.text-muted { color: var(--gg-muted) !important; }
+.brand-graham { color: var(--gg-primary-dark) !important; }
+
+/* Touch-friendly tap targets everywhere on small screens */
+@media (max-width: 767.98px) {
+  .btn, .form-control, .form-select { min-height: 44px; }
+  h4 { font-size: 1.25rem; }
+}
+
+/* ---------------- Buttons ---------------- */
+.btn {
+  border-radius: var(--gg-radius-pill);
+  font-weight: 500;
+  padding: .6rem 1.3rem;
+  font-size: .9rem;
+  transition: transform .2s var(--gg-ease), box-shadow .2s var(--gg-ease), filter .2s var(--gg-ease), background-color .2s var(--gg-ease);
+  border-width: 1.5px;
+}
+.btn-sm { padding: .4rem .9rem; font-size: .8rem; min-height: 38px !important; }
+.btn:active { transform: scale(.97); }
+
+.btn-warning,
+.btn-gg-primary {
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  border: none;
+  color: #fff !important;
+  box-shadow: 0 6px 16px rgba(224, 138, 62, .35);
+}
+.btn-warning:hover, .btn-gg-primary:hover { filter: brightness(1.07); color: #fff; transform: translateY(-2px); box-shadow: 0 12px 26px -4px rgba(224, 138, 62, .48); }
+.btn-warning:active, .btn-gg-primary:active { transform: translateY(0) scale(.97); }
+
+.btn-dark { background: var(--gg-cocoa); border-color: var(--gg-cocoa); }
+.btn-dark:hover { background: #38271b; border-color: #38271b; transform: translateY(-2px); box-shadow: var(--gg-shadow); }
+.btn-outline-dark { color: var(--gg-cocoa); border-color: var(--gg-cocoa-light); background: #fff; }
+.btn-outline-dark:hover { background: var(--gg-cocoa); border-color: var(--gg-cocoa); transform: translateY(-2px); box-shadow: var(--gg-shadow); }
+.btn-outline-secondary { border-color: var(--gg-border); color: var(--gg-muted); }
+.btn-outline-danger { border-color: #f3c9c7; }
+.btn-outline-danger:hover { transform: translateY(-2px); }
+.btn-link { color: var(--gg-muted); }
+
+/* ---------------- Cards ---------------- */
+.card {
+  border: 1px solid rgba(74, 51, 36, .05);
+  border-radius: var(--gg-radius-lg);
+  box-shadow: var(--gg-shadow-sm);
+  transition: transform .3s var(--gg-ease), box-shadow .3s var(--gg-ease), border-color .3s var(--gg-ease);
+}
+.shadow-sm { box-shadow: var(--gg-shadow-sm) !important; }
+.card-product { border-radius: var(--gg-radius-lg); overflow: hidden; position: relative; }
+.card-product::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, var(--gg-primary), var(--gg-primary-dark));
+  transform: scaleX(0); transform-origin: left; transition: transform .35s var(--gg-ease); z-index: 2;
+}
+.card-product:hover::before { transform: scaleX(1); }
+.card-product:hover { box-shadow: var(--gg-glow) !important; transform: translateY(-6px); border-color: rgba(224, 138, 62, .18); }
+.card-product .card-thumb {
+  height: 120px;
+  background: linear-gradient(135deg, var(--gg-primary-light), #ffe3c2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem;
+  overflow: hidden;
+}
+.card-product .card-thumb i { transition: transform .35s var(--gg-ease); display: inline-block; }
+.card-product:hover .card-thumb i { transform: scale(1.15) rotate(-6deg); }
+@media (min-width: 768px) { .card-product .card-thumb { height: 140px; } }
+
+/* Solid, saturated icon "badge" — a square with a flat color fill and a
+   white glyph, the way the Elegant admin template marks each stat/report
+   card. Standalone (not nested under .stat-card) so it also works on
+   plain report-launcher cards that just want the same icon treatment. */
+.stat-icon {
+  width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; color: #fff;
+  transition: transform .3s var(--gg-ease);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 6px 14px -4px rgba(74, 51, 36, .3);
+}
+.card:hover .stat-icon { transform: scale(1.08) rotate(-3deg); }
+@media (min-width: 768px) {
+  .stat-icon { width: 52px; height: 52px; font-size: 1.3rem; }
+}
+
+.stat-card { border: 1px solid rgba(74, 51, 36, .05) !important; border-radius: var(--gg-radius-lg); box-shadow: var(--gg-shadow-sm); transition: transform .3s var(--gg-ease), box-shadow .3s var(--gg-ease); overflow: hidden; }
+.stat-card:hover { transform: translateY(-5px); box-shadow: var(--gg-shadow); }
+/* On the narrowest phones, a 2-up grid doesn't leave enough width next
+   to a 46px icon for a label like "Total Reservations" to wrap cleanly
+   at word boundaries — it was overflowing (or, with break-word, breaking
+   mid-word). Stacked (icon above text) sidesteps that entirely; from
+   small-tablet width up there's enough room for the icon-beside-text
+   row the Elegant reference uses. */
+.stat-card .card-body { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; }
+.stat-card:hover .stat-icon { transform: scale(1.1) rotate(-4deg); }
+.stat-card .card-body > div:not(.stat-icon) { min-width: 0; flex: 1 1 auto; }
+.stat-card .stat-value { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--gg-cocoa); line-height: 1.15; overflow-wrap: break-word; }
+.stat-card .stat-label { font-size: .68rem; color: var(--gg-muted); text-transform: uppercase; letter-spacing: .03em; line-height: 1.3; }
+@media (min-width: 576px) {
+  .stat-card .card-body { flex-direction: row; align-items: center; gap: .65rem; }
+}
+@media (min-width: 768px) {
+  .stat-card .card-body { gap: .85rem; }
+  .stat-card .stat-value { font-size: 1.6rem; }
+  .stat-card .stat-label { font-size: .72rem; letter-spacing: .04em; }
+}
+
+/* Any card that acts as a clickable row/link (mobile card-lists for
+   reservations, customers, products, etc.) gets the same gentle hover
+   lift as everything else, so it reads as "tappable" everywhere. */
+a.card:hover, .card-product a:hover { transform: translateY(-4px); box-shadow: var(--gg-shadow); }
+
+/* ---------------- Badges ---------------- */
+.badge { font-weight: 500; border-radius: var(--gg-radius-pill); padding: .4em .85em; font-size: .72rem; }
+.badge.bg-success { background: var(--gg-success-bg) !important; color: var(--gg-success) !important; }
+.badge.bg-warning { background: var(--gg-warning-bg) !important; color: var(--gg-warning) !important; }
+.badge.bg-info    { background: var(--gg-info-bg) !important; color: var(--gg-info) !important; }
+.badge.bg-danger  { background: var(--gg-danger-bg) !important; color: var(--gg-danger) !important; }
+.badge.bg-secondary, .badge.bg-primary { background: var(--gg-secondary-bg) !important; color: var(--gg-secondary) !important; }
+
+/* ---------------- Forms ---------------- */
+.form-control, .form-select {
+  border-radius: var(--gg-radius-sm);
+  border: 1.5px solid var(--gg-border);
+  padding: .6rem .9rem;
+  font-size: 1rem; /* prevents iOS zoom-on-focus */
+  transition: border-color .2s var(--gg-ease), box-shadow .2s var(--gg-ease);
+}
+/* .form-select needs extra right padding reserved for Bootstrap's own
+   arrow icon (a background-image, unaffected by padding) — the shared
+   rule above was overwriting that space, so on a short/narrow select
+   (e.g. DataTables' "Show 10" length menu) the arrow sat on top of the
+   text instead of clear of it. */
+.form-select { padding-right: 2.25rem; }
+.form-control:hover, .form-select:hover { border-color: #e2cdb0; }
+.form-control:focus, .form-select:focus {
+  border-color: var(--gg-primary);
+  box-shadow: 0 0 0 .22rem rgba(224, 138, 62, .16);
+}
+/* Locked fields (email, customer type, etc.) — a "not-allowed" cursor
+   plus a slightly shaded background gives a clear at-a-glance signal
+   that the field can't be edited, on top of the lock icon in its label. */
+.form-control:disabled, .form-select:disabled {
+  background: var(--gg-secondary-bg);
+  cursor: not-allowed;
+}
+.form-control:disabled:hover, .form-select:disabled:hover { border-color: var(--gg-border); }
+.form-label { font-weight: 500; font-size: .85rem; color: var(--gg-cocoa-light); margin-bottom: .35rem; }
+.form-label .bi-lock-fill { cursor: help; }
+
+/* Native date/time inputs: keep the browser's picker icon from crowding
+   the value text on narrow (mobile) widths. */
+input[type="date"], input[type="time"], input[type="datetime-local"] {
+  min-width: 0;
+  padding-right: .5rem;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-left: .4rem;
+  flex-shrink: 0;
+}
+
+/* ---------------- Tables ---------------- */
+.table-responsive {
+  border-radius: var(--gg-radius-lg);
+  box-shadow: var(--gg-shadow-sm);
+  border: 1px solid rgba(74, 51, 36, .05);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+}
+.table { margin-bottom: 0; }
+.table thead.table-light th {
+  background: linear-gradient(180deg, #FDF6EE, #FBF3EA); color: var(--gg-cocoa-light);
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 600;
+  border-bottom: none; padding: .85rem .9rem; white-space: nowrap;
+}
+.table td { padding: .8rem .9rem; vertical-align: middle; border-color: var(--gg-border); white-space: nowrap; }
+.table tbody tr { transition: background-color .15s var(--gg-ease); }
+.table tbody tr:hover { background: #FFFBF6; }
+
+/* ---------------- Alerts / progress ---------------- */
+.alert { border: none; border-left: 3px solid transparent; border-radius: var(--gg-radius-sm); font-size: .88rem; box-shadow: var(--gg-shadow-sm); }
+.alert-success { background: var(--gg-success-bg); color: var(--gg-success); border-left-color: var(--gg-success); }
+.alert-danger  { background: var(--gg-danger-bg); color: var(--gg-danger); border-left-color: var(--gg-danger); }
+.alert-info    { background: var(--gg-info-bg); color: var(--gg-info); border-left-color: var(--gg-info); }
+.alert-warning { background: var(--gg-warning-bg); color: var(--gg-warning); border-left-color: var(--gg-warning); }
+.alert-warning .alert-link { color: var(--gg-warning); text-decoration: underline; font-weight: 600; }
+.progress { border-radius: var(--gg-radius-pill); background: var(--gg-border); }
+.progress-bar { background: linear-gradient(90deg, var(--gg-primary), var(--gg-primary-dark)); }
+
+/* =========================================================
+   Customer top bar (mobile-first: minimal bar + bottom tabs)
+   ========================================================= */
+.gg-topbar {
+  background: rgba(255, 250, 244, .78);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  border-bottom: 1px solid var(--gg-border);
+  position: sticky; top: 0; z-index: 1030;
+}
+.gg-topbar .navbar-brand { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; transition: transform .2s var(--gg-ease); }
+.gg-topbar .navbar-brand:hover { transform: scale(1.03); }
+.gg-topbar .logo-dot {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: .95rem;
+}
+/* desktop inline nav (hidden on mobile, bottom tabs take over) */
+.gg-topbar .nav-link {
+  font-weight: 500; color: var(--gg-cocoa-light);
+  border-radius: var(--gg-radius-pill); padding: .5rem 1rem !important;
+  display: flex; align-items: center; gap: .4rem;
+}
+.gg-topbar .nav-link:hover, .gg-topbar .nav-link.active { background: var(--gg-primary-light); color: var(--gg-primary-dark); }
+.gg-topbar .nav-link.text-danger:hover { background: var(--gg-danger-bg); }
+
+/* Bottom tab bar — mobile only */
+.gg-bottomnav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030;
+  display: flex; height: var(--gg-bottomnav-h);
+  background: #fff;
+  border-top: 1px solid var(--gg-border);
+  box-shadow: 0 -6px 20px rgba(74,51,36,.08);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.gg-bottomnav a {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; color: var(--gg-muted); font-size: .68rem; font-weight: 500;
+}
+.gg-bottomnav a i { font-size: 1.25rem; }
+.gg-bottomnav a.active { color: var(--gg-primary-dark); }
+body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
+
+@media (min-width: 992px) {
+  .gg-bottomnav { display: none !important; }
+  body.has-bottomnav { padding-bottom: 0; }
+}
+
+/* =========================================================
+   Owner: top bar + sidebar (off-canvas on mobile)
+   ========================================================= */
+.owner-topbar {
+  background: #fff; border-bottom: 1px solid var(--gg-border);
+  position: sticky; top: 0; z-index: 1020;
+  padding: .7rem 1rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.owner-topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 600; min-width: 0; }
+.owner-topbar .logo-dot {
+  width: 30px; height: 30px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem;
+  flex-shrink: 0;
+}
+.owner-topbar .menu-btn {
+  border: none; background: var(--gg-secondary-bg); color: var(--gg-cocoa);
+  width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Light sidebar (Elegant-template style) — white surface, a soft right
+   edge instead of a hard border, and the same orange brand gradient
+   reserved for just the active nav pill + logo mark so it still reads
+   as "GrahamGo" rather than a generic admin template. */
+.sidebar {
+  background: #fff;
+  min-height: 100vh;
+  box-shadow: var(--gg-shadow);
+  border-right: 1px solid var(--gg-border);
+}
+.sidebar .brand { display: flex; align-items: center; gap: .6rem; color: var(--gg-cocoa) !important; }
+.sidebar .logo-dot {
+  width: 36px; height: 36px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+}
+.sidebar a {
+  color: var(--gg-muted); display: flex; align-items: center; gap: .7rem;
+  padding: .7rem 1rem; border-radius: var(--gg-radius-sm);
+  font-size: .9rem; font-weight: 500; transition: background-color .2s var(--gg-ease), color .2s var(--gg-ease), transform .2s var(--gg-ease), box-shadow .2s var(--gg-ease);
+}
+.sidebar a i { font-size: 1.05rem; width: 1.1rem; text-align: center; }
+.sidebar a:hover { background: var(--gg-primary-light); color: var(--gg-primary-dark); transform: translateX(3px); }
+.sidebar a.active {
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  color: #fff; box-shadow: 0 8px 20px -4px rgba(224, 138, 62, .45);
+}
+.sidebar a.active:hover { transform: none; }
+.sidebar a.logout-link:hover { background: var(--gg-danger-bg); color: var(--gg-danger) !important; }
+.sidebar .nav-divider { height: 1px; background: var(--gg-border); margin: .75rem 0; }
+
+/* Mobile: sidebar becomes an off-canvas drawer */
+@media (max-width: 991.98px) {
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 260px;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 1045; min-height: 100vh; overflow-y: auto;
+  }
+  .sidebar.show { transform: translateX(0); }
+  .owner-topbar { display: flex !important; }
+}
+@media (min-width: 992px) {
+  .owner-topbar { display: none !important; }
+  .sidebar { position: sticky; top: 0; }
+}
+
+.sidebar-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 1040;
+}
+.sidebar-backdrop.show { display: block; }
+
+/* Desktop admin topbar (Elegant-template style) — persistent bar above
+   every owner page's content, carrying account/notification actions
+   that used to live only inside the sidebar. */
+.admin-topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--gg-border);
+  padding: .7rem 1.5rem;
+  position: sticky; top: 0; z-index: 1015;
+  box-shadow: var(--gg-shadow-sm);
+}
+.admin-topbar-actions { display: flex; align-items: center; gap: .85rem; }
+.topbar-search {
+  position: relative; flex: 0 1 340px;
+}
+.topbar-search i {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--gg-muted); font-size: .9rem; pointer-events: none;
+}
+.topbar-search input {
+  width: 100%; border: 1.5px solid var(--gg-border); background: var(--gg-bg);
+  border-radius: var(--gg-radius-pill); padding: .55rem 1rem .55rem 2.4rem;
+  font-size: .86rem; color: var(--gg-text);
+  transition: border-color .2s var(--gg-ease), box-shadow .2s var(--gg-ease), background-color .2s var(--gg-ease);
+}
+.topbar-search input:focus {
+  outline: none; background: #fff;
+  border-color: var(--gg-primary);
+  box-shadow: 0 0 0 .18rem rgba(224, 138, 62, .16);
+}
+.topbar-search-results {
+  display: none;
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: #fff; border: 1px solid var(--gg-border); border-radius: var(--gg-radius-sm);
+  box-shadow: var(--gg-shadow); max-height: 340px; overflow: hidden auto;
+  z-index: 1030;
+}
+.topbar-search-results.show { display: block; }
+.topbar-search-result-item {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .6rem .8rem; color: var(--gg-text); text-decoration: none;
+  border-bottom: 1px solid var(--gg-border);
+  transition: background-color .15s var(--gg-ease);
+}
+.topbar-search-result-item:last-of-type { border-bottom: none; }
+.topbar-search-result-item:hover { background: var(--gg-primary-light); }
+.topbar-search-result-viewall {
+  display: block; text-align: center; padding: .6rem;
+  font-size: .82rem; font-weight: 500; color: var(--gg-primary-dark);
+  text-decoration: none; background: var(--gg-bg);
+  border-top: 1px solid var(--gg-border);
+}
+.topbar-search-result-viewall:hover { background: var(--gg-primary-light); }
+.topbar-icon-btn {
+  position: relative;
+  width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gg-secondary-bg); color: var(--gg-cocoa);
+  font-size: 1.05rem;
+  transition: background-color .2s var(--gg-ease), color .2s var(--gg-ease), transform .2s var(--gg-ease);
+}
+.topbar-icon-btn:hover { background: var(--gg-primary-light); color: var(--gg-primary-dark); transform: translateY(-2px); }
+.topbar-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--gg-danger); color: #fff;
+  font-size: .62rem; font-weight: 700; line-height: 1;
+  min-width: 17px; height: 17px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px; border: 2px solid #fff;
+}
+.topbar-account-btn {
+  display: flex; align-items: center; gap: .6rem;
+  background: none; border: none; padding: .3rem .7rem .3rem .3rem;
+  border-radius: var(--gg-radius-pill);
+  font-weight: 500; font-size: .88rem; color: var(--gg-cocoa);
+  transition: background-color .2s var(--gg-ease);
+}
+.topbar-account-btn:hover, .topbar-account-btn:focus { background: var(--gg-secondary-bg); }
+.topbar-avatar-fallback {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--gg-primary-light); color: var(--gg-primary-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+
+/* Bootstrap's own dropdown-menu, themed to match the rest of the system
+   instead of default flat white-with-hard-corners. */
+.dropdown-menu {
+  border-radius: var(--gg-radius-sm);
+  border: 1px solid var(--gg-border);
+  box-shadow: var(--gg-shadow);
+  padding: .5rem;
+}
+.dropdown-item {
+  border-radius: var(--gg-radius-sm);
+  padding: .55rem .8rem;
+  font-size: .88rem;
+  display: flex; align-items: center; gap: .6rem;
+  transition: background-color .15s var(--gg-ease), color .15s var(--gg-ease);
+}
+.dropdown-item:hover, .dropdown-item:focus { background: var(--gg-primary-light); color: var(--gg-primary-dark); }
+.dropdown-item.text-danger:hover, .dropdown-item.text-danger:focus { background: var(--gg-danger-bg); color: var(--gg-danger) !important; }
+.dropdown-divider { border-color: var(--gg-border); margin: .4rem 0; }
+
+/* =========================================================
+   Auth pages
+   ========================================================= */
+.auth-shell {
+  min-height: 100vh; display: flex; align-items: center;
+  background:
+    radial-gradient(circle at 15% 20%, var(--gg-primary-light), transparent 45%),
+    radial-gradient(circle at 85% 80%, #ffe3c2, transparent 45%),
+    radial-gradient(circle at 50% 100%, #ffe9cf, transparent 60%),
+    var(--gg-bg);
+}
+.auth-card { border: 1px solid rgba(74, 51, 36, .05); border-radius: var(--gg-radius-lg); box-shadow: var(--gg-shadow-lg); }
+.auth-badge {
+  width: 50px; height: 50px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 1.35rem; box-shadow: 0 8px 20px rgba(224, 138, 62, .35);
+}
+
+footer { color: var(--gg-muted); }
+.status-badge { font-size: .74rem; }
+::selection { background: var(--gg-primary-light); }
+
+/* =========================================================
+   Animation & interactivity — shared app-wide (landing page,
+   customer pages, and the owner/admin side alike).
+   ========================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  /* Scroll-reveal: pair with partials/scroll_reveal.php, which adds
+     .is-visible via IntersectionObserver as an element enters view.
+     An inline --reveal-delay custom property staggers a group instead
+     of everything popping in at once. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .6s var(--gg-ease), transform .6s var(--gg-ease);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+  @keyframes gg-fade-in-up {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* Above-the-fold content (page headers, hero sections) plays this
+     immediately on load rather than waiting for a scroll trigger. */
+  .enter { animation: gg-fade-in-up .65s var(--gg-ease) both; }
+  .enter-delay-1 { animation: gg-fade-in-up .65s var(--gg-ease) .1s both; }
+  .enter-delay-2 { animation: gg-fade-in-up .65s var(--gg-ease) .2s both; }
+
+  @keyframes gg-floaty {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  .float { animation: gg-floaty 3.2s ease-in-out infinite; }
+
+  /* Large primary CTAs (hero-style buttons, empty-state prompts) get a
+     soft attention pulse. Scoped to .btn-lg specifically so the many
+     small .btn-gg-primary action buttons in tables/forms across the
+     admin side don't pulse constantly — that would be distracting
+     rather than helpful in a busy screen. */
+  @keyframes gg-pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(224, 138, 62, .35); }
+    100% { box-shadow: 0 0 0 14px rgba(224, 138, 62, 0); }
+  }
+  .btn-gg-primary.btn-lg { animation: gg-pulse-ring 2.4s ease-out infinite; }
+  .btn-gg-primary.btn-lg:hover { animation: none; }
+}
+
+/* Sidebar / bottom-nav / topbar links already transition color and
+   background (see their own rules above) — this adds a matching
+   subtle press feedback so every nav item feels consistent with .btn. */
+.sidebar a:active, .gg-bottomnav a:active, .gg-topbar .nav-link:active { transform: scale(.96); }
+
+/* =========================================================
+   DataTables — theme the generated search/length/pagination
+   controls to match the rest of the system instead of Bootstrap's
+   default blue (the table itself already picks up .table styling).
+   ========================================================= */
+.dataTables_wrapper { padding-top: .25rem; }
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter { margin-bottom: .75rem; }
+.dataTables_wrapper .dataTables_filter input {
+  border-radius: var(--gg-radius-sm);
+  border: 1.5px solid var(--gg-border);
+  padding: .4rem .7rem;
+  min-width: 200px;
+}
+.dataTables_wrapper .dataTables_length select {
+  border-radius: var(--gg-radius-sm);
+  border: 1.5px solid var(--gg-border);
+  padding: .4rem 2rem .4rem .7rem; /* extra right padding clears Bootstrap's arrow icon */
+  min-width: 4.5rem;
+}
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+  border-color: var(--gg-primary);
+  box-shadow: 0 0 0 .18rem rgba(224, 138, 62, .16);
+  outline: none;
+}
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+  color: var(--gg-muted);
+  font-size: .82rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.dataTables_wrapper .dataTables_paginate { margin-top: .75rem; }
+.dataTables_wrapper .dataTables_paginate .page-link {
+  border-radius: var(--gg-radius-sm) !important;
+  margin-left: .25rem;
+  color: var(--gg-cocoa);
+  border-color: var(--gg-border);
+}
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+  background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
+  border-color: transparent;
+  color: #fff;
+}
+.dataTables_wrapper .dataTables_paginate .page-link:hover {
+  background: var(--gg-primary-light);
+  color: var(--gg-primary-dark);
+  border-color: var(--gg-primary-light);
+}
+.dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+  color: var(--gg-border);
+}
+table.dataTable thead th { position: relative; }
+table.dataTable thead th.no-sort::before,
+table.dataTable thead th.no-sort::after { display: none !important; }

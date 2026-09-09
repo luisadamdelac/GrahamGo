@@ -1,0 +1,24 @@
+# Local dev only — never bake these into the image. On Railway, config
+# comes from the dashboard's Environment Variables instead.
+.env
+.env.*
+
+# Not part of the PHP app — a separate React/MUI reference template used
+# only as a design reference during development (see app.css for the
+# elements adapted from it). Irrelevant to what actually runs.
+elegent-v1.0.1/
+
+# Git metadata, local writable state, vendor (reinstalled fresh via
+# composer in the Dockerfile), and this project's own local test/scratch
+# artifacts.
+.git/
+.gitignore
+vendor/
+writable/cache/*
+writable/debugbar/*
+writable/logs/*
+writable/session/*
+public/uploads/avatars/*
+public/uploads/products/*
+node_modules/
+*.md

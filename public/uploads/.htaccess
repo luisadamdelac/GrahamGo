@@ -1,0 +1,8 @@
+# Uploaded files are served as static assets only — never executed.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phar|pl|py|cgi|asp|aspx)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes -ExecCGI
