@@ -1,9 +1,12 @@
 FROM php:8.2-apache
 
-# System packages + PHP extensions this app/CI4 needs. libonig-dev is
-# oniguruma, the regex engine mbstring's ./configure step compiles
-# against — without it, docker-php-ext-install mbstring fails.
+# System packages + PHP extensions this app/CI4 needs.
+# - pkg-config: the intl/zip extensions' ./configure steps use it to
+#   locate libicu/libzip — without it, configure fails pointing at "the
+#   pkg-config man page".
+# - libonig-dev: oniguruma, the regex engine mbstring compiles against.
 RUN apt-get update && apt-get install -y \
+        pkg-config \
         libicu-dev \
         libonig-dev \
         libzip-dev \
