@@ -7,7 +7,7 @@ $statuses     = ['Pending', 'Approved', 'Rejected'];
 $ggStars = static function (int $rating): string {
     $out = '';
     for ($i = 1; $i <= 5; $i++) {
-        $out .= '<i class="bi bi-star' . ($i <= $rating ? '-fill' : '') . '" style="color:var(--gg-primary-dark);"></i>';
+        $out .= '<i class="bi bi-star' . ($i <= $rating ? '-fill' : '') . '" style="color:var(--gg-star);"></i>';
     }
     return $out;
 };

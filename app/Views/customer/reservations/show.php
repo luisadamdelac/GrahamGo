@@ -85,23 +85,25 @@ $currentIndex = array_search($reservation['status'], $steps, true);
 <?php if ($reservation['status'] === 'Claimed'): ?>
   <div class="card mt-3">
     <div class="card-body p-3 p-md-4">
-      <h6 class="mb-3"><i class="bi bi-star-fill" style="color:var(--gg-primary-dark);"></i> Rate These Products</h6>
+      <h6 class="mb-3"><i class="bi bi-star-fill" style="color:var(--gg-star);"></i> Rate These Products</h6>
       <div class="d-flex flex-column gap-3">
         <?php foreach ($details as $d): ?>
           <div class="p-3" style="background:var(--gg-bg); border-radius:var(--gg-radius-lg);">
             <p class="fw-semibold mb-2"><?= esc($d['product_name']) ?></p>
             <?= form_open('products/' . $d['product_id'] . '/review') ?>
-              <div class="gg-star-input mb-2">
+              <div class="gg-star-input mb-3">
                 <?php for ($i = 5; $i >= 1; $i--): ?>
                   <input type="radio" name="rating" id="ggStar<?= $d['product_id'] ?>_<?= $i ?>" value="<?= $i ?>" <?= (int) ($d['myReview']['rating'] ?? 0) === $i ? 'checked' : '' ?> required>
                   <label for="ggStar<?= $d['product_id'] ?>_<?= $i ?>"><i class="bi bi-star-fill"></i></label>
                 <?php endfor; ?>
               </div>
-              <textarea name="comment" class="form-control mb-2" rows="2" maxlength="1000" placeholder="Share your thoughts about this product (optional)"><?= esc($d['myReview']['comment'] ?? '') ?></textarea>
-              <button type="submit" class="btn btn-gg-primary btn-sm"><i class="bi bi-send-fill"></i> <?= $d['myReview'] ? 'Update Review' : 'Submit Review' ?></button>
-              <?php if ($d['myReview'] && $d['myReview']['status'] === 'Pending'): ?>
-                <span class="small text-muted ms-2">Awaiting approval</span>
-              <?php endif; ?>
+              <textarea name="comment" class="form-control mb-3" rows="3" maxlength="1000" placeholder="Share your thoughts about this product (optional)"><?= esc($d['myReview']['comment'] ?? '') ?></textarea>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button type="submit" class="btn btn-gg-primary btn-sm w-100 w-sm-auto"><i class="bi bi-send-fill"></i> <?= $d['myReview'] ? 'Update Review' : 'Submit Review' ?></button>
+                <?php if ($d['myReview'] && $d['myReview']['status'] === 'Pending'): ?>
+                  <span class="small text-muted">Awaiting approval</span>
+                <?php endif; ?>
+              </div>
             <?= form_close() ?>
           </div>
         <?php endforeach; ?>

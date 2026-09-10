@@ -32,6 +32,7 @@
   --gg-danger-bg: #FCEBEA;
   --gg-secondary: #7A6858;
   --gg-secondary-bg: #F1ECE5;
+  --gg-star: #FFC107;
 
   --gg-radius-sm: .65rem;
   --gg-radius: 1.1rem;
@@ -538,7 +539,10 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .gg-star-input label { font-size: 1.7rem; line-height: 1; color: var(--gg-border); cursor: pointer; transition: color .15s var(--gg-ease); }
 .gg-star-input input:checked ~ label,
 .gg-star-input label:hover,
-.gg-star-input label:hover ~ label { color: var(--gg-primary-dark); }
+.gg-star-input label:hover ~ label { color: var(--gg-star); }
+@media (max-width: 420px) {
+  .gg-star-input label { font-size: 1.5rem; }
+}
 
 /* =========================================================
    Auth pages

@@ -19,7 +19,7 @@
       <div class="card-body p-4">
         <h4 class="mb-1"><?= esc($product['product_name']) ?></h4>
         <?php if ($ratingSummary['count'] > 0): ?>
-          <div class="mb-2" style="color:var(--gg-primary-dark);">
+          <div class="mb-2" style="color:var(--gg-star);">
             <?php for ($i = 1; $i <= 5; $i++): ?><i class="bi bi-star<?= $i <= round($ratingSummary['avg']) ? '-fill' : '' ?>"></i><?php endfor; ?>
             <span class="text-muted small"><?= number_format($ratingSummary['avg'], 1) ?> (<?= $ratingSummary['count'] ?> review<?= $ratingSummary['count'] === 1 ? '' : 's' ?>)</span>
           </div>
@@ -67,7 +67,7 @@
                 <div class="flex-grow-1">
                   <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="fw-semibold small"><?= esc($rv['customer_name']) ?></span>
-                    <span style="color:var(--gg-primary-dark); font-size:.8rem;">
+                    <span style="color:var(--gg-star); font-size:.8rem;">
                       <?php for ($i = 1; $i <= 5; $i++): ?><i class="bi bi-star<?= $i <= $rv['rating'] ? '-fill' : '' ?>"></i><?php endfor; ?>
                     </span>
                     <span class="text-muted small"><?= date('M d, Y', strtotime($rv['created_at'])) ?></span>
