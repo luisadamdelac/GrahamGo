@@ -32,5 +32,6 @@ $navItems = [
 <?= view('partials/confirm_modal') ?>
 <?= view('partials/auto_dismiss_alerts') ?>
 <?= view('partials/scroll_reveal') ?>
+<?= view('partials/password_toggle') ?>
 </body>
 </html>
