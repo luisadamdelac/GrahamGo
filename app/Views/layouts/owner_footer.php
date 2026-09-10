@@ -37,27 +37,36 @@
     var titleEl        = document.getElementById('ggPageTitle');
     var reservationBadge = document.getElementById('ggReservationBadge');
     var lowStockBadge    = document.getElementById('ggLowStockBadge');
-    var bellBadge         = document.getElementById('ggTopbarBellBadge');
-    var notifOverdueItem      = document.getElementById('ggNotifOverdueItem');
-    var notifOverdueCount     = document.getElementById('ggNotifOverdueCount');
-    var notifReservationItem  = document.getElementById('ggNotifReservationItem');
-    var notifReservationCount = document.getElementById('ggNotifReservationCount');
-    var notifStockItem        = document.getElementById('ggNotifStockItem');
-    var notifStockCount       = document.getElementById('ggNotifStockCount');
-    var notifSignupItem       = document.getElementById('ggNotifSignupItem');
-    var notifSignupCount      = document.getElementById('ggNotifSignupCount');
-    var notifEmpty            = document.getElementById('ggNotifEmpty');
-    var baseTitle       = titleEl ? titleEl.getAttribute('data-base-title') : document.title;
+    var baseTitle         = titleEl ? titleEl.getAttribute('data-base-title') : document.title;
+
+    // The notification bell partial (partials/owner_notification_bell)
+    // can appear twice on the page — once in the mobile topbar, once in
+    // the desktop one — so every element it needs to update uses a
+    // data-role attribute instead of an id, and every match gets
+    // updated via querySelectorAll + forEach, not getElementById.
+    function setBadgeAll(role, count) {
+      document.querySelectorAll('[data-role="' + role + '"]').forEach(function (el) {
+        el.textContent = count;
+        el.style.display = count > 0 ? '' : 'none';
+      });
+    }
+
+    function setTextAll(role, value) {
+      document.querySelectorAll('[data-role="' + role + '"]').forEach(function (el) {
+        el.textContent = value;
+      });
+    }
+
+    function toggleAll(role, show) {
+      document.querySelectorAll('[data-role="' + role + '"]').forEach(function (el) {
+        el.style.display = show ? '' : 'none';
+      });
+    }
 
     function setBadge(el, count) {
       if (! el) return;
       el.textContent = count;
       el.style.display = count > 0 ? '' : 'none';
-    }
-
-    function toggleItem(el, show) {
-      if (! el) return;
-      el.style.display = show ? '' : 'none';
     }
 
     function poll() {
@@ -67,17 +76,17 @@
           if (! data) return;
           setBadge(reservationBadge, data.reservations);
           setBadge(lowStockBadge, data.lowStock);
-          setBadge(bellBadge, data.total);
+          setBadgeAll('notif-bell-badge', data.total);
 
-          if (notifOverdueCount) notifOverdueCount.textContent = data.overdue;
-          if (notifReservationCount) notifReservationCount.textContent = data.reservations;
-          if (notifStockCount) notifStockCount.textContent = data.lowStock;
-          if (notifSignupCount) notifSignupCount.textContent = data.newSignups;
-          toggleItem(notifOverdueItem, data.overdue > 0);
-          toggleItem(notifReservationItem, data.reservations > 0);
-          toggleItem(notifStockItem, data.lowStock > 0);
-          toggleItem(notifSignupItem, data.newSignups > 0);
-          toggleItem(notifEmpty, (data.overdue + data.reservations + data.lowStock + data.newSignups) === 0);
+          setTextAll('notif-overdue-count', data.overdue);
+          setTextAll('notif-reservation-count', data.reservations);
+          setTextAll('notif-stock-count', data.lowStock);
+          setTextAll('notif-signup-count', data.newSignups);
+          toggleAll('notif-overdue-item', data.overdue > 0);
+          toggleAll('notif-reservation-item', data.reservations > 0);
+          toggleAll('notif-stock-item', data.lowStock > 0);
+          toggleAll('notif-signup-item', data.newSignups > 0);
+          toggleAll('notif-empty', (data.overdue + data.reservations + data.lowStock + data.newSignups) === 0);
 
           document.title = data.total > 0 ? '(' + data.total + ') ' + baseTitle : baseTitle;
         })

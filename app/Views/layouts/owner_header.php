@@ -31,10 +31,14 @@
 
 <div class="owner-topbar d-lg-none">
   <button class="menu-btn" id="ggSidebarToggle" type="button" aria-label="Open menu"><i class="bi bi-list"></i></button>
-  <div class="brand">
+  <div class="brand flex-grow-1">
     <img src="<?= base_url('assets/img/logo.png') ?>" alt="GrahamGo" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;">
     GrahamGo
   </div>
+  <?= view('partials/owner_notification_bell', [
+    'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
+    'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
+  ]) ?>
 </div>
 
 <div class="sidebar-backdrop" id="ggSidebarBackdrop"></div>
@@ -80,55 +84,10 @@
         <div class="topbar-search-results" id="ggTopbarSearchResults"></div>
       </form>
       <div class="admin-topbar-actions">
-        <div class="dropdown">
-          <button class="topbar-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
-            <i class="bi bi-bell-fill"></i>
-            <span id="ggTopbarBellBadge" class="topbar-badge" style="<?= $ggTotalAlerts > 0 ? '' : 'display:none;' ?>"><?= $ggTotalAlerts ?></span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" style="min-width:290px;">
-            <li><h6 class="dropdown-header">Notifications</h6></li>
-            <li id="ggNotifOverdueItem" style="<?= $ggOverdueAlerts > 0 ? '' : 'display:none;' ?>">
-              <a class="dropdown-item" href="<?= site_url('owner/reservations') ?>">
-                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-danger-bg);color:var(--gg-danger);"><i class="bi bi-alarm-fill"></i></div>
-                <div>
-                  <div class="fw-semibold"><span id="ggNotifOverdueCount"><?= $ggOverdueAlerts ?></span> reservation(s) overdue</div>
-                  <div class="text-muted" style="font-size:.78rem;">Claim date has already passed</div>
-                </div>
-              </a>
-            </li>
-            <li id="ggNotifReservationItem" style="<?= $ggReservationAlerts > 0 ? '' : 'display:none;' ?>">
-              <a class="dropdown-item" href="<?= site_url('owner/reservations') ?>">
-                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-warning-bg);color:var(--gg-warning);"><i class="bi bi-journal-check"></i></div>
-                <div>
-                  <div class="fw-semibold"><span id="ggNotifReservationCount"><?= $ggReservationAlerts ?></span> reservation(s) need attention</div>
-                  <div class="text-muted" style="font-size:.78rem;">Pending, confirmed, or ready to claim</div>
-                </div>
-              </a>
-            </li>
-            <li id="ggNotifStockItem" style="<?= $ggLowStockAlerts > 0 ? '' : 'display:none;' ?>">
-              <a class="dropdown-item" href="<?= site_url('owner/products') ?>">
-                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-danger-bg);color:var(--gg-danger);"><i class="bi bi-exclamation-triangle-fill"></i></div>
-                <div>
-                  <div class="fw-semibold"><span id="ggNotifStockCount"><?= $ggLowStockAlerts ?></span> product(s) low on stock</div>
-                  <div class="text-muted" style="font-size:.78rem;">Restock before running out</div>
-                </div>
-              </a>
-            </li>
-            <li id="ggNotifSignupItem" style="<?= $ggNewSignups > 0 ? '' : 'display:none;' ?>">
-              <a class="dropdown-item" href="<?= site_url('owner/customers') ?>">
-                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-success-bg);color:var(--gg-success);"><i class="bi bi-person-plus-fill"></i></div>
-                <div>
-                  <div class="fw-semibold"><span id="ggNotifSignupCount"><?= $ggNewSignups ?></span> new customer sign-up(s)</div>
-                  <div class="text-muted" style="font-size:.78rem;">In the last 48 hours</div>
-                </div>
-              </a>
-            </li>
-            <?php $ggAnyNotif = $ggOverdueAlerts + $ggReservationAlerts + $ggLowStockAlerts + $ggNewSignups; ?>
-            <li id="ggNotifEmpty" class="dropdown-item-text text-center text-muted py-3" style="<?= $ggAnyNotif > 0 ? 'display:none;' : '' ?>">
-              <i class="bi bi-emoji-smile"></i> You're all caught up!
-            </li>
-          </ul>
-        </div>
+        <?= view('partials/owner_notification_bell', [
+          'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
+          'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
+        ]) ?>
         <div class="dropdown">
           <button class="topbar-account-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <?php if (! empty(current_owner()['avatar'])): ?>
