@@ -20,10 +20,11 @@
         <span class="badge bg-<?= $p['status'] === 'Active' ? 'success' : 'secondary' ?>"><?= esc($p['status']) ?></span>
       </div>
       <div class="small text-muted mb-2">₱<?= number_format($p['price'], 2) ?> &middot; Stock: <span class="<?= $p['stock'] <= $p['reorder_level'] ? 'text-danger fw-bold' : '' ?>"><?= $p['stock'] ?></span> &middot; Alert at <?= $p['reorder_level'] ?></div>
+      <?php $cannotDeactivate = $p['status'] === 'Active' && $p['stock'] > 0; ?>
       <div class="d-flex gap-2 mb-2">
         <a href="<?= site_url('owner/products/' . $p['product_id'] . '/edit') ?>" class="btn btn-sm btn-outline-dark flex-fill">Edit</a>
         <?= form_open('owner/products/' . $p['product_id'] . '/toggle', ['class' => 'flex-fill']) ?>
-          <button type="submit" class="btn btn-sm btn-outline-secondary w-100"><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
+          <button type="submit" class="btn btn-sm btn-outline-secondary w-100" <?= $cannotDeactivate ? 'disabled title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
         <?= form_close() ?>
       </div>
       <button type="button" class="btn btn-sm btn-gg-primary w-100" data-restock-id="<?= $p['product_id'] ?>" data-restock-name="<?= esc($p['product_name']) ?>"><i class="bi bi-box-arrow-in-down"></i> Restock</button>
@@ -55,8 +56,9 @@
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-sm btn-gg-primary" data-restock-id="<?= $p['product_id'] ?>" data-restock-name="<?= esc($p['product_name']) ?>"><i class="bi bi-box-arrow-in-down"></i> Restock</button>
               <a href="<?= site_url('owner/products/' . $p['product_id'] . '/edit') ?>" class="btn btn-sm btn-outline-dark">Edit</a>
+              <?php $cannotDeactivate = $p['status'] === 'Active' && $p['stock'] > 0; ?>
               <?= form_open('owner/products/' . $p['product_id'] . '/toggle') ?>
-                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap"><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
+                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap" <?= $cannotDeactivate ? 'disabled title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
               <?= form_close() ?>
             </div>
           </td>

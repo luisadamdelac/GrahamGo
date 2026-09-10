@@ -143,6 +143,15 @@ class ProductController extends BaseController
             return redirect()->to('owner/products')->with('error', 'Product not found.');
         }
 
+        // Deactivating a product with stock still on hand would hide it
+        // from customers while that stock just sits there unsold/
+        // unaccounted for — restock it out (or let it sell through)
+        // first. The button is disabled for this same reason in the
+        // view; this is the server-side backstop for that.
+        if ($product['status'] === 'Active' && (int) $product['stock'] > 0) {
+            return redirect()->to('owner/products')->with('error', 'Cannot deactivate — this product still has ' . $product['stock'] . ' unit(s) in stock.');
+        }
+
         $newStatus = $product['status'] === 'Active' ? 'Inactive' : 'Active';
         $this->productModel->update($id, ['status' => $newStatus]);
 
