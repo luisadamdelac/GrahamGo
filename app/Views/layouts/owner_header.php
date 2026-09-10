@@ -100,7 +100,7 @@
       <a href="<?= site_url('owner/logout') ?>" class="logout-link" style="color:var(--gg-danger);"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </nav>
   </div>
-  <div class="flex-grow-1" style="min-width:0;">
+  <div class="flex-grow-1 owner-content" style="min-width:0;">
     <div class="admin-topbar d-none d-lg-flex align-items-center justify-content-between">
       <form action="<?= site_url('owner/customers') ?>" method="get" class="topbar-search" id="ggTopbarSearchForm" autocomplete="off">
         <i class="bi bi-search"></i>

@@ -394,7 +394,12 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 }
 @media (min-width: 992px) {
   .owner-topbar { display: none !important; }
-  .sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  /* True position:fixed — not sticky — so the sidebar is always exactly
+     viewport-tall and pinned regardless of how much content is on the
+     current page (a short Sales page vs. a long Reservations table),
+     instead of being sized by flexbox stretch matching its sibling. */
+  .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 250px; overflow-y: auto; }
+  .owner-content { margin-left: 250px; }
 }
 
 .sidebar-backdrop {
