@@ -101,6 +101,6 @@
   </div>
 <?= form_close() ?>
 
-<?= view('partials/avatar_confirm_modal') ?>
+<?= view('partials/avatar_confirm_modal', ['uploadUrl' => 'owner/profile/avatar']) ?>
 
 <?= view('layouts/owner_footer') ?>

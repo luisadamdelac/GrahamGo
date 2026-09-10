@@ -34,10 +34,40 @@ class ProfileController extends BaseController
         ]);
     }
 
-    public function update()
+    /**
+     * Avatar-only upload, called via AJAX from partials/avatar_confirm_modal
+     * instead of bundling the photo into the full profile form submit —
+     * so it saves the instant it's confirmed, independent of whatever
+     * state the other fields (barangay, password, ...) happen to be in.
+     */
+    public function updateAvatar()
     {
         $userId = current_customer()['user_id'];
         $user   = $this->userModel->find($userId);
+
+        $rules = ['avatar' => 'uploaded[avatar]|is_image[avatar]|max_size[avatar,2048]|mime_in[avatar,image/jpg,image/jpeg,image/png,image/webp]'];
+
+        if (! $this->validate($rules)) {
+            return $this->response->setStatusCode(422)->setJSON(['error' => implode(' ', $this->validator->getErrors())]);
+        }
+
+        $newAvatar = save_avatar_upload($this->request->getFile('avatar'), $user['avatar'] ?? null);
+        if (! $newAvatar) {
+            return $this->response->setStatusCode(500)->setJSON(['error' => 'Upload failed. Please try again.']);
+        }
+
+        $this->userModel->update($userId, ['avatar' => $newAvatar]);
+
+        $customer            = current_customer();
+        $customer['avatar']  = $newAvatar;
+        session()->set('customer', $customer);
+
+        return $this->response->setJSON(['success' => true, 'url' => avatar_url($newAvatar)]);
+    }
+
+    public function update()
+    {
+        $userId = current_customer()['user_id'];
 
         $rules = [
             'last_name'      => 'required|min_length[2]|max_length[100]',
@@ -48,7 +78,6 @@ class ProfileController extends BaseController
             'barangay_other' => 'permit_empty|max_length[100]',
             'contact_number' => 'permit_empty|max_length[20]',
             'password'       => 'permit_empty|' . UserModel::PASSWORD_RULE,
-            'avatar'         => 'permit_empty|is_image[avatar]|max_size[avatar,2048]|mime_in[avatar,image/jpg,image/jpeg,image/png,image/webp]',
         ];
 
         $messages = [
@@ -84,11 +113,6 @@ class ProfileController extends BaseController
         $newPassword = $this->request->getPost('password');
         if (! empty($newPassword)) {
             $data['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
-        }
-
-        $newAvatar = save_avatar_upload($this->request->getFile('avatar'), $user['avatar'] ?? null);
-        if ($newAvatar) {
-            $data['avatar'] = $newAvatar;
         }
 
         $this->userModel->update($userId, $data);

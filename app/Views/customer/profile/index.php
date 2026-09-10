@@ -136,6 +136,6 @@
 })();
 </script>
 
-<?= view('partials/avatar_confirm_modal') ?>
+<?= view('partials/avatar_confirm_modal', ['uploadUrl' => 'profile/avatar']) ?>
 
 <?= view('layouts/footer') ?>

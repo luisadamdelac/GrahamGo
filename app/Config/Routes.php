@@ -41,6 +41,7 @@ $routes->group('', ['filter' => 'customerAuth'], static function ($routes) {
 
     $routes->get('profile', 'Customer\ProfileController::index');
     $routes->post('profile', 'Customer\ProfileController::update');
+    $routes->post('profile/avatar', 'Customer\ProfileController::updateAvatar');
 });
 
 // ---------------------------------------------------------------------
@@ -92,6 +93,7 @@ $routes->group('owner', ['filter' => 'ownerAuth'], static function ($routes) {
     // Profile
     $routes->get('profile', 'Owner\ProfileController::index');
     $routes->post('profile', 'Owner\ProfileController::update');
+    $routes->post('profile/avatar', 'Owner\ProfileController::updateAvatar');
 
     // Settings
     $routes->get('settings', 'Owner\SettingController::index');
