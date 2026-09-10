@@ -14,7 +14,7 @@ if (! function_exists('calapan_barangays')) {
             'Biga', 'Bondoc', 'Bucayao', 'Buhuan', 'Bulusan', 'Calero', 'Camansihan',
             'Camilmil', 'Canubing I', 'Canubing II', 'Comunal', 'Guinobatan', 'Gulod',
             'Gutad', 'Ibaba East', 'Ibaba West', 'Ilaya', 'Lalud', 'Lazareto', 'Libis',
-            'Lumang Bayan', 'Mahal na Pangalan', 'Maidlang', 'Malad', 'Malamig',
+            'Lumangbayan', 'Mahal na Pangalan', 'Maidlang', 'Malad', 'Malamig',
             'Managpi', 'Masipit', 'Nag-iba I', 'Nag-iba II', 'Navotas', 'Pachoca',
             'Palhi', 'Panggalaan', 'Parang', 'Patas', 'Personas', 'Putingtubig',
             'Salong', 'San Antonio', 'San Vicente Central', 'San Vicente East',
