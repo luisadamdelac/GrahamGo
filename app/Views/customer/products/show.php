@@ -7,7 +7,7 @@
     <div class="card h-100">
       <div class="card-thumb p-0 overflow-hidden" style="height:160px; border-radius:1.25rem;">
         <?php if (! empty($product['image'])): ?>
-          <img src="<?= product_image_url($product['image']) ?>" alt="<?= esc($product['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+          <img src="<?= cloudinary_resized(product_image_url($product['image']), 800) ?>" alt="<?= esc($product['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
         <?php else: ?>
           <i class="bi bi-cake-fill" style="font-size:3rem; color:var(--gg-primary-dark);"></i>
         <?php endif; ?>

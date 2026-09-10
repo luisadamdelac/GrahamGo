@@ -9,7 +9,7 @@
       <div class="card h-100">
         <div class="card-body p-4 text-center">
           <?php if ($user['avatar']): ?>
-            <img id="avatarPreview" src="<?= avatar_url($user['avatar']) ?>" class="rounded-circle mb-3" style="width:96px;height:96px;object-fit:cover;" alt="Avatar">
+            <img id="avatarPreview" src="<?= cloudinary_resized(avatar_url($user['avatar']), 192) ?>" class="rounded-circle mb-3" style="width:96px;height:96px;object-fit:cover;" alt="Avatar">
           <?php else: ?>
             <div id="avatarPreview" class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:96px;height:96px;background:var(--gg-primary-light);">
               <i class="bi bi-person-fill" style="font-size:2.4rem; color:var(--gg-primary-dark);"></i>

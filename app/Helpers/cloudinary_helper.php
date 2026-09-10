@@ -76,3 +76,31 @@ if (! function_exists('cloudinary_upload_image')) {
         return $data['secure_url'] ?? null;
     }
 }
+
+if (! function_exists('cloudinary_resized')) {
+    /**
+     * Inserts a resize/auto-format/auto-quality transformation into a
+     * Cloudinary delivery URL, so a browser showing this image at (say)
+     * 36px doesn't download the same multi-hundred-KB original the full
+     * product detail page uses — Cloudinary generates and caches the
+     * resized/re-encoded variant on first request, then serves it
+     * straight from CDN after that.
+     *
+     * $width should be roughly 2x the image's actual on-screen size, so
+     * it still looks sharp on high-DPI ("retina") screens.
+     *
+     * Leaves the URL untouched if it isn't a Cloudinary URL (local-disk
+     * fallback path, or already-transformed) — this only ever touches
+     * URLs this app itself generated via cloudinary_upload_image().
+     */
+    function cloudinary_resized(?string $url, int $width): ?string
+    {
+        if (! $url || ! str_contains($url, '/image/upload/')) {
+            return $url;
+        }
+
+        $transform = "w_{$width},c_fill,q_auto,f_auto";
+
+        return str_replace('/image/upload/', "/image/upload/{$transform}/", $url);
+    }
+}

@@ -9,7 +9,7 @@
         <label class="form-label">Product Photo</label>
         <div class="d-flex align-items-center gap-3">
           <?php if (! empty($product['image'])): ?>
-            <img id="productImagePreview" src="<?= product_image_url($product['image']) ?>" class="rounded" style="width:72px;height:72px;object-fit:cover;" alt="">
+            <img id="productImagePreview" src="<?= cloudinary_resized(product_image_url($product['image']), 144) ?>" class="rounded" style="width:72px;height:72px;object-fit:cover;" alt="">
           <?php else: ?>
             <div id="productImagePreview" class="rounded d-flex align-items-center justify-content-center" style="width:72px;height:72px;background:var(--gg-primary-light);">
               <i class="bi bi-cake-fill" style="color:var(--gg-primary-dark);"></i>

@@ -69,7 +69,12 @@ if (! function_exists('avatar_chip')) {
     function avatar_chip(string $name, ?string $avatarFile = null, int $size = 36): string
     {
         if ($avatarFile) {
-            return '<img src="' . esc(avatar_url($avatarFile)) . '" alt="" class="rounded-circle" '
+            // 2x the on-screen size so it still looks sharp on high-DPI
+            // screens, without shipping a multi-hundred-KB original for
+            // what's often a 24-36px circle in a list.
+            $src = cloudinary_resized(avatar_url($avatarFile), $size * 2);
+
+            return '<img src="' . esc($src) . '" alt="" class="rounded-circle" loading="lazy" '
                 . 'style="width:' . $size . 'px;height:' . $size . 'px;object-fit:cover;flex-shrink:0;">';
         }
 

@@ -39,7 +39,7 @@ $navItems = [
           <li class="nav-item">
             <a class="nav-link <?= str_starts_with(uri_string(), $item['match']) ? 'active' : '' ?>" href="<?= site_url($item['url']) ?>">
               <?php if ($item['url'] === 'profile' && ! empty(current_customer()['avatar'])): ?>
-                <img src="<?= avatar_url(current_customer()['avatar']) ?>" class="rounded-circle" style="width:20px;height:20px;object-fit:cover;" alt="">
+                <img src="<?= cloudinary_resized(avatar_url(current_customer()['avatar']), 40) ?>" class="rounded-circle" style="width:20px;height:20px;object-fit:cover;" alt="">
               <?php else: ?>
                 <i class="bi bi-<?= $item['icon'] ?>"></i>
               <?php endif; ?>

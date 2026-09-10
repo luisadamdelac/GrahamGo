@@ -62,7 +62,7 @@
       <div class="nav-divider"></div>
       <a href="<?= site_url('owner/profile') ?>" class="<?= (str_starts_with(uri_string(), 'owner/profile')) ? 'active' : '' ?>">
         <?php if (! empty(current_owner()['avatar'])): ?>
-          <img src="<?= avatar_url(current_owner()['avatar']) ?>" class="rounded-circle" style="width:18px;height:18px;object-fit:cover;" alt="">
+          <img src="<?= cloudinary_resized(avatar_url(current_owner()['avatar']), 36) ?>" class="rounded-circle" style="width:18px;height:18px;object-fit:cover;" alt="">
         <?php else: ?>
           <i class="bi bi-person-circle"></i>
         <?php endif; ?>
@@ -132,7 +132,7 @@
         <div class="dropdown">
           <button class="topbar-account-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <?php if (! empty(current_owner()['avatar'])): ?>
-              <img src="<?= avatar_url(current_owner()['avatar']) ?>" class="rounded-circle" style="width:34px;height:34px;object-fit:cover;" alt="">
+              <img src="<?= cloudinary_resized(avatar_url(current_owner()['avatar']), 68) ?>" class="rounded-circle" style="width:34px;height:34px;object-fit:cover;" alt="">
             <?php else: ?>
               <div class="topbar-avatar-fallback"><i class="bi bi-person-fill"></i></div>
             <?php endif; ?>

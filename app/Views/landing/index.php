@@ -186,7 +186,7 @@
           <a href="<?= $isCustomer ? site_url('products/' . $product['product_id']) : site_url('register') ?>" class="card card-product h-100 text-decoration-none text-reset d-block">
             <div class="card-thumb p-0 overflow-hidden">
               <?php if (! empty($product['image'])): ?>
-                <img src="<?= product_image_url($product['image']) ?>" alt="<?= esc($product['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                <img src="<?= cloudinary_resized(product_image_url($product['image']), 400) ?>" alt="<?= esc($product['product_name']) ?>" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
               <?php else: ?>
                 <i class="bi bi-cake-fill" style="color:var(--gg-primary-dark);"></i>
               <?php endif; ?>

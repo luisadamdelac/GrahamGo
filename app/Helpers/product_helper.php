@@ -58,7 +58,9 @@ if (! function_exists('product_chip')) {
     function product_chip(?string $imageFile, int $size = 36): string
     {
         if ($imageFile) {
-            return '<img src="' . esc(product_image_url($imageFile)) . '" alt="" class="rounded" '
+            $src = cloudinary_resized(product_image_url($imageFile), $size * 2);
+
+            return '<img src="' . esc($src) . '" alt="" class="rounded" loading="lazy" '
                 . 'style="width:' . $size . 'px;height:' . $size . 'px;object-fit:cover;flex-shrink:0;">';
         }
 
