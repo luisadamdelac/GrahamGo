@@ -33,7 +33,7 @@
   <button class="menu-btn" id="ggSidebarToggle" type="button" aria-label="Open menu"><i class="bi bi-list"></i></button>
   <div class="brand flex-grow-1">
     <img src="<?= base_url('assets/img/logo.png') ?>" alt="GrahamGo" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;">
-    GrahamGo
+    <span class="brand-text">GrahamGo</span>
   </div>
   <div class="d-flex align-items-center gap-2">
     <button class="menu-btn" id="ggMobileSearchToggle" type="button" aria-label="Search customers"><i class="bi bi-search"></i></button>

@@ -319,7 +319,13 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
   padding: .7rem 1rem;
   display: flex; align-items: center; gap: 1rem;
 }
-.owner-topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 600; min-width: 0; }
+.owner-topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 600; min-width: 0; overflow: hidden; }
+.owner-topbar .brand-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+@media (max-width: 380px) {
+  .owner-topbar { gap: .5rem; padding: .7rem .75rem; }
+  .owner-topbar .brand-text { display: none; }
+  .owner-topbar .d-flex.gap-2 { gap: .4rem !important; }
+}
 .owner-topbar .logo-dot {
   width: 30px; height: 30px; border-radius: 9px;
   background: linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));
@@ -388,7 +394,7 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 }
 @media (min-width: 992px) {
   .owner-topbar { display: none !important; }
-  .sidebar { position: sticky; top: 0; }
+  .sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 }
 
 .sidebar-backdrop {
