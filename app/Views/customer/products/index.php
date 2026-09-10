@@ -23,6 +23,10 @@
         </div>
         <div class="card-body d-flex flex-column p-3">
           <h6 class="card-title mb-1"><?= esc($product['product_name']) ?></h6>
+          <?php $ggSum = $ratingSummary[$product['product_id']] ?? null; ?>
+          <?php if ($ggSum): ?>
+            <div class="small mb-1" style="color:var(--gg-primary-dark);"><i class="bi bi-star-fill"></i> <?= number_format($ggSum['avg'], 1) ?> <span class="text-muted">(<?= $ggSum['count'] ?>)</span></div>
+          <?php endif; ?>
           <p class="card-text text-muted small flex-grow-1 d-none d-sm-block"><?= esc(character_limiter($product['description'] ?? '', 70)) ?></p>
           <div class="d-flex align-items-center justify-content-between mb-2 mb-md-3">
             <span class="fw-bold" style="color:var(--gg-primary-dark);">₱<?= number_format($product['price'], 2) ?></span>

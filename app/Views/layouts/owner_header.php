@@ -9,6 +9,7 @@
   $ggLowStockAlerts    = (new \App\Models\ProductModel())->lowStockCount();
   $ggOverdueAlerts     = $ggReservationModel->overdueCount();
   $ggNewSignups        = (new \App\Models\UserModel())->recentCustomerSignupCount();
+  $ggPendingReviews    = (new \App\Models\ReviewModel())->pendingCount();
 
   // Sidebar nav badges (Reservations/Inventory) always use the raw
   // counts above — they're live to-do counters, not part of the
@@ -87,6 +88,10 @@
       <a href="<?= site_url('owner/sales') ?>" class="<?= (str_starts_with(uri_string(), 'owner/sales')) ? 'active' : '' ?>"><i class="bi bi-cash-coin"></i> Sales</a>
       <a href="<?= site_url('owner/walk-in-sale') ?>" class="<?= (uri_string() === 'owner/walk-in-sale') ? 'active' : '' ?>"><i class="bi bi-bag-check-fill"></i> Walk-in Sale</a>
       <a href="<?= site_url('owner/reports') ?>" class="<?= (str_starts_with(uri_string(), 'owner/reports')) ? 'active' : '' ?>"><i class="bi bi-bar-chart-fill"></i> Reports</a>
+      <a href="<?= site_url('owner/reviews') ?>" class="<?= (str_starts_with(uri_string(), 'owner/reviews')) ? 'active' : '' ?>">
+        <i class="bi bi-star-fill"></i> Reviews
+        <span id="ggReviewsBadge" class="badge bg-danger ms-auto" style="<?= $ggPendingReviews > 0 ? '' : 'display:none;' ?>"><?= $ggPendingReviews ?></span>
+      </a>
       <div class="nav-divider"></div>
       <a href="<?= site_url('owner/profile') ?>" class="<?= (str_starts_with(uri_string(), 'owner/profile')) ? 'active' : '' ?>">
         <?php if (! empty(current_owner()['avatar'])): ?>

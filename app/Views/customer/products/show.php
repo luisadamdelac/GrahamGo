@@ -18,6 +18,12 @@
     <div class="card h-100">
       <div class="card-body p-4">
         <h4 class="mb-1"><?= esc($product['product_name']) ?></h4>
+        <?php if ($ratingSummary['count'] > 0): ?>
+          <div class="mb-2" style="color:var(--gg-primary-dark);">
+            <?php for ($i = 1; $i <= 5; $i++): ?><i class="bi bi-star<?= $i <= round($ratingSummary['avg']) ? '-fill' : '' ?>"></i><?php endfor; ?>
+            <span class="text-muted small"><?= number_format($ratingSummary['avg'], 1) ?> (<?= $ratingSummary['count'] ?> review<?= $ratingSummary['count'] === 1 ? '' : 's' ?>)</span>
+          </div>
+        <?php endif; ?>
         <p class="text-muted"><?= esc($product['description']) ?></p>
         <h4 class="fw-bold mb-3" style="color:var(--gg-primary-dark);">₱<?= number_format($product['price'], 2) ?></h4>
         <p>
@@ -32,6 +38,57 @@
           <a href="<?= site_url('reserve/' . $product['product_id']) ?>" class="btn btn-gg-primary w-100 w-md-auto"><i class="bi bi-bag-plus-fill"></i> Make Reservation</a>
         <?php else: ?>
           <button class="btn btn-secondary w-100 w-md-auto" disabled>Currently Unavailable</button>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-12 col-md-11 col-lg-9">
+    <div class="card">
+      <div class="card-body p-4">
+        <h6 class="mb-3">Reviews <span class="text-muted">(<?= count($reviews) ?>)</span></h6>
+
+        <?php if ($canReview): ?>
+          <div class="p-3 mb-3" style="background:var(--gg-bg); border-radius:var(--gg-radius-lg);">
+            <p class="small text-muted mb-2"><?= $myReview ? 'Update your review' : 'You claimed this product — leave a review!' ?></p>
+            <?= form_open('products/' . $product['product_id'] . '/review') ?>
+              <div class="gg-star-input mb-3">
+                <?php for ($i = 5; $i >= 1; $i--): ?>
+                  <input type="radio" name="rating" id="ggStar<?= $i ?>" value="<?= $i ?>" <?= (int) ($myReview['rating'] ?? 0) === $i ? 'checked' : '' ?> required>
+                  <label for="ggStar<?= $i ?>"><i class="bi bi-star-fill"></i></label>
+                <?php endfor; ?>
+              </div>
+              <textarea name="comment" class="form-control mb-2" rows="3" maxlength="1000" placeholder="Share your thoughts about this product (optional)"><?= esc($myReview['comment'] ?? '') ?></textarea>
+              <button type="submit" class="btn btn-gg-primary btn-sm"><i class="bi bi-send-fill"></i> Submit Review</button>
+              <?php if ($myReview && $myReview['status'] === 'Pending'): ?>
+                <span class="small text-muted ms-2">Awaiting approval</span>
+              <?php endif; ?>
+            <?= form_close() ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if (empty($reviews)): ?>
+          <p class="text-muted small mb-0">No reviews yet.</p>
+        <?php else: ?>
+          <div class="d-flex flex-column gap-3">
+            <?php foreach ($reviews as $rv): ?>
+              <div class="d-flex gap-2 pb-3" style="border-bottom:1px solid var(--gg-border);">
+                <?= avatar_chip($rv['customer_name'], $rv['customer_avatar'], 36) ?>
+                <div class="flex-grow-1">
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="fw-semibold small"><?= esc($rv['customer_name']) ?></span>
+                    <span style="color:var(--gg-primary-dark); font-size:.8rem;">
+                      <?php for ($i = 1; $i <= 5; $i++): ?><i class="bi bi-star<?= $i <= $rv['rating'] ? '-fill' : '' ?>"></i><?php endfor; ?>
+                    </span>
+                    <span class="text-muted small"><?= date('M d, Y', strtotime($rv['created_at'])) ?></span>
+                  </div>
+                  <?php if ($rv['comment']): ?><p class="small mb-0 mt-1"><?= esc($rv['comment']) ?></p><?php endif; ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
         <?php endif; ?>
       </div>
     </div>

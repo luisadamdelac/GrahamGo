@@ -42,6 +42,8 @@ $routes->group('', ['filter' => 'customerAuth'], static function ($routes) {
     $routes->get('profile', 'Customer\ProfileController::index');
     $routes->post('profile', 'Customer\ProfileController::update');
     $routes->post('profile/avatar', 'Customer\ProfileController::updateAvatar');
+
+    $routes->post('products/(:num)/review', 'Customer\ReviewController::store/$1');
 });
 
 // ---------------------------------------------------------------------
@@ -95,6 +97,11 @@ $routes->group('owner', ['filter' => 'ownerAuth'], static function ($routes) {
     $routes->get('profile', 'Owner\ProfileController::index');
     $routes->post('profile', 'Owner\ProfileController::update');
     $routes->post('profile/avatar', 'Owner\ProfileController::updateAvatar');
+
+    // Reviews
+    $routes->get('reviews', 'Owner\ReviewController::index');
+    $routes->post('reviews/(:num)/approve', 'Owner\ReviewController::approve/$1');
+    $routes->post('reviews/(:num)/reject', 'Owner\ReviewController::reject/$1');
 
     // Settings
     $routes->get('settings', 'Owner\SettingController::index');

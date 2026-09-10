@@ -525,6 +525,16 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .notif-mark-read-btn:hover { background: var(--gg-success-bg); color: var(--gg-success); }
 .notif-mark-read-btn:disabled { opacity: .4; }
 
+/* Product review star picker — radios in reverse DOM order so a plain
+   sibling selector can light up "this star and everything before it"
+   on hover/checked without any JS. */
+.gg-star-input { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: .2rem; width: fit-content; }
+.gg-star-input input { position: absolute; opacity: 0; pointer-events: none; }
+.gg-star-input label { font-size: 1.7rem; line-height: 1; color: var(--gg-border); cursor: pointer; transition: color .15s var(--gg-ease); }
+.gg-star-input input:checked ~ label,
+.gg-star-input label:hover,
+.gg-star-input label:hover ~ label { color: var(--gg-primary-dark); }
+
 /* =========================================================
    Auth pages
    ========================================================= */
