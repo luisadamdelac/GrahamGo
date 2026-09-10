@@ -79,11 +79,11 @@
     <div class="card h-100"><div class="card-body p-3 p-md-4">
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
         <h6 class="mb-0">Sales Trend</h6>
-        <div class="btn-group btn-group-sm" role="group" id="ggSalesTrendRange">
-          <button type="button" class="btn btn-dark" data-range="week">Week</button>
-          <button type="button" class="btn btn-outline-dark" data-range="month">Month</button>
-          <button type="button" class="btn btn-outline-dark" data-range="year">Year</button>
-        </div>
+        <select class="form-select form-select-sm" id="ggSalesTrendRange" style="width:auto;">
+          <option value="week">Week</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+        </select>
       </div>
       <div style="position:relative; height:240px;">
         <canvas id="ggSalesTrendChart"
@@ -220,32 +220,21 @@ document.addEventListener('DOMContentLoaded', function () {
       },
     });
 
-    // Week/Month/Year toggle — refetches labels/values for the chosen
+    // Week/Month/Year dropdown — refetches labels/values for the chosen
     // range and swaps them into the existing chart instead of rebuilding
     // it, so the transition animates instead of flashing blank.
-    var rangeGroup = document.getElementById('ggSalesTrendRange');
-    if (rangeGroup) {
-      rangeGroup.querySelectorAll('[data-range]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (btn.classList.contains('btn-dark')) return;
-
-          rangeGroup.querySelectorAll('[data-range]').forEach(function (b) {
-            b.classList.remove('btn-dark');
-            b.classList.add('btn-outline-dark');
-          });
-          btn.classList.remove('btn-outline-dark');
-          btn.classList.add('btn-dark');
-
-          fetch('<?= site_url('owner/dashboard/sales-trend') ?>?range=' + btn.getAttribute('data-range'), { credentials: 'same-origin' })
-            .then(function (res) { return res.ok ? res.json() : null; })
-            .then(function (data) {
-              if (! data) return;
-              trendChart.data.labels = data.labels;
-              trendChart.data.datasets[0].data = data.values;
-              trendChart.update();
-            })
-            .catch(function () { /* leave the chart showing whatever it last had */ });
-        });
+    var rangeSelect = document.getElementById('ggSalesTrendRange');
+    if (rangeSelect) {
+      rangeSelect.addEventListener('change', function () {
+        fetch('<?= site_url('owner/dashboard/sales-trend') ?>?range=' + rangeSelect.value, { credentials: 'same-origin' })
+          .then(function (res) { return res.ok ? res.json() : null; })
+          .then(function (data) {
+            if (! data) return;
+            trendChart.data.labels = data.labels;
+            trendChart.data.datasets[0].data = data.values;
+            trendChart.update();
+          })
+          .catch(function () { /* leave the chart showing whatever it last had */ });
       });
     }
   }
