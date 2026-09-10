@@ -47,12 +47,12 @@
           <div class="reg-step" data-step="1">
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label">Last Name</label>
-                <input type="text" name="last_name" class="form-control" value="<?= esc(old('last_name')) ?>" required autofocus>
+                <label class="form-label">First Name</label>
+                <input type="text" name="first_name" class="form-control" value="<?= esc(old('first_name')) ?>" required autofocus>
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label">First Name</label>
-                <input type="text" name="first_name" class="form-control" value="<?= esc(old('first_name')) ?>" required>
+                <label class="form-label">Last Name</label>
+                <input type="text" name="last_name" class="form-control" value="<?= esc(old('last_name')) ?>" required>
               </div>
             </div>
             <div class="mb-3">

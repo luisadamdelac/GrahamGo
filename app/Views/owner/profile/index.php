@@ -35,12 +35,12 @@
         <div class="card-body p-4">
           <div class="row g-3">
             <div class="col-md-4">
-              <label class="form-label">Last Name</label>
-              <input type="text" name="last_name" class="form-control" value="<?= esc(old('last_name', $user['last_name'])) ?>" required>
-            </div>
-            <div class="col-md-4">
               <label class="form-label">First Name</label>
               <input type="text" name="first_name" class="form-control" value="<?= esc(old('first_name', $user['first_name'])) ?>" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control" value="<?= esc(old('last_name', $user['last_name'])) ?>" required>
             </div>
             <div class="col-md-4">
               <label class="form-label">Middle Name <span class="text-muted small">(optional)</span></label>
