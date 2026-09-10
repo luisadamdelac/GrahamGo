@@ -24,7 +24,7 @@
       <div class="d-flex gap-2 mb-2">
         <a href="<?= site_url('owner/products/' . $p['product_id'] . '/edit') ?>" class="btn btn-sm btn-outline-dark flex-fill">Edit</a>
         <?= form_open('owner/products/' . $p['product_id'] . '/toggle', ['class' => 'flex-fill']) ?>
-          <button type="submit" class="btn btn-sm btn-outline-secondary w-100" <?= $cannotDeactivate ? 'disabled title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
+          <button type="submit" class="btn btn-sm btn-outline-secondary w-100 <?= $cannotDeactivate ? 'btn-blocked' : '' ?>" <?= $cannotDeactivate ? 'data-blocked="1" title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
         <?= form_close() ?>
       </div>
       <button type="button" class="btn btn-sm btn-gg-primary w-100" data-restock-id="<?= $p['product_id'] ?>" data-restock-name="<?= esc($p['product_name']) ?>"><i class="bi bi-box-arrow-in-down"></i> Restock</button>
@@ -58,7 +58,7 @@
               <a href="<?= site_url('owner/products/' . $p['product_id'] . '/edit') ?>" class="btn btn-sm btn-outline-dark">Edit</a>
               <?php $cannotDeactivate = $p['status'] === 'Active' && $p['stock'] > 0; ?>
               <?= form_open('owner/products/' . $p['product_id'] . '/toggle') ?>
-                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap" <?= $cannotDeactivate ? 'disabled title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
+                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap <?= $cannotDeactivate ? 'btn-blocked' : '' ?>" <?= $cannotDeactivate ? 'data-blocked="1" title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
               <?= form_close() ?>
             </div>
           </td>
@@ -152,6 +152,18 @@
 // this runs (see app/Views/owner/inventory/index.php for the bug this
 // once caused when checked immediately instead).
 document.addEventListener('DOMContentLoaded', function () {
+  // Deactivate buttons for a product that still has stock aren't a real
+  // <button disabled> — disabled elements don't reliably fire hover in
+  // every browser, which meant the "why can't I click this" tooltip
+  // never showed. They're styled to look disabled (.btn-blocked) but
+  // stay real, hoverable buttons; this just stops the actual submit
+  // (the server rejects it anyway — see ProductController::toggleStatus).
+  document.querySelectorAll('[data-blocked]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+    });
+  });
+
   if (typeof bootstrap === 'undefined') return;
 
   var restockModalEl = document.getElementById('ggRestockModal');

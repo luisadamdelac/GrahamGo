@@ -110,6 +110,11 @@ a:hover { color: var(--gg-cocoa); }
 .btn-outline-dark { color: var(--gg-cocoa); border-color: var(--gg-cocoa-light); background: #fff; }
 .btn-outline-dark:hover { background: var(--gg-cocoa); border-color: var(--gg-cocoa); transform: translateY(-2px); box-shadow: var(--gg-shadow); }
 .btn-outline-secondary { border-color: var(--gg-border); color: var(--gg-muted); }
+/* Looks disabled, but stays a real hoverable element so its title
+   tooltip actually shows — native disabled buttons don't reliably fire
+   hover in every browser. The click itself is stopped in JS. */
+.btn-blocked { opacity: .5; cursor: not-allowed; }
+.btn-blocked:hover { transform: none !important; box-shadow: none !important; background: #fff !important; color: var(--gg-muted) !important; }
 .btn-outline-danger { border-color: #f3c9c7; }
 .btn-outline-danger:hover { transform: translateY(-2px); }
 .btn-link { color: var(--gg-muted); }
