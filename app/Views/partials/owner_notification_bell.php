@@ -15,11 +15,21 @@
  * DashboardController::markNotificationsRead) — the counts themselves
  * always display the true live number so the text stays accurate even
  * right after it's been dismissed once and something new adds to it.
+ *
+ * Each item's whole sentence (not just the number) is rebuilt with
+ * correct singular/plural — see the matching phrasing in
+ * owner_footer.php's poll(), which has to reproduce the same wording
+ * client-side for live updates between page loads.
  */
 $ggUnreadOverdue      ??= $ggOverdueAlerts;
 $ggUnreadReservations ??= $ggReservationAlerts;
 $ggUnreadStock        ??= $ggLowStockAlerts;
 $ggUnreadSignups      ??= $ggNewSignups;
+
+$ggOverdueText     = $ggOverdueAlerts === 1 ? '1 reservation is overdue' : $ggOverdueAlerts . ' reservations are overdue';
+$ggReservationText = $ggReservationAlerts === 1 ? '1 reservation needs your attention' : $ggReservationAlerts . ' reservations need your attention';
+$ggStockText       = $ggLowStockAlerts === 1 ? '1 product is running low on stock' : $ggLowStockAlerts . ' products are running low on stock';
+$ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSignups . ' new customers signed up';
 ?>
 <div class="dropdown">
   <button class="topbar-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
@@ -35,8 +45,8 @@ $ggUnreadSignups      ??= $ggNewSignups;
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-danger-bg);color:var(--gg-danger);"><i class="bi bi-alarm-fill"></i></div>
         <div>
-          <div class="fw-semibold"><span data-role="notif-overdue-count"><?= $ggOverdueAlerts ?></span> reservation(s) overdue</div>
-          <div class="text-muted" style="font-size:.78rem;">Claim date has already passed</div>
+          <div class="fw-semibold" data-role="notif-overdue-text"><?= esc($ggOverdueText) ?></div>
+          <div class="text-muted" style="font-size:.78rem;">Claim date has already passed — check on these first</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="overdue" title="Mark as read"><i class="bi bi-check2"></i></button>
@@ -45,8 +55,8 @@ $ggUnreadSignups      ??= $ggNewSignups;
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-warning-bg);color:var(--gg-warning);"><i class="bi bi-journal-check"></i></div>
         <div>
-          <div class="fw-semibold"><span data-role="notif-reservation-count"><?= $ggReservationAlerts ?></span> reservation(s) need attention</div>
-          <div class="text-muted" style="font-size:.78rem;">Pending, confirmed, or ready to claim</div>
+          <div class="fw-semibold" data-role="notif-reservation-text"><?= esc($ggReservationText) ?></div>
+          <div class="text-muted" style="font-size:.78rem;">Waiting to be confirmed, prepared, or claimed</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="reservations" title="Mark as read"><i class="bi bi-check2"></i></button>
@@ -55,8 +65,8 @@ $ggUnreadSignups      ??= $ggNewSignups;
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/products') ?>">
         <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-danger-bg);color:var(--gg-danger);"><i class="bi bi-exclamation-triangle-fill"></i></div>
         <div>
-          <div class="fw-semibold"><span data-role="notif-stock-count"><?= $ggLowStockAlerts ?></span> product(s) low on stock</div>
-          <div class="text-muted" style="font-size:.78rem;">Restock before running out</div>
+          <div class="fw-semibold" data-role="notif-stock-text"><?= esc($ggStockText) ?></div>
+          <div class="text-muted" style="font-size:.78rem;">Restock soon before it runs out completely</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="stock" title="Mark as read"><i class="bi bi-check2"></i></button>
@@ -65,15 +75,11 @@ $ggUnreadSignups      ??= $ggNewSignups;
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/customers') ?>">
         <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:34px;height:34px;background:var(--gg-success-bg);color:var(--gg-success);"><i class="bi bi-person-plus-fill"></i></div>
         <div>
-          <div class="fw-semibold"><span data-role="notif-signup-count"><?= $ggNewSignups ?></span> new customer sign-up(s)</div>
-          <div class="text-muted" style="font-size:.78rem;">In the last 48 hours</div>
+          <div class="fw-semibold" data-role="notif-signup-text"><?= esc($ggSignupText) ?></div>
+          <div class="text-muted" style="font-size:.78rem;">Joined GrahamGo in the last 48 hours</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="signup" title="Mark as read"><i class="bi bi-check2"></i></button>
-    </li>
-    <?php $ggAnyUnread = $ggUnreadOverdue + $ggUnreadReservations + $ggUnreadStock + $ggUnreadSignups; ?>
-    <li data-role="notif-empty" class="dropdown-item-text text-center text-muted py-3" style="<?= $ggAnyUnread > 0 ? 'display:none;' : '' ?>">
-      <i class="bi bi-emoji-smile"></i> You're all caught up!
     </li>
   </ul>
 </div>

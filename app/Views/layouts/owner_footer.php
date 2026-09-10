@@ -97,10 +97,13 @@
           setBadge(lowStockBadge, data.lowStock);
           setBadgeAll('notif-bell-badge', data.total);
 
-          setTextAll('notif-overdue-count', data.overdue);
-          setTextAll('notif-reservation-count', data.reservations);
-          setTextAll('notif-stock-count', data.lowStock);
-          setTextAll('notif-signup-count', data.newSignups);
+          // Same phrasing as owner_notification_bell.php's PHP render —
+          // kept in sync by hand since this is the client-side refresh
+          // path for the same sentences.
+          setTextAll('notif-overdue-text', data.overdue === 1 ? '1 reservation is overdue' : data.overdue + ' reservations are overdue');
+          setTextAll('notif-reservation-text', data.reservations === 1 ? '1 reservation needs your attention' : data.reservations + ' reservations need your attention');
+          setTextAll('notif-stock-text', data.lowStock === 1 ? '1 product is running low on stock' : data.lowStock + ' products are running low on stock');
+          setTextAll('notif-signup-text', data.newSignups === 1 ? '1 new customer signed up' : data.newSignups + ' new customers signed up');
           // Item visibility (and the "Mark all as read" link) is gated
           // by the *unread* counts — how many are still new since this
           // category was last dismissed — not the raw live counts above,
@@ -109,7 +112,6 @@
           toggleAll('notif-reservation-item', data.unread.reservations > 0);
           toggleAll('notif-stock-item', data.unread.stock > 0);
           toggleAll('notif-signup-item', data.unread.signup > 0);
-          toggleAll('notif-empty', data.total === 0);
           toggleAll('notif-mark-all-btn', data.total > 0);
 
           document.title = data.total > 0 ? '(' + data.total + ') ' + baseTitle : baseTitle;
