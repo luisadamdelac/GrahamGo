@@ -1,23 +1,38 @@
 <?php
 
+use App\Libraries\BrevoMailer;
 use App\Models\SettingModel;
 use Config\Email as EmailConfig;
 
 if (! function_exists('mailer')) {
     /**
-     * Builds a CodeIgniter Email service configured with the Gmail SMTP
-     * credentials stored in the settings table (set via Owner > Settings).
+     * Returns something that can setTo/setReplyTo/setSubject/setMessage/
+     * send/attach/setAttachmentCID/printDebugger — either a real
+     * CodeIgniter Email (SMTP) or a BrevoMailer (HTTPS API), so every
+     * call site stays the same either way.
+     *
+     * Outbound SMTP (587 and 465 both) turned out to be blocked entirely
+     * on Railway — every send just hangs until SMTPTimeout. Brevo's API
+     * rides over plain HTTPS instead, which isn't blocked. Set
+     * BREVO_API_KEY (from brevo.com, free tier) to switch to it; without
+     * it, this still uses Gmail SMTP with the stored settings, which is
+     * what local XAMPP dev keeps using.
      */
-    function mailer(): \CodeIgniter\Email\Email
+    function mailer()
     {
         $settingModel = new SettingModel();
         $values       = $settingModel->getMany(['smtp_email', 'smtp_app_password', 'smtp_from_name']);
 
-        // Port/crypto are env-overridable — some hosts (Railway included)
-        // block outbound port 587 (STARTTLS) by default to curb spam
-        // abuse, while 465 (implicit SSL) sometimes isn't blocked. Set
-        // SMTP_PORT=465 and SMTP_CRYPTO=ssl in the platform's env vars to
-        // try that instead, without a code change/redeploy each time.
+        $brevoKey = env('BREVO_API_KEY');
+        if ($brevoKey) {
+            return new BrevoMailer($brevoKey, $values['smtp_email'] ?? '', $values['smtp_from_name'] ?: 'GrahamGo');
+        }
+
+        // Port/crypto are env-overridable — some hosts block outbound
+        // port 587 (STARTTLS) by default to curb spam abuse, while 465
+        // (implicit SSL) sometimes isn't blocked. Set SMTP_PORT=465 and
+        // SMTP_CRYPTO=ssl in the platform's env vars to try that instead,
+        // without a code change/redeploy each time.
         $config             = new EmailConfig();
         $config->protocol   = 'smtp';
         $config->SMTPHost   = 'smtp.gmail.com';
@@ -52,7 +67,7 @@ if (! function_exists('email_template')) {
      * attachment travels inside the email itself, so it renders correctly
      * regardless of whether the app is deployed anywhere yet.
      */
-    function email_template(\CodeIgniter\Email\Email $emailService, string $bodyHtml): string
+    function email_template(\CodeIgniter\Email\Email|BrevoMailer $emailService, string $bodyHtml): string
     {
         $logoPath = FCPATH . 'assets/img/logo.png';
         $logoSrc  = base_url('assets/img/logo.png');
