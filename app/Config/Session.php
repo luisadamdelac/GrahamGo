@@ -4,6 +4,7 @@ namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Session\Handlers\BaseHandler;
+use CodeIgniter\Session\Handlers\DatabaseHandler;
 use CodeIgniter\Session\Handlers\FileHandler;
 
 class Session extends BaseConfig
@@ -19,6 +20,14 @@ class Session extends BaseConfig
      * - `CodeIgniter\Session\Handlers\DatabaseHandler`
      * - `CodeIgniter\Session\Handlers\MemcachedHandler`
      * - `CodeIgniter\Session\Handlers\RedisHandler`
+     *
+     * FileHandler writes to writable/session/ on local disk — fine for
+     * XAMPP, but on Railway that directory doesn't reliably survive
+     * between requests (ephemeral container filesystem), which was
+     * silently dropping sessions mid-flow (forgot-password OTP, login,
+     * profile actions — anything spanning more than one request). Set
+     * SESSION_DRIVER=database in the platform's env vars to switch to
+     * the DB-backed handler instead, which doesn't have this problem.
      *
      * @var class-string<BaseHandler>
      */
@@ -125,4 +134,15 @@ class Session extends BaseConfig
      * seconds.
      */
     public int $lockMaxRetries = 300;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        if (env('SESSION_DRIVER') === 'database') {
+            $this->driver   = DatabaseHandler::class;
+            $this->savePath = 'ci_sessions';
+            $this->DBGroup  = 'default';
+        }
+    }
 }
