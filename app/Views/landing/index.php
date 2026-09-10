@@ -40,6 +40,13 @@
     .landing-hero { padding: 3.5rem 0 4.5rem; }
     .landing-hero h1 { font-size: 2.4rem; line-height: 1.15; }
   }
+  /* Justified only on phones — on the wider desktop column this text
+     sits in, lines are long enough that justify rarely needs to stretch
+     anything, so it's not worth the (very) occasional uneven word
+     spacing there. */
+  @media (max-width: 767.98px) {
+    .hero-lead { text-align: justify; text-justify: inter-word; }
+  }
 
   .landing-nav { background: rgba(255,250,244,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--gg-border); position: sticky; top: 0; z-index: 1030; }
 
@@ -124,7 +131,7 @@
     <div class="row align-items-center g-4">
       <div class="col-lg-7 enter">
         <h1 class="mb-3">Reserve your Graham Mango &amp; Oreo Graham online</h1>
-        <p class="text-muted mb-4" style="font-size:1.05rem;">
+        <p class="text-muted mb-4 hero-lead" style="font-size:1.05rem;">
           Skip the back and forth messages. Browse what's available, pick your quantity and claim date,
           and track your order status in real time.
         </p>
