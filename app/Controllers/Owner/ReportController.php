@@ -16,8 +16,11 @@ class ReportController extends BaseController
 
     public function reservations()
     {
-        $from = $this->request->getGet('from');
-        $to   = $this->request->getGet('to');
+        // Defaults to the current month rather than showing blank date
+        // fields (and an unfiltered, potentially huge report) on first
+        // visit — still fully overridable via the form.
+        $from = $this->request->getGet('from') ?: date('Y-m-01');
+        $to   = $this->request->getGet('to') ?: date('Y-m-d');
 
         $builder = db_connect()->table('reservations r')
             ->select('r.reservation_id, r.claim_date, r.total_amount, r.payment_status, r.status, u.name AS customer_name, u.customer_type, p.product_name, rd.quantity')
@@ -43,8 +46,8 @@ class ReportController extends BaseController
 
     public function sales()
     {
-        $from = $this->request->getGet('from');
-        $to   = $this->request->getGet('to');
+        $from = $this->request->getGet('from') ?: date('Y-m-01');
+        $to   = $this->request->getGet('to') ?: date('Y-m-d');
 
         $model = new SaleModel();
         $sales = $model->withDetails($from ?: null, $to ?: null);

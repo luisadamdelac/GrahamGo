@@ -16,8 +16,10 @@ class SaleController extends BaseController
 
     public function index()
     {
-        $from = $this->request->getGet('from');
-        $to   = $this->request->getGet('to');
+        // Defaults to the current month instead of blank date fields
+        // (and every sale ever) on first visit — still overridable.
+        $from = $this->request->getGet('from') ?: date('Y-m-01');
+        $to   = $this->request->getGet('to') ?: date('Y-m-d');
 
         $sales = $this->saleModel->withDetails($from ?: null, $to ?: null);
 

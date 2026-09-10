@@ -31,8 +31,10 @@ class InventoryController extends BaseController
 
     public function allBatches()
     {
-        $from = $this->request->getGet('from');
-        $to   = $this->request->getGet('to');
+        // Defaults to the current month instead of blank date fields
+        // (and every batch ever) on first visit — still overridable.
+        $from = $this->request->getGet('from') ?: date('Y-m-01');
+        $to   = $this->request->getGet('to') ?: date('Y-m-d');
 
         return view('owner/inventory/all_batches', [
             'title'   => 'All Stock Batches',
