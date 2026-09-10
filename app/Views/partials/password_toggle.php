@@ -18,6 +18,16 @@
   }
   .pw-eye-toggle:hover { color: var(--gg-cocoa, #4A3324); }
   .pw-eye-toggle:focus-visible { outline: 2px solid var(--gg-primary, #E08A3E); outline-offset: 2px; border-radius: 4px; }
+
+  /* Hides the browser's own built-in reveal icon so only ours shows —
+     Edge/IE add theirs via this pseudo-element (inconsistently, only
+     under some conditions), which was showing up alongside ours,
+     looking like two overlapping icons. Chrome/Firefox don't render a
+     native one on a plain input, so this has no effect there. */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
