@@ -68,4 +68,32 @@ class SaleModel extends Model
 
         return $result;
     }
+
+    /**
+     * Month-by-month sales totals for the last $months months (including
+     * the current one), oldest first — same fill-in-the-gaps idea as
+     * dailyTotals(), just grouped coarser for the Dashboard's Year view.
+     */
+    public function monthlyTotals(int $months = 12): array
+    {
+        $from = date('Y-m-01', strtotime('-' . ($months - 1) . ' months'));
+
+        $rows = $this->select("DATE_FORMAT(sale_date, '%Y-%m') AS sale_month, SUM(total_amount) AS total")
+            ->where('sale_date >=', $from . ' 00:00:00')
+            ->groupBy('sale_month')
+            ->findAll();
+
+        $byMonth = [];
+        foreach ($rows as $row) {
+            $byMonth[$row['sale_month']] = (float) $row['total'];
+        }
+
+        $result = [];
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $month = date('Y-m', strtotime("-{$i} months"));
+            $result[] = ['date' => $month . '-01', 'total' => $byMonth[$month] ?? 0.0];
+        }
+
+        return $result;
+    }
 }

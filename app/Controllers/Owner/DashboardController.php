@@ -48,6 +48,34 @@ class DashboardController extends BaseController
     }
 
     /**
+     * Backs the Week/Month/Year toggle on the Dashboard's Sales Trend
+     * chart — Week/Month are daily points (7 vs 30 days), Year is
+     * monthly points (12 months), since 365 daily points would be
+     * unreadable on that small a chart.
+     */
+    public function salesTrend()
+    {
+        $range     = $this->request->getGet('range') ?: 'week';
+        $saleModel = new SaleModel();
+
+        if ($range === 'year') {
+            $data      = $saleModel->monthlyTotals(12);
+            $labelFmt  = 'M Y';
+        } elseif ($range === 'month') {
+            $data      = $saleModel->dailyTotals(30);
+            $labelFmt  = 'M j';
+        } else {
+            $data      = $saleModel->dailyTotals(7);
+            $labelFmt  = 'M j';
+        }
+
+        return $this->response->setJSON([
+            'labels' => array_map(static fn ($d) => date($labelFmt, strtotime($d['date'])), $data),
+            'values' => array_map(static fn ($d) => $d['total'], $data),
+        ]);
+    }
+
+    /**
      * Polled from every owner page (see owner_footer.php) so the sidebar
      * badges, topbar notification dropdown, and browser tab title stay
      * current even while the admin is sitting on some other page, without

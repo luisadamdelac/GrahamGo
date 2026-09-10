@@ -51,6 +51,7 @@ $routes->group('', ['filter' => 'customerAuth'], static function ($routes) {
 // ---------------------------------------------------------------------
 $routes->group('owner', ['filter' => 'ownerAuth'], static function ($routes) {
     $routes->get('dashboard', 'Owner\DashboardController::index');
+    $routes->get('dashboard/sales-trend', 'Owner\DashboardController::salesTrend');
     $routes->get('notifications/alerts-count', 'Owner\DashboardController::alertsCount');
     $routes->post('notifications/mark-read', 'Owner\DashboardController::markNotificationsRead');
 

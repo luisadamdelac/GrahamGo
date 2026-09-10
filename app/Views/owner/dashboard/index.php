@@ -77,7 +77,14 @@
 <div class="row g-2 g-md-3 mb-3 mb-md-4">
   <div class="col-12 col-lg-8 reveal" style="--reveal-delay: .35s;">
     <div class="card h-100"><div class="card-body p-3 p-md-4">
-      <h6 class="mb-3">Sales Trend <span class="text-muted small fw-normal">(last 7 days)</span></h6>
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <h6 class="mb-0">Sales Trend</h6>
+        <div class="btn-group btn-group-sm" role="group" id="ggSalesTrendRange">
+          <button type="button" class="btn btn-dark" data-range="week">Week</button>
+          <button type="button" class="btn btn-outline-dark" data-range="month">Month</button>
+          <button type="button" class="btn btn-outline-dark" data-range="year">Year</button>
+        </div>
+      </div>
       <div style="position:relative; height:240px;">
         <canvas id="ggSalesTrendChart"
           data-labels='<?= esc(json_encode(array_map(static fn ($d) => date('M j', strtotime($d['date'])), $salesTrend)), 'attr') ?>'
@@ -184,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var values = JSON.parse(trendEl.getAttribute('data-values'));
     var primary = v('--gg-primary', '#E08A3E');
 
-    new Chart(trendEl, {
+    var trendChart = new Chart(trendEl, {
       type: 'line',
       data: {
         labels: labels,
@@ -212,6 +219,35 @@ document.addEventListener('DOMContentLoaded', function () {
         },
       },
     });
+
+    // Week/Month/Year toggle — refetches labels/values for the chosen
+    // range and swaps them into the existing chart instead of rebuilding
+    // it, so the transition animates instead of flashing blank.
+    var rangeGroup = document.getElementById('ggSalesTrendRange');
+    if (rangeGroup) {
+      rangeGroup.querySelectorAll('[data-range]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.classList.contains('btn-dark')) return;
+
+          rangeGroup.querySelectorAll('[data-range]').forEach(function (b) {
+            b.classList.remove('btn-dark');
+            b.classList.add('btn-outline-dark');
+          });
+          btn.classList.remove('btn-outline-dark');
+          btn.classList.add('btn-dark');
+
+          fetch('<?= site_url('owner/dashboard/sales-trend') ?>?range=' + btn.getAttribute('data-range'), { credentials: 'same-origin' })
+            .then(function (res) { return res.ok ? res.json() : null; })
+            .then(function (data) {
+              if (! data) return;
+              trendChart.data.labels = data.labels;
+              trendChart.data.datasets[0].data = data.values;
+              trendChart.update();
+            })
+            .catch(function () { /* leave the chart showing whatever it last had */ });
+        });
+      });
+    }
   }
 
   var statusEl = document.getElementById('ggReservationStatusChart');
