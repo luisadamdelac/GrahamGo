@@ -5,7 +5,7 @@
 
 <div class="row g-3 g-lg-4">
   <div class="col-12 col-lg-5">
-    <div class="card h-100">
+    <div class="card">
       <div class="card-body p-4">
         <h6 class="mb-3"><i class="bi bi-calendar-range-fill" style="color:var(--gg-primary-dark);"></i> Reservation Rules</h6>
 
@@ -25,7 +25,7 @@
   </div>
 
   <div class="col-12 col-lg-7">
-    <div class="card h-100">
+    <div class="card">
       <div class="card-body p-4">
         <h6 class="mb-3"><i class="bi bi-envelope-at-fill" style="color:var(--gg-primary-dark);"></i> Email (SMTP) Settings</h6>
 
