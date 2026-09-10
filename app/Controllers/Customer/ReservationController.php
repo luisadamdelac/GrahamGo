@@ -7,6 +7,7 @@ use App\Models\InventoryTransactionModel;
 use App\Models\ProductModel;
 use App\Models\ReservationDetailModel;
 use App\Models\ReservationModel;
+use App\Models\ReviewModel;
 use App\Models\SettingModel;
 
 class ReservationController extends BaseController
@@ -153,10 +154,25 @@ class ReservationController extends BaseController
             return redirect()->to('my-reservations')->with('error', 'Reservation not found.');
         }
 
+        $details = $this->detailModel->forReservation($reservation['reservation_id']);
+
+        // Reviewing only makes sense once you've actually claimed the
+        // order, so myReview (for the pre-fill/edit state) is only worth
+        // fetching here — see customer/reservations/show.php's "Rate
+        // These Products" section.
+        if ($reservation['status'] === 'Claimed') {
+            $reviewModel = new ReviewModel();
+            $userId      = current_customer()['user_id'];
+            foreach ($details as &$d) {
+                $d['myReview'] = $reviewModel->myReview($userId, $d['product_id']);
+            }
+            unset($d);
+        }
+
         return view('customer/reservations/show', [
             'title'       => 'Reservation #' . $reservation['reservation_id'],
             'reservation' => $reservation,
-            'details'     => $this->detailModel->forReservation($reservation['reservation_id']),
+            'details'     => $details,
         ]);
     }
 

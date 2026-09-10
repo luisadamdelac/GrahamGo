@@ -51,21 +51,9 @@
         <h6 class="mb-3">Reviews <span class="text-muted">(<?= count($reviews) ?>)</span></h6>
 
         <?php if ($canReview): ?>
-          <div class="p-3 mb-3" style="background:var(--gg-bg); border-radius:var(--gg-radius-lg);">
-            <p class="small text-muted mb-2"><?= $myReview ? 'Update your review' : 'You claimed this product — leave a review!' ?></p>
-            <?= form_open('products/' . $product['product_id'] . '/review') ?>
-              <div class="gg-star-input mb-3">
-                <?php for ($i = 5; $i >= 1; $i--): ?>
-                  <input type="radio" name="rating" id="ggStar<?= $i ?>" value="<?= $i ?>" <?= (int) ($myReview['rating'] ?? 0) === $i ? 'checked' : '' ?> required>
-                  <label for="ggStar<?= $i ?>"><i class="bi bi-star-fill"></i></label>
-                <?php endfor; ?>
-              </div>
-              <textarea name="comment" class="form-control mb-2" rows="3" maxlength="1000" placeholder="Share your thoughts about this product (optional)"><?= esc($myReview['comment'] ?? '') ?></textarea>
-              <button type="submit" class="btn btn-gg-primary btn-sm"><i class="bi bi-send-fill"></i> Submit Review</button>
-              <?php if ($myReview && $myReview['status'] === 'Pending'): ?>
-                <span class="small text-muted ms-2">Awaiting approval</span>
-              <?php endif; ?>
-            <?= form_close() ?>
+          <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-info-circle-fill"></i>
+            You've claimed this product — <a href="<?= site_url('my-reservations') ?>">rate it from My Reservations</a>.
           </div>
         <?php endif; ?>
 

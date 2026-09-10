@@ -42,8 +42,10 @@ class ProductController extends BaseController
             'product'       => $product,
             'reviews'       => $this->reviewModel->approvedForProduct($id),
             'ratingSummary' => $this->reviewModel->summaryForProduct($id),
+            // Reviewing itself happens from My Reservations (tied to a
+            // specific claimed order there) — this page only needs to
+            // know whether to point a customer that way.
             'canReview'     => $this->reviewModel->hasClaimed($userId, $id),
-            'myReview'      => $this->reviewModel->myReview($userId, $id),
         ]);
     }
 }
