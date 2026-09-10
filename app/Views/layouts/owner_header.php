@@ -35,10 +35,13 @@
     <img src="<?= base_url('assets/img/logo.png') ?>" alt="GrahamGo" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;">
     GrahamGo
   </div>
-  <?= view('partials/owner_notification_bell', [
-    'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
-    'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
-  ]) ?>
+  <div class="d-flex align-items-center gap-2">
+    <?= view('partials/owner_notification_bell', [
+      'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
+      'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
+    ]) ?>
+    <?= view('partials/owner_account_dropdown') ?>
+  </div>
 </div>
 
 <div class="sidebar-backdrop" id="ggSidebarBackdrop"></div>
@@ -88,22 +91,7 @@
           'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
           'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
         ]) ?>
-        <div class="dropdown">
-          <button class="topbar-account-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <?php if (! empty(current_owner()['avatar'])): ?>
-              <img src="<?= cloudinary_resized(avatar_url(current_owner()['avatar']), 68) ?>" class="rounded-circle" style="width:34px;height:34px;object-fit:cover;" alt="">
-            <?php else: ?>
-              <div class="topbar-avatar-fallback"><i class="bi bi-person-fill"></i></div>
-            <?php endif; ?>
-            <span class="d-none d-xl-inline"><?= esc(current_owner()['name']) ?></span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="<?= site_url('owner/profile') ?>"><i class="bi bi-person-circle"></i> Profile</a></li>
-            <li><a class="dropdown-item" href="<?= site_url('owner/settings') ?>"><i class="bi bi-gear-fill"></i> Settings</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="<?= site_url('owner/logout') ?>"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-          </ul>
-        </div>
+        <?= view('partials/owner_account_dropdown') ?>
       </div>
     </div>
     <div class="p-3 p-lg-4">
