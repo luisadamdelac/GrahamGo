@@ -13,11 +13,16 @@ if (! function_exists('mailer')) {
         $settingModel = new SettingModel();
         $values       = $settingModel->getMany(['smtp_email', 'smtp_app_password', 'smtp_from_name']);
 
+        // Port/crypto are env-overridable — some hosts (Railway included)
+        // block outbound port 587 (STARTTLS) by default to curb spam
+        // abuse, while 465 (implicit SSL) sometimes isn't blocked. Set
+        // SMTP_PORT=465 and SMTP_CRYPTO=ssl in the platform's env vars to
+        // try that instead, without a code change/redeploy each time.
         $config             = new EmailConfig();
         $config->protocol   = 'smtp';
         $config->SMTPHost   = 'smtp.gmail.com';
-        $config->SMTPPort   = 587;
-        $config->SMTPCrypto = 'tls';
+        $config->SMTPPort   = (int) (env('SMTP_PORT') ?: 587);
+        $config->SMTPCrypto = env('SMTP_CRYPTO') ?: 'tls';
         $config->SMTPUser   = $values['smtp_email'] ?? '';
         $config->SMTPPass   = $values['smtp_app_password'] ?? '';
         $config->fromEmail  = $values['smtp_email'] ?? '';
