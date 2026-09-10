@@ -11,7 +11,7 @@ class CustomerAuth implements FilterInterface
     public function before(RequestInterface $request, $arguments = null)
     {
         if (! session('customer')) {
-            return redirect()->to('/login')->with('error', 'Please log in to continue.');
+            return redirect()->to('/login')->with('error', 'Your session has expired. Please log in again.');
         }
 
         return null;
