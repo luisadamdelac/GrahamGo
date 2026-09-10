@@ -332,6 +332,18 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
   flex-shrink: 0;
 }
 
+/* The mobile search row that drops down below the topbar when its
+   toggle button is tapped — same .topbar-search input/results styling
+   as the desktop one (see the "Desktop admin topbar" rules further
+   down), just full-width in this narrower context instead of a fixed
+   max-width. */
+.owner-topbar-search {
+  background: #fff; border-bottom: 1px solid var(--gg-border);
+  padding: .6rem 1rem .8rem;
+  position: sticky; top: 57px; z-index: 1019;
+}
+.owner-topbar-search .topbar-search { flex: 0 1 auto; }
+
 /* Light sidebar (Elegant-template style) — white surface, a soft right
    edge instead of a hard border, and the same orange brand gradient
    reserved for just the active nav pill + logo mark so it still reads

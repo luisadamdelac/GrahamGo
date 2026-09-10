@@ -23,6 +23,23 @@
       link.addEventListener('click', closeSidebar);
     });
   })();
+
+  // Mobile-only: the search icon in the topbar drops down a search row
+  // below it instead of navigating anywhere — same live search as
+  // desktop, just tucked away until asked for since there's no room to
+  // keep it permanently visible at this width.
+  (function () {
+    var toggle = document.getElementById('ggMobileSearchToggle');
+    var row    = document.getElementById('ggMobileSearchRow');
+    var input  = document.getElementById('ggMobileSearchInput');
+    if (! toggle || ! row) return;
+
+    toggle.addEventListener('click', function () {
+      var opening = row.classList.contains('d-none');
+      row.classList.toggle('d-none');
+      if (opening && input) input.focus();
+    });
+  })();
 </script>
 <script>
   // Keeps the sidebar badges (Reservations, Inventory) and the browser
@@ -99,11 +116,13 @@
 <script>
   // Live results under the topbar search box — fetches matching
   // customers as you type (debounced) instead of only searching after
-  // Enter is pressed and the whole Customers page reloads.
-  (function () {
-    var input   = document.getElementById('ggTopbarSearchInput');
-    var results = document.getElementById('ggTopbarSearchResults');
-    var form    = document.getElementById('ggTopbarSearchForm');
+  // Enter is pressed and the whole Customers page reloads. Wired up as
+  // a function (not a bare IIFE) so it can run for both the desktop
+  // topbar's search box and the mobile one, each with their own ids.
+  function ggInitTopbarSearch(inputId, resultsId, formId) {
+    var input   = document.getElementById(inputId);
+    var results = document.getElementById(resultsId);
+    var form    = document.getElementById(formId);
     if (! input || ! results || ! form) return;
 
     var debounceTimer = null;
@@ -180,7 +199,10 @@
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { results.classList.remove('show'); input.blur(); }
     });
-  })();
+  }
+
+  ggInitTopbarSearch('ggTopbarSearchInput', 'ggTopbarSearchResults', 'ggTopbarSearchForm');
+  ggInitTopbarSearch('ggMobileSearchInput', 'ggMobileSearchResults', 'ggMobileSearchForm');
 </script>
 <?= view('partials/datatables_init') ?>
 <?= view('partials/confirm_modal') ?>

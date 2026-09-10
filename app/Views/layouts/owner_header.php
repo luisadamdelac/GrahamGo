@@ -36,12 +36,20 @@
     GrahamGo
   </div>
   <div class="d-flex align-items-center gap-2">
+    <button class="menu-btn" id="ggMobileSearchToggle" type="button" aria-label="Search customers"><i class="bi bi-search"></i></button>
     <?= view('partials/owner_notification_bell', [
       'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
       'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
     ]) ?>
     <?= view('partials/owner_account_dropdown') ?>
   </div>
+</div>
+<div class="owner-topbar-search d-lg-none d-none" id="ggMobileSearchRow">
+  <form action="<?= site_url('owner/customers') ?>" method="get" class="topbar-search w-100" id="ggMobileSearchForm" autocomplete="off">
+    <i class="bi bi-search"></i>
+    <input type="search" name="q" id="ggMobileSearchInput" placeholder="Search customers by name or email&hellip;" autocomplete="off">
+    <div class="topbar-search-results" id="ggMobileSearchResults"></div>
+  </form>
 </div>
 
 <div class="sidebar-backdrop" id="ggSidebarBackdrop"></div>
