@@ -91,7 +91,7 @@
             </div>
             <div class="col-12">
               <label class="form-label">Street <span class="text-muted small">(optional)</span></label>
-              <input type="text" name="street" class="form-control" placeholder="e.g. 123 Rizal St." value="<?= esc(old('street', $user['street'])) ?>">
+              <input type="text" name="street" class="form-control" value="<?= esc(old('street', $user['street'])) ?>">
             </div>
           </div>
           <button type="submit" class="btn btn-gg-primary mt-4"><i class="bi bi-check2"></i> Save Changes</button>

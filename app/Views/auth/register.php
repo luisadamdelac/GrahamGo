@@ -87,7 +87,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Street</label>
-              <input type="text" name="street" class="form-control" placeholder="e.g. 123 Rizal St." value="<?= esc(old('street')) ?>" required>
+              <input type="text" name="street" class="form-control" value="<?= esc(old('street')) ?>" required>
             </div>
             <button type="button" class="btn btn-gg-primary w-100 mt-2 reg-next">Next <i class="bi bi-arrow-right"></i></button>
           </div>
