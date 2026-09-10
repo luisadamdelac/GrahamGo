@@ -47,8 +47,11 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.innerHTML = '<i class="bi bi-eye-fill"></i>';
     wrapper.appendChild(btn);
 
-    var existingPadding = window.getComputedStyle(input).paddingRight;
-    input.style.paddingRight = 'calc(' + existingPadding + ' + 1.9rem)';
+    // A flat value, not "existing padding + extra" via getComputedStyle —
+    // that combination was silently failing for at least one field (the
+    // main Register password field, sitting next to the strength
+    // checklist), leaving no room for the button and no visible icon.
+    input.style.paddingRight = '2.75rem';
 
     btn.addEventListener('click', function () {
       var willShow = input.type === 'password';

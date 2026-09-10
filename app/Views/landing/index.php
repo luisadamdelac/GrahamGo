@@ -24,9 +24,17 @@
       var(--gg-bg);
     padding: 2rem 0 2.5rem;
   }
+  /* At the default 1.75rem, "Reserve your Graham Mango & Oreo Graham
+     online" was wrapping to an awkward 3 lines on narrow phones, with
+     "Graham" landing at the end of two different lines — reads as
+     repetitive/messy at a glance. Sized down just enough to wrap to a
+     cleaner 2 lines on most phone widths. */
   .landing-hero h1 {
-    font-size: 1.75rem;
-    line-height: 1.2;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  @media (min-width: 380px) {
+    .landing-hero h1 { font-size: 1.65rem; }
   }
   @media (min-width: 768px) {
     .landing-hero { padding: 3.5rem 0 4.5rem; }
