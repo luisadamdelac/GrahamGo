@@ -2,6 +2,28 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script>
+  // Every From/To date filter (Sales, Reports, All Batches) — a plain
+  // native <input type="date"> displays in whatever format the admin's
+  // browser/OS locale uses (MM/DD vs DD/MM), which reads as ambiguous.
+  // flatpickr always shows the same unambiguous "Month Day, Year" for
+  // everyone and only lets you pick from the calendar, while the actual
+  // input still submits a plain Y-m-d value underneath.
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof flatpickr === 'undefined') return;
+    document.querySelectorAll('.gg-date-picker').forEach(function (el) {
+      flatpickr(el, {
+        altInput: true,
+        altFormat: 'F j, Y',
+        altInputClass: 'form-control',
+        dateFormat: 'Y-m-d',
+        disableMobile: true,
+      });
+    });
+  });
+</script>
 <script>
   (function () {
     var sidebar = document.getElementById('ggSidebar');

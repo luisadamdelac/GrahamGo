@@ -19,51 +19,31 @@
           </div>
           <div class="mb-3">
             <label class="form-label"><i class="bi bi-calendar-event"></i> Claim Date</label>
-            <input type="date" id="claimDateInput" name="claim_date" class="form-control" min="<?= date('Y-m-d') ?>" max="<?= esc($maxClaimDate) ?>" value="<?= esc(old('claim_date', date('Y-m-d'))) ?>" required>
+            <input type="text" id="claimDateInput" name="claim_date" class="form-control" value="<?= esc(old('claim_date', date('Y-m-d'))) ?>" required readonly>
             <div class="form-text">Must be on or before <?= esc(date('M j, Y', strtotime($maxClaimDate))) ?>.</div>
-            <div class="invalid-feedback d-block d-none" id="claimDateError">Claim date cannot be later than <?= esc(date('M j, Y', strtotime($maxClaimDate))) ?>.</div>
           </div>
           <button type="submit" class="btn btn-gg-primary w-100 mt-2" id="reserveSubmitBtn"><i class="bi bi-send-check-fill"></i> Submit Reservation</button>
         <?= form_close() ?>
 
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
         <script>
         document.addEventListener('DOMContentLoaded', function () {
-          var input   = document.getElementById('claimDateInput');
-          var errorEl = document.getElementById('claimDateError');
-          var minDate = input.min;
-          var maxDate = input.max;
-
-          function isOutOfRange() {
-            return input.value !== '' && (input.value < minDate || input.value > maxDate);
-          }
-
-          // Single source of truth for the error UI — always re-derives
-          // it from the current value instead of only ever turning it on,
-          // so it correctly clears again once the date is back in range
-          // (including right after clamp() below corrects it).
-          function updateErrorState() {
-            var invalid = isOutOfRange();
-            errorEl.classList.toggle('d-none', ! invalid);
-            input.classList.toggle('is-invalid', invalid);
-            return invalid;
-          }
-
-          function clamp() {
-            if (isOutOfRange()) {
-              input.value = input.value > maxDate ? maxDate : minDate;
-            }
-            updateErrorState();
-          }
-
-          input.addEventListener('input', updateErrorState);
-          input.addEventListener('change', clamp);
-
-          input.form.addEventListener('submit', function (e) {
-            if (isOutOfRange()) {
-              e.preventDefault();
-              clamp();
-              input.focus();
-            }
+          // Native <input type="date"> displays in whatever format the
+          // visitor's browser/OS locale happens to use (MM/DD vs DD/MM),
+          // which reads as ambiguous — flatpickr always shows the same
+          // unambiguous "Month Day, Year" format for everyone, and only
+          // lets you pick from the calendar (no free-typing an unclear
+          // date), while still submitting a plain Y-m-d value underneath.
+          flatpickr('#claimDateInput', {
+            altInput: true,
+            altFormat: 'F j, Y',
+            altInputClass: 'form-control',
+            dateFormat: 'Y-m-d',
+            minDate: '<?= date('Y-m-d') ?>',
+            maxDate: '<?= esc($maxClaimDate) ?>',
+            defaultDate: '<?= esc(old('claim_date', date('Y-m-d'))) ?>',
+            disableMobile: true,
           });
         });
         </script>

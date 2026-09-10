@@ -6,11 +6,11 @@
 <form method="get" class="row g-2 mb-3">
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">From</label>
-    <input type="date" name="from" class="form-control" value="<?= esc($from) ?>">
+    <input type="text" name="from" class="form-control gg-date-picker" value="<?= esc($from) ?>">
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">To</label>
-    <input type="date" name="to" class="form-control" value="<?= esc($to) ?>">
+    <input type="text" name="to" class="form-control gg-date-picker" value="<?= esc($to) ?>">
   </div>
   <div class="col-12 col-md-auto d-flex gap-2 align-self-md-end">
     <button type="submit" class="btn btn-dark flex-fill">Filter</button>
