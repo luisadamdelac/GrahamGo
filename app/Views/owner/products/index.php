@@ -24,7 +24,7 @@
       <div class="d-flex gap-2 mb-2">
         <a href="<?= site_url('owner/products/' . $p['product_id'] . '/edit') ?>" class="btn btn-sm btn-outline-dark flex-fill">Edit</a>
         <?= form_open('owner/products/' . $p['product_id'] . '/toggle', ['class' => 'flex-fill']) ?>
-          <button type="submit" class="btn btn-sm btn-outline-secondary w-100 <?= $cannotDeactivate ? 'btn-blocked' : '' ?>" <?= $cannotDeactivate ? 'data-blocked="1" title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
+          <button type="submit" class="btn btn-sm btn-outline-secondary w-100 <?= $cannotDeactivate ? 'btn-blocked' : '' ?>" <?= $cannotDeactivate ? 'data-blocked="1" title="Restock out to 0 before deactivating"' : '' ?>><?= $cannotDeactivate ? '<i class="bi bi-slash-circle"></i> ' : '' ?><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
         <?= form_close() ?>
       </div>
       <button type="button" class="btn btn-sm btn-gg-primary w-100" data-restock-id="<?= $p['product_id'] ?>" data-restock-name="<?= esc($p['product_name']) ?>"><i class="bi bi-box-arrow-in-down"></i> Restock</button>
@@ -58,7 +58,7 @@
               <a href="<?= site_url('owner/products/' . $p['product_id'] . '/edit') ?>" class="btn btn-sm btn-outline-dark">Edit</a>
               <?php $cannotDeactivate = $p['status'] === 'Active' && $p['stock'] > 0; ?>
               <?= form_open('owner/products/' . $p['product_id'] . '/toggle') ?>
-                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap <?= $cannotDeactivate ? 'btn-blocked' : '' ?>" <?= $cannotDeactivate ? 'data-blocked="1" title="Restock out to 0 before deactivating"' : '' ?>><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
+                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap <?= $cannotDeactivate ? 'btn-blocked' : '' ?>" <?= $cannotDeactivate ? 'data-blocked="1" title="Restock out to 0 before deactivating"' : '' ?>><?= $cannotDeactivate ? '<i class="bi bi-slash-circle"></i> ' : '' ?><?= $p['status'] === 'Active' ? 'Deactivate' : 'Activate' ?></button>
               <?= form_close() ?>
             </div>
           </td>
