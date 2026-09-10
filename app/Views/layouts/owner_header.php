@@ -85,7 +85,6 @@
         <i class="bi bi-clipboard-data-fill"></i> Inventory
         <span id="ggLowStockBadge" class="badge bg-danger ms-auto" style="<?= $ggLowStockAlerts > 0 ? '' : 'display:none;' ?>"><?= $ggLowStockAlerts ?></span>
       </a>
-      <a href="<?= site_url('owner/sales') ?>" class="<?= (str_starts_with(uri_string(), 'owner/sales')) ? 'active' : '' ?>"><i class="bi bi-cash-coin"></i> Sales</a>
       <a href="<?= site_url('owner/walk-in-sale') ?>" class="<?= (uri_string() === 'owner/walk-in-sale') ? 'active' : '' ?>"><i class="bi bi-bag-check-fill"></i> Walk-in Sale</a>
       <a href="<?= site_url('owner/reports') ?>" class="<?= (str_starts_with(uri_string(), 'owner/reports')) ? 'active' : '' ?>"><i class="bi bi-bar-chart-fill"></i> Reports</a>
       <a href="<?= site_url('owner/reviews') ?>" class="<?= (str_starts_with(uri_string(), 'owner/reviews')) ? 'active' : '' ?>">

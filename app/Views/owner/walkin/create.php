@@ -43,7 +43,7 @@
           </div>
           <div class="d-flex gap-2 mt-4">
             <button type="submit" class="btn btn-gg-primary"><i class="bi bi-check2-circle"></i> Record Sale</button>
-            <a href="<?= site_url('owner/sales') ?>" class="btn btn-outline-secondary">Cancel</a>
+            <a href="<?= site_url('owner/reports/sales') ?>" class="btn btn-outline-secondary">Cancel</a>
           </div>
         <?= form_close() ?>
       </div>

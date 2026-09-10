@@ -122,6 +122,6 @@ class WalkInSaleController extends BaseController
             'total_amount'   => $totalAmount,
         ]);
 
-        return redirect()->to('owner/sales')->with('success', 'Walk-in sale recorded — ' . $product['product_name'] . ' x' . $quantity . '.');
+        return redirect()->to('owner/reports/sales')->with('success', 'Walk-in sale recorded — ' . $product['product_name'] . ' x' . $quantity . '.');
     }
 }

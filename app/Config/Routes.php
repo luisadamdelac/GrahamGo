@@ -83,8 +83,9 @@ $routes->group('owner', ['filter' => 'ownerAuth'], static function ($routes) {
     $routes->get('inventory/(:num)/batches', 'Owner\InventoryController::batches/$1');
     $routes->post('inventory/(:num)/adjust', 'Owner\InventoryController::adjust/$1');
 
-    // Sales
-    $routes->get('sales', 'Owner\SaleController::index');
+    // Sales — folded into Reports > Sales Report; this just catches any
+    // old bookmarks/links to the standalone page that used to live here.
+    $routes->get('sales', static fn () => redirect()->to('owner/reports/sales'));
     $routes->get('walk-in-sale', 'Owner\WalkInSaleController::create');
     $routes->post('walk-in-sale', 'Owner\WalkInSaleController::store');
 
