@@ -55,6 +55,8 @@
     var reservationBadge = document.getElementById('ggReservationBadge');
     var lowStockBadge    = document.getElementById('ggLowStockBadge');
     var baseTitle         = titleEl ? titleEl.getAttribute('data-base-title') : document.title;
+    var csrfName          = '<?= csrf_token() ?>';
+    var csrfHash          = '<?= csrf_hash() ?>';
 
     // The notification bell partial (partials/owner_notification_bell)
     // can appear twice on the page — once in the mobile topbar, once in
@@ -99,11 +101,16 @@
           setTextAll('notif-reservation-count', data.reservations);
           setTextAll('notif-stock-count', data.lowStock);
           setTextAll('notif-signup-count', data.newSignups);
-          toggleAll('notif-overdue-item', data.overdue > 0);
-          toggleAll('notif-reservation-item', data.reservations > 0);
-          toggleAll('notif-stock-item', data.lowStock > 0);
-          toggleAll('notif-signup-item', data.newSignups > 0);
-          toggleAll('notif-empty', (data.overdue + data.reservations + data.lowStock + data.newSignups) === 0);
+          // Item visibility (and the "Mark all as read" link) is gated
+          // by the *unread* counts — how many are still new since this
+          // category was last dismissed — not the raw live counts above,
+          // which stay on-screen for context while an item is showing.
+          toggleAll('notif-overdue-item', data.unread.overdue > 0);
+          toggleAll('notif-reservation-item', data.unread.reservations > 0);
+          toggleAll('notif-stock-item', data.unread.stock > 0);
+          toggleAll('notif-signup-item', data.unread.signup > 0);
+          toggleAll('notif-empty', data.total === 0);
+          toggleAll('notif-mark-all-btn', data.total > 0);
 
           document.title = data.total > 0 ? '(' + data.total + ') ' + baseTitle : baseTitle;
         })
@@ -111,6 +118,34 @@
     }
 
     setInterval(poll, 30000);
+
+    // "Mark as read" (one category) / "Mark all as read" — both live
+    // inside the notification-bell dropdown, which can appear twice on
+    // the page (mobile + desktop topbar), so this is one delegated
+    // listener on the document rather than a per-button one.
+    document.addEventListener('click', function (e) {
+      var markAllBtn = e.target.closest('[data-role="notif-mark-all-btn"]');
+      var markOneBtn = e.target.closest('[data-role="notif-mark-read-btn"]');
+      var btn = markAllBtn || markOneBtn;
+      if (! btn) return;
+
+      var type = markAllBtn ? 'all' : markOneBtn.getAttribute('data-notif-type');
+      btn.disabled = true;
+
+      var body = new URLSearchParams();
+      body.append('type', type);
+      body.append(csrfName, csrfHash);
+
+      fetch('<?= site_url('owner/notifications/mark-read') ?>', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString(),
+      })
+        .then(function () { poll(); })
+        .catch(function () { /* leave it visible — nothing changed */ })
+        .finally(function () { btn.disabled = false; });
+    });
   })();
 </script>
 <script>

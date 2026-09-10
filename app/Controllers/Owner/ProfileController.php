@@ -60,8 +60,7 @@ class ProfileController extends BaseController
             'first_name'     => 'required|min_length[2]|max_length[100]',
             'middle_name'    => 'permit_empty|max_length[100]',
             'street'         => 'permit_empty|max_length[150]',
-            'barangay'       => 'required|max_length[100]',
-            'barangay_other' => 'permit_empty|max_length[100]',
+            'barangay'       => 'required|in_list[' . implode(',', calapan_barangays()) . ']',
             'email'          => "required|valid_email|is_unique[users.email,user_id,{$userId}]",
             'contact_number' => 'permit_empty|max_length[20]',
             'password'       => 'permit_empty|' . UserModel::PASSWORD_RULE,
@@ -75,12 +74,6 @@ class ProfileController extends BaseController
             return redirect()->back()->withInput()->with('error', implode(' ', $this->validator->getErrors()));
         }
 
-        $barangay      = $this->request->getPost('barangay');
-        $barangayOther = $this->request->getPost('barangay_other');
-        if ($barangay === 'Other' && empty(trim((string) $barangayOther))) {
-            return redirect()->back()->withInput()->with('error', 'Please specify your barangay.');
-        }
-
         // city_municipality/province are fixed — Calapan City, Oriental
         // Mindoro — never taken from the request.
         $data = [
@@ -88,7 +81,7 @@ class ProfileController extends BaseController
             'first_name'        => $this->request->getPost('first_name'),
             'middle_name'       => $this->request->getPost('middle_name'),
             'street'            => $this->request->getPost('street'),
-            'barangay'          => $barangay === 'Other' ? $barangayOther : $barangay,
+            'barangay'          => $this->request->getPost('barangay'),
             'city_municipality' => 'Calapan City',
             'province'          => 'Oriental Mindoro',
             'email'             => $this->request->getPost('email'),

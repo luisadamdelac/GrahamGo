@@ -101,12 +101,7 @@
                 <?php foreach (calapan_barangays() as $brgy): ?>
                   <option value="<?= esc($brgy) ?>" <?= $currentBarangay === $brgy ? 'selected' : '' ?>><?= esc($brgy) ?></option>
                 <?php endforeach; ?>
-                <option value="Other" <?= ($currentBarangay && ! in_array($currentBarangay, calapan_barangays(), true)) ? 'selected' : '' ?>>Other (not listed / outside Calapan)</option>
               </select>
-            </div>
-            <div class="col-md-6 <?= ($currentBarangay && ! in_array($currentBarangay, calapan_barangays(), true)) ? '' : 'd-none' ?>" id="profBarangayOtherWrap">
-              <label class="form-label">Please specify your barangay</label>
-              <input type="text" name="barangay_other" id="profBarangayOther" class="form-control" value="<?= esc(old('barangay_other', ($currentBarangay && ! in_array($currentBarangay, calapan_barangays(), true)) ? $currentBarangay : '')) ?>">
             </div>
             <div class="col-12">
               <label class="form-label">Street <span class="text-muted small">(optional)</span></label>
@@ -119,22 +114,6 @@
     </div>
   </div>
 <?= form_close() ?>
-
-<script>
-(function () {
-  var select    = document.getElementById('profBarangay');
-  var otherWrap = document.getElementById('profBarangayOtherWrap');
-  var otherInput = document.getElementById('profBarangayOther');
-  if (! select) return;
-
-  select.addEventListener('change', function () {
-    var isOther = select.value === 'Other';
-    otherWrap.classList.toggle('d-none', ! isOther);
-    otherInput.required = isOther;
-    if (! isOther) otherInput.value = '';
-  });
-})();
-</script>
 
 <?= view('partials/avatar_confirm_modal', ['uploadUrl' => 'profile/avatar']) ?>
 

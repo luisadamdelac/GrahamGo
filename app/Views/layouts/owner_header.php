@@ -9,11 +9,22 @@
   $ggLowStockAlerts    = (new \App\Models\ProductModel())->lowStockCount();
   $ggOverdueAlerts     = $ggReservationModel->overdueCount();
   $ggNewSignups        = (new \App\Models\UserModel())->recentCustomerSignupCount();
-  // Overdue is a subset of $ggReservationAlerts (an overdue reservation
-  // is still Pending/Confirmed/Ready), so it's surfaced as its own
-  // notification-dropdown item but deliberately left out of the total
-  // to avoid double-counting the same reservations twice.
-  $ggTotalAlerts = $ggReservationAlerts + $ggLowStockAlerts + $ggNewSignups;
+
+  // Sidebar nav badges (Reservations/Inventory) always use the raw
+  // counts above — they're live to-do counters, not part of the
+  // notification inbox. The bell dropdown's own items/badge instead use
+  // "unread" versions, gated by whatever count each category was at
+  // when last dismissed via Mark as read/Mark all as read (see
+  // DashboardController::markNotificationsRead).
+  $ggDismissed = (new \App\Models\SettingModel())->getMany([
+      'notif_dismissed_overdue', 'notif_dismissed_reservations',
+      'notif_dismissed_stock', 'notif_dismissed_signup',
+  ]);
+  $ggUnreadOverdue      = max(0, $ggOverdueAlerts - (int) ($ggDismissed['notif_dismissed_overdue'] ?? 0));
+  $ggUnreadReservations = max(0, $ggReservationAlerts - (int) ($ggDismissed['notif_dismissed_reservations'] ?? 0));
+  $ggUnreadStock        = max(0, $ggLowStockAlerts - (int) ($ggDismissed['notif_dismissed_stock'] ?? 0));
+  $ggUnreadSignups      = max(0, $ggNewSignups - (int) ($ggDismissed['notif_dismissed_signup'] ?? 0));
+  $ggTotalAlerts        = $ggUnreadReservations + $ggUnreadStock + $ggUnreadSignups;
 ?>
 <title id="ggPageTitle" data-base-title="<?= esc($title ?? 'GrahamGo Admin') ?>"><?= $ggTotalAlerts > 0 ? "({$ggTotalAlerts}) " : '' ?><?= esc($title ?? 'GrahamGo Admin') ?></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,6 +51,8 @@
     <?= view('partials/owner_notification_bell', [
       'ggTotalAlerts' => $ggTotalAlerts, 'ggOverdueAlerts' => $ggOverdueAlerts,
       'ggReservationAlerts' => $ggReservationAlerts, 'ggLowStockAlerts' => $ggLowStockAlerts, 'ggNewSignups' => $ggNewSignups,
+      'ggUnreadOverdue' => $ggUnreadOverdue, 'ggUnreadReservations' => $ggUnreadReservations,
+      'ggUnreadStock' => $ggUnreadStock, 'ggUnreadSignups' => $ggUnreadSignups,
     ]) ?>
     <?= view('partials/owner_account_dropdown') ?>
   </div>

@@ -78,7 +78,7 @@ class Auth extends BaseController
      * lost either way — old() below restores every field regardless).
      */
     private const REGISTER_STEP_FIELDS = [
-        1 => ['last_name', 'first_name', 'middle_name', 'street', 'sitio', 'barangay', 'barangay_other'],
+        1 => ['last_name', 'first_name', 'middle_name', 'street', 'sitio', 'barangay'],
         2 => ['email', 'contact_number', 'customer_type', 'customer_type_other'],
         3 => ['password', 'confirm_password', 'terms_accepted'],
     ];
@@ -99,8 +99,7 @@ class Auth extends BaseController
             'first_name'        => 'required|min_length[2]|max_length[100]',
             'middle_name'       => 'permit_empty|max_length[100]',
             'street'            => 'required|max_length[150]',
-            'barangay'          => 'required|max_length[100]',
-            'barangay_other'    => 'permit_empty|max_length[100]',
+            'barangay'          => 'required|in_list[' . implode(',', calapan_barangays()) . ']',
             'email'             => 'required|valid_email|is_unique[users.email]',
             'password'          => 'required|' . UserModel::PASSWORD_RULE,
             'confirm_password'  => 'required|matches[password]',
@@ -116,22 +115,16 @@ class Auth extends BaseController
 
         $customerType      = $this->request->getPost('customer_type');
         $customerTypeOther = $this->request->getPost('customer_type_other');
-        $barangay           = $this->request->getPost('barangay');
-        $barangayOther       = $this->request->getPost('barangay_other');
 
         if (! $this->validate($rules, $messages)) {
             return $this->backToRegisterStep()->with('error', implode(' ', $this->validator->getErrors()));
         }
 
         // "Other" needs a free-text description of what that actually
-        // means (e.g. "Carpenter" for customer type, or an actual
-        // barangay name outside Calapan) — not covered by a simple
-        // in_list rule, so both are checked separately here.
+        // means (e.g. "Carpenter") — not covered by a simple in_list
+        // rule, so it's checked separately here.
         if ($customerType === 'Other' && empty(trim((string) $customerTypeOther))) {
             return $this->backToRegisterStep(2)->with('error', 'Please specify what "Other" means for you.');
-        }
-        if ($barangay === 'Other' && empty(trim((string) $barangayOther))) {
-            return $this->backToRegisterStep(1)->with('error', 'Please specify your barangay.');
         }
 
         $userId = $this->userModel->insert([
@@ -140,7 +133,7 @@ class Auth extends BaseController
             'middle_name'         => $this->request->getPost('middle_name'),
             'street'              => $this->request->getPost('street'),
             'sitio'               => $this->request->getPost('sitio'),
-            'barangay'            => $barangay === 'Other' ? $barangayOther : $barangay,
+            'barangay'            => $this->request->getPost('barangay'),
             // Calapan City / Oriental Mindoro are fixed — never trust
             // whatever a client sent for these, even though the fields
             // are locked in the UI.
@@ -165,8 +158,7 @@ class Auth extends BaseController
      * Redirects back to the register form, flashing which step it
      * should reopen on. Defaults to the earliest step with an invalid
      * field per REGISTER_STEP_FIELDS; pass an explicit step for checks
-     * that happen outside the normal validator (customer_type_other,
-     * barangay_other).
+     * that happen outside the normal validator (customer_type_other).
      */
     private function backToRegisterStep(?int $forceStep = null)
     {

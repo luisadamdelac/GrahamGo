@@ -78,12 +78,7 @@
                 <?php foreach (calapan_barangays() as $brgy): ?>
                   <option value="<?= esc($brgy) ?>" <?= old('barangay') === $brgy ? 'selected' : '' ?>><?= esc($brgy) ?></option>
                 <?php endforeach; ?>
-                <option value="Other" <?= old('barangay') === 'Other' ? 'selected' : '' ?>>Other (not listed / outside Calapan)</option>
               </select>
-            </div>
-            <div class="mb-3 <?= old('barangay') === 'Other' ? '' : 'd-none' ?>" id="regBarangayOtherWrap">
-              <label class="form-label">Please specify your barangay</label>
-              <input type="text" name="barangay_other" id="regBarangayOther" class="form-control" value="<?= esc(old('barangay_other')) ?>" <?= old('barangay') === 'Other' ? 'required' : '' ?>>
             </div>
             <div class="mb-3">
               <label class="form-label">Street</label>
@@ -220,18 +215,6 @@
       otherWrap.classList.toggle('d-none', ! isOther);
       otherInput.required = isOther;
       if (! isOther) otherInput.value = '';
-    });
-  }
-
-  var barangaySelect = document.getElementById('regBarangay');
-  var barangayOtherWrap  = document.getElementById('regBarangayOtherWrap');
-  var barangayOtherInput = document.getElementById('regBarangayOther');
-  if (barangaySelect) {
-    barangaySelect.addEventListener('change', function () {
-      var isOther = barangaySelect.value === 'Other';
-      barangayOtherWrap.classList.toggle('d-none', ! isOther);
-      barangayOtherInput.required = isOther;
-      if (! isOther) barangayOtherInput.value = '';
     });
   }
 

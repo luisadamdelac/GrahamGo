@@ -82,12 +82,7 @@
                 <?php foreach (calapan_barangays() as $brgy): ?>
                   <option value="<?= esc($brgy) ?>" <?= $currentBarangay === $brgy ? 'selected' : '' ?>><?= esc($brgy) ?></option>
                 <?php endforeach; ?>
-                <option value="Other" <?= ($currentBarangay && ! in_array($currentBarangay, calapan_barangays(), true)) ? 'selected' : '' ?>>Other (not listed / outside Calapan)</option>
               </select>
-            </div>
-            <div class="col-md-6 <?= ($currentBarangay && ! in_array($currentBarangay, calapan_barangays(), true)) ? '' : 'd-none' ?>" id="profBarangayOtherWrap">
-              <label class="form-label">Please specify your barangay</label>
-              <input type="text" name="barangay_other" id="profBarangayOther" class="form-control" value="<?= esc(old('barangay_other', ($currentBarangay && ! in_array($currentBarangay, calapan_barangays(), true)) ? $currentBarangay : '')) ?>">
             </div>
             <div class="col-12">
               <label class="form-label">Street <span class="text-muted small">(optional)</span></label>
