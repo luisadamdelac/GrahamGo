@@ -97,7 +97,7 @@ $currentIndex = array_search($reservation['status'], $steps, true);
                   <label for="ggStar<?= $d['product_id'] ?>_<?= $i ?>"><i class="bi bi-star-fill"></i></label>
                 <?php endfor; ?>
               </div>
-              <textarea name="comment" class="form-control mb-3" rows="3" maxlength="1000" placeholder="Share your thoughts about this product (optional)"><?= esc($d['myReview']['comment'] ?? '') ?></textarea>
+              <textarea name="comment" class="form-control mb-3" rows="3" style="min-height:90px;" maxlength="1000" placeholder="Share your thoughts (optional)"><?= esc($d['myReview']['comment'] ?? '') ?></textarea>
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <button type="submit" class="btn btn-gg-primary btn-sm w-100 w-sm-auto"><i class="bi bi-send-fill"></i> <?= $d['myReview'] ? 'Update Review' : 'Submit Review' ?></button>
                 <?php if ($d['myReview'] && $d['myReview']['status'] === 'Pending'): ?>
