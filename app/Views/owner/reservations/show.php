@@ -105,7 +105,6 @@ $statusColors = [
               <select name="payment_method" class="form-select">
                 <option value="Cash">Cash</option>
                 <option value="GCash">GCash</option>
-                <option value="Other">Other</option>
               </select>
             </div>
             <div class="mb-3">

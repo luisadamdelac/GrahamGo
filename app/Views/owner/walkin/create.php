@@ -34,7 +34,6 @@
               <select name="payment_method" class="form-select" required>
                 <option value="Cash">Cash</option>
                 <option value="GCash">GCash</option>
-                <option value="Other">Other</option>
               </select>
             </div>
             <div class="col-md-6">

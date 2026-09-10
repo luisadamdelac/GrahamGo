@@ -146,7 +146,7 @@ class ReservationController extends BaseController
         }
 
         $rules = [
-            'payment_method' => 'required|in_list[Cash,GCash,Other]',
+            'payment_method' => 'required|in_list[Cash,GCash]',
             'amount_paid'    => 'required|decimal|greater_than_equal_to[0]',
         ];
 

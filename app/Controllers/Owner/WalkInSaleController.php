@@ -54,7 +54,7 @@ class WalkInSaleController extends BaseController
         $rules = [
             'product_id'     => 'required|integer',
             'quantity'       => 'required|integer|greater_than[0]',
-            'payment_method' => 'required|in_list[Cash,GCash,Other]',
+            'payment_method' => 'required|in_list[Cash,GCash]',
             'amount_paid'    => 'required|decimal|greater_than_equal_to[0]',
         ];
 
