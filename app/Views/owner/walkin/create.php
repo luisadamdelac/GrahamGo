@@ -1,5 +1,25 @@
 <?= view('layouts/owner_header', ['title' => 'Walk-in Sale']) ?>
 
+<style>
+  /* Standard "hidden but still a real, focusable/validatable form
+     field" pattern — position:absolute + a 1x1 box instead of
+     display:none, so the browser's own required-field validation still
+     works on it (a display:none required field can silently block
+     submit in some browsers with no visible error to explain why). */
+  .gg-visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .gg-custom-select { position: relative; }
+  .gg-custom-select-list {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20;
+    background: #fff; border: 1.5px solid var(--gg-border); border-radius: var(--gg-radius-sm);
+    box-shadow: var(--gg-shadow); max-height: 260px; overflow-y: auto;
+  }
+  .gg-custom-select-option { padding: .6rem .9rem; font-size: .9rem; cursor: pointer; }
+  .gg-custom-select-option:hover, .gg-custom-select-option.is-active { background: var(--gg-primary-light); color: var(--gg-cocoa); }
+</style>
+
 <h4 class="mb-1 enter"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Walk-in Sale</h4>
 <p class="text-muted mb-4">For a customer buying and paying on the spot — deducts stock and records the sale immediately, no online reservation needed.</p>
 
@@ -11,7 +31,26 @@
           <div class="row g-3">
             <div class="col-12">
               <label class="form-label">Product</label>
-              <select name="product_id" id="wsProduct" class="form-select" required>
+              <!-- Hand-rolled dropdown, no library — a native <select>'s
+                   OS-rendered option list can't be sized via CSS at all
+                   (especially iOS), but a third-party JS enhancer
+                   (Choices.js) broke the real functionality here three
+                   times over before being reverted. This is plain
+                   markup/CSS/JS instead: the real <select> stays the
+                   actual form field and event source (recalc() below is
+                   untouched), just visually hidden — gg-custom-select is
+                   a separate div built purely for compact display. -->
+              <div class="gg-custom-select" id="wsProductCustom">
+                <button type="button" class="form-select text-start" id="wsProductTrigger">Select product</button>
+                <div class="gg-custom-select-list d-none" id="wsProductList">
+                  <?php foreach ($products as $p): ?>
+                    <div class="gg-custom-select-option" data-value="<?= $p['product_id'] ?>">
+                      <?= esc($p['product_name']) ?> — ₱<?= number_format($p['price'], 2) ?> (<?= (int) $p['stock'] ?> in stock)
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+              <select name="product_id" id="wsProduct" class="gg-visually-hidden" required>
                 <option value="">Select product</option>
                 <?php foreach ($products as $p): ?>
                   <option value="<?= $p['product_id'] ?>" data-price="<?= esc($p['price'], 'attr') ?>" data-stock="<?= (int) $p['stock'] ?>">
@@ -73,7 +112,35 @@ document.addEventListener('DOMContentLoaded', function () {
   var amountPaid     = document.getElementById('wsAmountPaid');
   var changeWrap     = document.getElementById('wsChangeWrap');
   var changeDisplay  = document.getElementById('wsChangeDisplay');
+  var productTrigger = document.getElementById('wsProductTrigger');
+  var productList    = document.getElementById('wsProductList');
   var currentTotal   = 0;
+
+  // Custom dropdown: picking an option sets the real (visually-hidden)
+  // <select>'s value and fires a real 'change' event on it, so
+  // everything below (recalc, form submission) stays exactly as if the
+  // customer had picked it from a native <select> — this div/list is
+  // only ever a display layer on top of that.
+  productTrigger.addEventListener('click', function () {
+    productList.classList.toggle('d-none');
+  });
+
+  productList.querySelectorAll('.gg-custom-select-option').forEach(function (optionEl) {
+    optionEl.addEventListener('click', function () {
+      productSelect.value = optionEl.getAttribute('data-value');
+      productTrigger.textContent = optionEl.textContent.trim();
+      productList.querySelectorAll('.gg-custom-select-option').forEach(function (o) { o.classList.remove('is-active'); });
+      optionEl.classList.add('is-active');
+      productList.classList.add('d-none');
+      productSelect.dispatchEvent(new Event('change'));
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (! document.getElementById('wsProductCustom').contains(e.target)) {
+      productList.classList.add('d-none');
+    }
+  });
 
   function recalc() {
     var opt = productSelect.options[productSelect.selectedIndex];
