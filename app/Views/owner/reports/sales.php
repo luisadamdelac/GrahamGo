@@ -6,7 +6,7 @@
   <a href="<?= site_url('owner/walk-in-sale') ?>" class="btn btn-gg-primary btn-sm"><i class="bi bi-cash-coin"></i> Walk-in Sale</a>
 </div>
 
-<form method="get" class="row g-2 mb-3">
+<form method="get" class="row g-2 mb-2">
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">From</label>
     <input type="text" name="from" class="form-control gg-date-picker" value="<?= esc($from) ?>">
@@ -18,10 +18,17 @@
   <div class="col-12 col-md-auto d-flex gap-2 align-self-md-end">
     <button type="submit" class="btn btn-dark flex-fill">Filter</button>
     <a href="<?= site_url('owner/reports/sales') ?>" class="btn btn-outline-secondary flex-fill">Reset</a>
-    <a href="<?= site_url('owner/reports/sales/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" target="_blank" class="btn btn-outline-dark" title="Preview PDF"><i class="bi bi-file-earmark-pdf"></i></a>
-    <a href="<?= site_url('owner/reports/sales/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" class="btn btn-outline-dark" title="Export Excel"><i class="bi bi-file-earmark-excel"></i></a>
   </div>
 </form>
+
+<!-- Own row, not squeezed alongside Filter/Reset — those two grow
+     (flex-fill) to fill whatever width they're given, which was
+     pushing these off-screen on narrow phones instead of just
+     wrapping to a visible second line. -->
+<div class="d-flex gap-2 mb-3">
+  <a href="<?= site_url('owner/reports/sales/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
+  <a href="<?= site_url('owner/reports/sales/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+</div>
 
 <div class="mb-3"><span class="fw-bold fs-5">Total: ₱<?= number_format($total, 2) ?></span></div>
 
