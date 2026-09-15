@@ -36,7 +36,12 @@
         </div>
         <div class="col-md-4 mb-3">
           <label class="form-label">Stock</label>
-          <input type="number" min="0" name="stock" class="form-control" value="<?= esc(old('stock', $product['stock'] ?? 0)) ?>" required>
+          <?php if ($product): ?>
+            <input type="number" class="form-control" value="<?= esc($product['stock']) ?>" disabled>
+            <div class="form-text mb-0">Use <a href="<?= site_url('owner/inventory/' . $product['product_id'] . '/batches') ?>">Restock</a> to change stock — keeps the batch history accurate.</div>
+          <?php else: ?>
+            <input type="number" min="0" name="stock" class="form-control" value="<?= esc(old('stock', 0)) ?>" required>
+          <?php endif; ?>
         </div>
         <div class="col-md-4 mb-3">
           <label class="form-label">Low Stock Alert Level</label>

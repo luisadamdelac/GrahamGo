@@ -96,7 +96,6 @@ class ProductController extends BaseController
         $rules = [
             'product_name'  => 'required|max_length[100]',
             'price'         => 'required|decimal',
-            'stock'         => 'required|integer|greater_than_equal_to[0]',
             'reorder_level' => 'permit_empty|integer|greater_than_equal_to[0]',
             'image'         => 'permit_empty|is_image[image]|max_size[image,2048]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
         ];
@@ -105,13 +104,11 @@ class ProductController extends BaseController
             return redirect()->back()->withInput()->with('error', implode(' ', $this->validator->getErrors()));
         }
 
-        // 'stock' is deliberately left out of $data below — it's applied
-        // through receive()/deplete() instead, so an edit that raises or
-        // lowers stock is recorded as a proper FIFO batch movement rather
-        // than a silent number change with no batch trail.
-        $newStock = (int) $this->request->getPost('stock');
-        $diff     = $newStock - (int) $product['stock'];
-
+        // Stock is never touched here — the edit form's Stock field is
+        // disabled and doesn't submit a value at all. Changing stock
+        // always goes through Restock/Batches instead, so every change
+        // leaves a proper FIFO batch trail rather than a silent number
+        // edit with no history behind it.
         $data = [
             'product_name'  => $this->request->getPost('product_name'),
             'description'   => $this->request->getPost('description'),
@@ -126,12 +123,6 @@ class ProductController extends BaseController
         }
 
         $this->productModel->update($id, $data);
-
-        if ($diff > 0) {
-            $this->stockBatchModel->receive((int) $id, $diff, 'Adjustment', 'Manual stock edit');
-        } elseif ($diff < 0) {
-            $this->stockBatchModel->deplete((int) $id, abs($diff), 'Adjustment', 'Manual stock edit');
-        }
 
         return redirect()->to('owner/products')->with('success', 'Product updated.');
     }
