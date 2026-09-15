@@ -74,6 +74,11 @@
             <div class="col-md-6">
               <label class="form-label">Amount Paid</label>
               <input type="number" step="0.01" min="0" name="amount_paid" id="wsAmountPaid" class="form-control" required>
+              <div class="form-text">Defaults to the total — raise it if the customer hands over more, to work out change.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Change</label>
+              <input type="text" id="wsChangeDisplay" class="form-control" value="₱0.00" disabled>
             </div>
           </div>
           <div class="d-flex gap-2 mt-4">
@@ -88,11 +93,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var productSelect = document.getElementById('wsProduct');
+  var productSelect  = document.getElementById('wsProduct');
   var quantityInput  = document.getElementById('wsQuantity');
   var totalDisplay   = document.getElementById('wsTotalDisplay');
   var stockHint      = document.getElementById('wsStockHint');
   var amountPaid     = document.getElementById('wsAmountPaid');
+  var changeDisplay  = document.getElementById('wsChangeDisplay');
+  var currentTotal   = 0;
 
   if (typeof Choices !== 'undefined') {
     // silent: false (default) — Choices still fires a real 'change'
@@ -119,13 +126,25 @@ document.addEventListener('DOMContentLoaded', function () {
     quantityInput.max = stock || '';
     stockHint.textContent = opt && opt.value ? stock + ' available' : '';
 
-    var total = price * qty;
-    totalDisplay.value = '₱' + total.toFixed(2);
-    amountPaid.value = total > 0 ? total.toFixed(2) : '';
+    currentTotal = price * qty;
+    totalDisplay.value = '₱' + currentTotal.toFixed(2);
+    amountPaid.value = currentTotal > 0 ? currentTotal.toFixed(2) : '';
+    recalcChange();
+  }
+
+  // Change is whatever the customer handed over beyond the total —
+  // amount_paid defaults to match the total exactly (see recalc()
+  // above), so this reads ₱0.00 until the cashier raises it for an
+  // overpayment that needs change given back.
+  function recalcChange() {
+    var paid   = parseFloat(amountPaid.value) || 0;
+    var change = paid - currentTotal;
+    changeDisplay.value = '₱' + (change > 0 ? change : 0).toFixed(2);
   }
 
   productSelect.addEventListener('change', recalc);
   quantityInput.addEventListener('input', recalc);
+  amountPaid.addEventListener('input', recalcChange);
 });
 </script>
 
