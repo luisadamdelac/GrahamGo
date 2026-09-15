@@ -20,6 +20,15 @@
 $from     = $from ?? null;
 $to       = $to ?? null;
 $logoPath = FCPATH . 'assets/img/logo.png';
+// Embedded as a base64 data URI rather than a plain file path — dompdf
+// restricts local filesystem reads to its own chroot, which a bare
+// <img src="/var/www/html/public/..."> path falls outside of on
+// Railway, rendering as a broken-image icon instead of the logo.
+// A data: URI sidesteps that (and the isRemoteEnabled=false remote-URL
+// restriction) entirely, since dompdf just decodes the bytes inline.
+$logoDataUri = is_file($logoPath)
+    ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+    : null;
 ?>
 <!DOCTYPE html>
 <html>
@@ -50,8 +59,8 @@ $logoPath = FCPATH . 'assets/img/logo.png';
   .gg-pdf-sub { font-size: 10px; color: #7A6858; margin-top: 2px; }
   .gg-pdf-title { font-size: 15px; color: #C46F26; margin-top: 8px; font-weight: bold; }
   .gg-pdf-meta { font-size: 10px; color: #7A6858; margin-top: 3px; }
-  .gg-pdf-table th { background: #FBF3EA; color: #4A3324; text-align: left; padding: 6px 8px; border-bottom: 1.5px solid #E08A3E; font-size: 10px; }
-  .gg-pdf-table td { padding: 5px 8px; border-bottom: 1px solid #F0E4D6; font-size: 10px; }
+  .gg-pdf-table th { background: #FBF3EA; color: #4A3324; text-align: left; vertical-align: middle; line-height: 1.5; padding: 7px 8px; border-bottom: 1.5px solid #E08A3E; font-size: 10px; }
+  .gg-pdf-table td { vertical-align: middle; line-height: 1.5; padding: 6px 8px; border-bottom: 1px solid #F0E4D6; font-size: 10px; }
   .gg-pdf-footer {
     position: fixed; bottom: -35px; left: 0; right: 0;
     padding-top: 6px; border-top: 1px solid #F0E4D6;
@@ -64,8 +73,8 @@ $logoPath = FCPATH . 'assets/img/logo.png';
 <div class="gg-pdf-header">
   <table style="border:none;">
     <tr>
-      <?php if (is_file($logoPath)): ?>
-        <td style="width:40px; border:none; padding:0; vertical-align:top;"><img src="<?= $logoPath ?>" class="gg-pdf-logo"></td>
+      <?php if ($logoDataUri): ?>
+        <td style="width:40px; border:none; padding:0; vertical-align:top;"><img src="<?= $logoDataUri ?>" class="gg-pdf-logo"></td>
       <?php endif; ?>
       <td style="border:none; padding:0; vertical-align:top;">
         <div class="gg-pdf-brand">GrahamGo</div>
