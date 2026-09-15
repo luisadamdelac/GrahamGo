@@ -1,5 +1,26 @@
 <?= view('layouts/owner_header', ['title' => 'Walk-in Sale']) ?>
 
+<style>
+  /* Matches .form-control/.form-select's own look (see app.css) so the
+     Choices.js-enhanced Product field reads as the same kind of input
+     as everything around it, not a visibly different widget. */
+  .choices__inner {
+    border-radius: var(--gg-radius-sm) !important;
+    border: 1.5px solid var(--gg-border) !important;
+    padding: .43rem .9rem !important;
+    background: #fff !important;
+    min-height: 44px;
+  }
+  .choices.is-focused .choices__inner { border-color: var(--gg-primary) !important; box-shadow: 0 0 0 .22rem rgba(224, 138, 62, .16); }
+  .choices__list--dropdown, .choices__list[aria-expanded] {
+    border-radius: var(--gg-radius-sm) !important;
+    border: 1.5px solid var(--gg-border) !important;
+    box-shadow: var(--gg-shadow);
+  }
+  .choices__list--dropdown .choices__item--selectable.is-highlighted { background: var(--gg-primary-light) !important; color: var(--gg-cocoa); }
+  .choices__list--dropdown .choices__input { margin: 0; }
+</style>
+
 <h4 class="mb-1 enter"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Walk-in Sale</h4>
 <p class="text-muted mb-4">For a customer buying and paying on the spot — deducts stock and records the sale immediately, no online reservation needed.</p>
 
@@ -20,6 +41,14 @@
                 <?php endforeach; ?>
               </select>
             </div>
+            <!-- Choices.js enhances the plain <select> above into a
+                 searchable, custom-styled dropdown instead of the OS's
+                 own plain popup list — the underlying <select> stays the
+                 real source of truth (Choices just wraps/hides it and
+                 keeps it in sync), so nothing else about how this form
+                 submits or how recalc() reads it needed to change. -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
             <div class="col-md-6">
               <label class="form-label">Quantity</label>
               <input type="number" name="quantity" id="wsQuantity" class="form-control" min="1" value="1" required>
@@ -58,6 +87,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var totalDisplay   = document.getElementById('wsTotalDisplay');
   var stockHint      = document.getElementById('wsStockHint');
   var amountPaid     = document.getElementById('wsAmountPaid');
+
+  if (typeof Choices !== 'undefined') {
+    // silent: false (default) — Choices still fires a real 'change'
+    // event on the underlying <select> whenever a choice is picked, so
+    // the existing productSelect.addEventListener('change', recalc)
+    // below keeps working unmodified.
+    new Choices(productSelect, {
+      searchEnabled: true,
+      searchPlaceholderValue: 'Search products…',
+      itemSelectText: '',
+      shouldSort: false,
+    });
+  }
 
   function recalc() {
     var opt = productSelect.options[productSelect.selectedIndex];
