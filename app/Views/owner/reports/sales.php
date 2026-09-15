@@ -18,7 +18,8 @@
   <div class="col-12 col-md-auto d-flex gap-2 align-self-md-end">
     <button type="submit" class="btn btn-dark flex-fill">Filter</button>
     <a href="<?= site_url('owner/reports/sales') ?>" class="btn btn-outline-secondary flex-fill">Reset</a>
-    <button type="button" class="btn btn-outline-dark d-none d-md-inline-block" onclick="window.print()"><i class="bi bi-printer"></i></button>
+    <a href="<?= site_url('owner/reports/sales/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" target="_blank" class="btn btn-outline-dark" title="Preview PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+    <a href="<?= site_url('owner/reports/sales/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" class="btn btn-outline-dark" title="Export Excel"><i class="bi bi-file-earmark-excel"></i></a>
   </div>
 </form>
 

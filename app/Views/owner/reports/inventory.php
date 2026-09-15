@@ -3,7 +3,10 @@
 <nav class="small mb-3 text-muted"><a href="<?= site_url('owner/reports') ?>">Reports</a> <i class="bi bi-chevron-right small"></i> Inventory Report</nav>
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h4 class="mb-0"><i class="bi bi-clipboard-data-fill" style="color:var(--gg-primary-dark);"></i> Inventory Report</h4>
-  <button type="button" class="btn btn-outline-dark btn-sm d-none d-md-inline-block" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+  <div class="d-flex gap-2">
+    <a href="<?= site_url('owner/reports/inventory/pdf') ?>" target="_blank" class="btn btn-outline-dark btn-sm" title="Preview PDF"><i class="bi bi-file-earmark-pdf"></i> <span class="d-none d-sm-inline">Preview PDF</span></a>
+    <a href="<?= site_url('owner/reports/inventory/excel') ?>" class="btn btn-outline-dark btn-sm" title="Export Excel"><i class="bi bi-file-earmark-excel"></i> <span class="d-none d-sm-inline">Export Excel</span></a>
+  </div>
 </div>
 
 <!-- Mobile: card list -->

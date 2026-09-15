@@ -92,8 +92,14 @@ $routes->group('owner', ['filter' => 'ownerAuth'], static function ($routes) {
     // Reports
     $routes->get('reports', 'Owner\ReportController::index');
     $routes->get('reports/reservations', 'Owner\ReportController::reservations');
+    $routes->get('reports/reservations/pdf', 'Owner\ReportController::reservationsPdf');
+    $routes->get('reports/reservations/excel', 'Owner\ReportController::reservationsExcel');
     $routes->get('reports/sales', 'Owner\ReportController::sales');
+    $routes->get('reports/sales/pdf', 'Owner\ReportController::salesPdf');
+    $routes->get('reports/sales/excel', 'Owner\ReportController::salesExcel');
     $routes->get('reports/inventory', 'Owner\ReportController::inventory');
+    $routes->get('reports/inventory/pdf', 'Owner\ReportController::inventoryPdf');
+    $routes->get('reports/inventory/excel', 'Owner\ReportController::inventoryExcel');
 
     // Profile
     $routes->get('profile', 'Owner\ProfileController::index');
