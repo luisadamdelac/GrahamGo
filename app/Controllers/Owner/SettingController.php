@@ -88,6 +88,6 @@ class SettingController extends BaseController
             return redirect()->to('owner/settings')->with('success', 'Test email sent to ' . $recipient . '. Check the inbox (and spam folder).');
         }
 
-        return redirect()->to('owner/settings')->with('error', 'Failed to send test email: ' . implode(' ', $emailService->printDebugger(['headers'])));
+        return redirect()->to('owner/settings')->with('error', 'Failed to send test email: ' . $emailService->printDebugger(['headers']));
     }
 }
