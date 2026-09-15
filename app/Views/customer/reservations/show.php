@@ -94,24 +94,30 @@ $currentIndex = array_search($reservation['status'], $steps, true);
     <div class="card-body p-3 p-md-4">
       <h6 class="mb-3"><i class="bi bi-star-fill" style="color:var(--gg-star);"></i> Rate These Products</h6>
       <div class="d-flex flex-column gap-3">
+        <?php $ggReviewStatusColors = ['Pending' => 'warning', 'Approved' => 'success', 'Rejected' => 'secondary']; ?>
         <?php foreach ($details as $d): ?>
           <div class="p-3" style="background:var(--gg-bg); border-radius:var(--gg-radius-lg);">
             <p class="fw-semibold mb-2"><?= esc($d['product_name']) ?></p>
-            <?= form_open('products/' . $d['product_id'] . '/review') ?>
-              <div class="gg-star-input mb-3">
-                <?php for ($i = 5; $i >= 1; $i--): ?>
-                  <input type="radio" name="rating" id="ggStar<?= $d['product_id'] ?>_<?= $i ?>" value="<?= $i ?>" <?= (int) ($d['myReview']['rating'] ?? 0) === $i ? 'checked' : '' ?> required>
-                  <label for="ggStar<?= $d['product_id'] ?>_<?= $i ?>"><i class="bi bi-star-fill"></i></label>
-                <?php endfor; ?>
+            <?php if ($d['myReview']): ?>
+              <!-- One submission per product, final — no edit form once
+                   a review exists (see Customer\ReviewController::store()). -->
+              <div class="mb-2" style="color:var(--gg-star);">
+                <?php for ($i = 1; $i <= 5; $i++): ?><i class="bi bi-star<?= $i <= $d['myReview']['rating'] ? '-fill' : '' ?>"></i><?php endfor; ?>
+                <span class="badge bg-<?= $ggReviewStatusColors[$d['myReview']['status']] ?? 'secondary' ?> ms-2"><?= esc($d['myReview']['status']) ?></span>
               </div>
-              <textarea name="comment" class="form-control mb-3" rows="3" style="min-height:90px;" maxlength="1000" placeholder="Share your thoughts (optional)"><?= esc($d['myReview']['comment'] ?? '') ?></textarea>
-              <div class="d-flex align-items-center gap-2 flex-wrap">
-                <button type="submit" class="btn btn-gg-primary btn-sm w-100 w-sm-auto"><i class="bi bi-send-fill"></i> <?= $d['myReview'] ? 'Update Review' : 'Submit Review' ?></button>
-                <?php if ($d['myReview'] && $d['myReview']['status'] === 'Pending'): ?>
-                  <span class="small text-muted">Awaiting approval</span>
-                <?php endif; ?>
-              </div>
-            <?= form_close() ?>
+              <?php if ($d['myReview']['comment']): ?><p class="small mb-0"><?= esc($d['myReview']['comment']) ?></p><?php endif; ?>
+            <?php else: ?>
+              <?= form_open('products/' . $d['product_id'] . '/review') ?>
+                <div class="gg-star-input mb-3">
+                  <?php for ($i = 5; $i >= 1; $i--): ?>
+                    <input type="radio" name="rating" id="ggStar<?= $d['product_id'] ?>_<?= $i ?>" value="<?= $i ?>" required>
+                    <label for="ggStar<?= $d['product_id'] ?>_<?= $i ?>"><i class="bi bi-star-fill"></i></label>
+                  <?php endfor; ?>
+                </div>
+                <textarea name="comment" class="form-control mb-3" rows="3" style="min-height:90px;" maxlength="1000" placeholder="Share your thoughts (optional)"></textarea>
+                <button type="submit" class="btn btn-gg-primary btn-sm w-100 w-sm-auto"><i class="bi bi-send-fill"></i> Submit Review</button>
+              <?= form_close() ?>
+            <?php endif; ?>
           </div>
         <?php endforeach; ?>
       </div>

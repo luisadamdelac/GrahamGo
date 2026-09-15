@@ -17,6 +17,14 @@ class ReviewController extends BaseController
             return redirect()->to('products/' . $productId)->with('error', 'You can only review a product you\'ve claimed.');
         }
 
+        // One submission per (customer, product), final — no editing
+        // afterward. The view only ever shows the form when myReview()
+        // is empty, so reaching this with an existing review means a
+        // direct/repeat POST; reject it the same way either way.
+        if ($reviewModel->myReview($userId, $productId)) {
+            return redirect()->to('products/' . $productId)->with('error', 'You\'ve already reviewed this product — reviews can\'t be edited once submitted.');
+        }
+
         $rules = [
             'rating'  => 'required|in_list[1,2,3,4,5]',
             'comment' => 'permit_empty|max_length[1000]',
@@ -26,23 +34,13 @@ class ReviewController extends BaseController
             return redirect()->to('products/' . $productId)->with('error', implode(' ', $this->validator->getErrors()));
         }
 
-        $data = [
+        $reviewModel->insert([
             'user_id'    => $userId,
             'product_id' => $productId,
             'rating'     => (int) $this->request->getPost('rating'),
             'comment'    => $this->request->getPost('comment'),
-            // Re-reviewing (or editing) always resets to Pending — an
-            // already-approved review's text shouldn't stay public
-            // unmoderated once it's been edited.
             'status'     => 'Pending',
-        ];
-
-        $existing = $reviewModel->myReview($userId, $productId);
-        if ($existing) {
-            $reviewModel->update($existing['review_id'], $data);
-        } else {
-            $reviewModel->insert($data);
-        }
+        ]);
 
         return redirect()->to('products/' . $productId)->with('success', 'Thanks! Your review was submitted and will show once approved.');
     }
