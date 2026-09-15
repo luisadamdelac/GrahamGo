@@ -101,11 +101,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var changeDisplay  = document.getElementById('wsChangeDisplay');
   var currentTotal   = 0;
 
+  // Source of truth for price/stock — read from this plain object
+  // rather than each <option>'s data-price/data-stock attributes,
+  // since Choices.js rebuilds its own internal list from the select
+  // and doesn't reliably carry custom data-* attributes through to the
+  // DOM node recalc() ends up looking at afterward.
+  var productData = <?= json_encode(array_reduce($products, static function ($acc, $p) {
+      $acc[(string) $p['product_id']] = ['price' => (float) $p['price'], 'stock' => (int) $p['stock']];
+      return $acc;
+  }, [])) ?>;
+
   if (typeof Choices !== 'undefined') {
-    // silent: false (default) — Choices still fires a real 'change'
-    // event on the underlying <select> whenever a choice is picked, so
-    // the existing productSelect.addEventListener('change', recalc)
-    // below keeps working unmodified.
     new Choices(productSelect, {
       searchEnabled: true,
       searchPlaceholderValue: 'Search products…',
@@ -114,17 +120,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function recalc() {
-    // Looked up by value (not selectedIndex) — Choices.js manages
-    // selection on the underlying <select> by syncing .value, and
-    // doesn't reliably keep .selectedIndex in step with it.
-    var opt = productSelect.value ? productSelect.querySelector('option[value="' + productSelect.value + '"]') : null;
-    var price = opt ? parseFloat(opt.getAttribute('data-price')) || 0 : 0;
-    var stock = opt ? parseInt(opt.getAttribute('data-stock'), 10) || 0 : 0;
+  function recalc(productId) {
+    // Choices.js's own 'change'/'choice' events carry the picked value
+    // straight in event.detail (see onProductPicked below) — used when
+    // given, since relying on productSelect.value/selectedIndex after
+    // the fact isn't reliably in sync with what Choices just rendered.
+    if (productId === undefined) productId = productSelect.value;
+    var data  = productId ? productData[productId] : null;
+    var price = data ? data.price : 0;
+    var stock = data ? data.stock : 0;
     var qty   = parseInt(quantityInput.value, 10) || 0;
 
     quantityInput.max = stock || '';
-    stockHint.textContent = opt && opt.value ? stock + ' available' : '';
+    stockHint.textContent = data ? stock + ' available' : '';
 
     currentTotal = price * qty;
     totalDisplay.value = '₱' + currentTotal.toFixed(2);
@@ -142,8 +150,24 @@ document.addEventListener('DOMContentLoaded', function () {
     changeDisplay.value = '₱' + (change > 0 ? change : 0).toFixed(2);
   }
 
-  productSelect.addEventListener('change', recalc);
-  quantityInput.addEventListener('input', recalc);
+  // Choices.js dispatches its own 'change' (detail.value) and 'choice'
+  // (detail.choice.value) custom events on the underlying <select> when
+  // a product is picked — read whichever detail is present rather than
+  // trusting productSelect.value/selectedIndex to already be in sync at
+  // that point. Falls back to productSelect.value for a plain <select>
+  // (e.g. if the Choices.js CDN script failed to load).
+  function onProductPicked(event) {
+    var productId = productSelect.value;
+    if (event && event.detail) {
+      if (event.detail.value !== undefined) productId = event.detail.value;
+      else if (event.detail.choice && event.detail.choice.value !== undefined) productId = event.detail.choice.value;
+    }
+    recalc(productId);
+  }
+
+  productSelect.addEventListener('change', onProductPicked);
+  productSelect.addEventListener('choice', onProductPicked);
+  quantityInput.addEventListener('input', function () { recalc(); });
   amountPaid.addEventListener('input', recalcChange);
 });
 </script>
