@@ -49,8 +49,13 @@ class Session extends BaseConfig
      *
      * The number of SECONDS you want the session to last.
      * Setting to 0 (zero) means expire when the browser is closed.
+     *
+     * 30 minutes — shorter than the framework default (2 hours) since
+     * this is used on shared/public devices (school computers) where a
+     * customer or owner forgetting to log out leaves their session
+     * usable by the next person for however long it stays alive.
      */
-    public int $expiration = 7200;
+    public int $expiration = 1800;
 
     /**
      * --------------------------------------------------------------------------
