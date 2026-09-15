@@ -112,14 +112,15 @@ class StockBatchModel extends Model
     }
 
     /**
-     * The current FIFO queue for a product — oldest (soonest to be used)
-     * first — for the Inventory > Batches breakdown view. Only batches
-     * that still have stock left are shown.
+     * The full FIFO history for a product — oldest (soonest to be used)
+     * first — for the Inventory > Batches breakdown view. Includes
+     * depleted batches too (not just what's currently on hand) so every
+     * batch is classified (Depleted/Active/Next to use) rather than
+     * used-up ones just silently vanishing from the list.
      */
     public function breakdown(int $productId): array
     {
         return $this->where('product_id', $productId)
-            ->where('remaining_quantity >', 0)
             ->orderBy('received_at', 'ASC')
             ->orderBy('batch_id', 'ASC')
             ->findAll();
