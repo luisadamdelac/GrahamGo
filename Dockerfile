@@ -5,14 +5,22 @@ FROM php:8.2-apache
 #   locate libicu/libzip — without it, configure fails pointing at "the
 #   pkg-config man page".
 # - libonig-dev: oniguruma, the regex engine mbstring compiles against.
+# - libpng-dev/libjpeg62-turbo-dev/libfreetype6-dev: gd's own image
+#   format support — phpoffice/phpspreadsheet hard-requires ext-gd
+#   (even though this app never touches images through it directly),
+#   so composer install fails without it, same as it would for zip.
 RUN apt-get update && apt-get install -y \
         pkg-config \
         libicu-dev \
         libonig-dev \
         libzip-dev \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
         unzip \
         git \
-    && docker-php-ext-install intl mbstring mysqli pdo_mysql zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install intl mbstring mysqli pdo_mysql zip gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # CI4's entry point is public/index.php — Apache must serve from there,
