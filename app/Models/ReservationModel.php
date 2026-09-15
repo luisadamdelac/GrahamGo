@@ -46,6 +46,23 @@ class ReservationModel extends Model
             ->countAllResults();
     }
 
+    /**
+     * The status of the customer's most recent non-cancelled reservation
+     * — used to highlight which step ("Browse"/"Reserve"/"Claim") of the
+     * landing page's how-it-works tracker actually applies to them right
+     * now. A cancelled reservation is skipped over (it's not something
+     * currently in progress) rather than counted as their "latest".
+     */
+    public function latestActiveStatus(int $userId): ?string
+    {
+        $row = $this->where('user_id', $userId)
+            ->where('status !=', 'Cancelled')
+            ->orderBy('created_at', 'DESC')
+            ->first();
+
+        return $row['status'] ?? null;
+    }
+
     public function counts(): array
     {
         return [

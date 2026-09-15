@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ProductModel;
+use App\Models\ReservationModel;
 use App\Models\UserModel;
 
 /**
@@ -20,12 +21,30 @@ class LandingController extends BaseController
         // it swaps the Login/Register buttons for "Go to Dashboard"
         // links matching whichever role(s) are currently active.
         $productModel = new ProductModel();
+        $customer     = current_customer();
+
+        // The "1 Browse / 2 Reserve / 3 Claim" tracker in the hero card
+        // reflects the signed-in customer's own progress instead of
+        // always just being a generic explainer: Pending/Confirmed/Ready
+        // means they're waiting on step 2 (Reserve), Claimed bumps them
+        // to step 3, and a guest (or a customer with no active
+        // reservation) sees step 1.
+        $currentStep = 1;
+        if ($customer) {
+            $status = (new ReservationModel())->latestActiveStatus($customer['user_id']);
+            if (in_array($status, ['Pending', 'Confirmed', 'Ready'], true)) {
+                $currentStep = 2;
+            } elseif ($status === 'Claimed') {
+                $currentStep = 3;
+            }
+        }
 
         return view('landing/index', [
-            'title'      => 'GrahamGo, Graham Mango & Oreo Graham',
-            'products'   => $productModel->activeProducts(),
-            'isCustomer' => (bool) current_customer(),
-            'isOwner'    => (bool) current_owner(),
+            'title'       => 'GrahamGo, Graham Mango & Oreo Graham',
+            'products'    => $productModel->activeProducts(),
+            'isCustomer'  => (bool) $customer,
+            'isOwner'     => (bool) current_owner(),
+            'currentStep' => $currentStep,
         ]);
     }
 

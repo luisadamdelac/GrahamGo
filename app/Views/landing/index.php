@@ -159,24 +159,23 @@
             </div>
           </div>
           <div class="row g-2 text-center">
-            <div class="col-4 mini-step">
-              <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
-                <div class="fw-bold" style="color:var(--gg-primary-dark);">1</div>
-                <div class="small text-muted">Browse</div>
+            <?php
+              // Reflects the signed-in customer's own progress (see
+              // LandingController::index()) rather than always being a
+              // plain generic explainer — the step matching their most
+              // recent active reservation is filled in solid instead of
+              // just tinted, like a "you are here" marker.
+              $ggSteps = [1 => 'Browse', 2 => 'Reserve', 3 => 'Claim'];
+            ?>
+            <?php foreach ($ggSteps as $ggNum => $ggLabel): ?>
+              <?php $ggActive = $ggNum === $currentStep; ?>
+              <div class="col-4 mini-step">
+                <div class="p-2 rounded-3" style="<?= $ggActive ? 'background:linear-gradient(135deg, var(--gg-primary), var(--gg-primary-dark));' : 'background:var(--gg-primary-light);' ?>">
+                  <div class="fw-bold" style="color:<?= $ggActive ? '#fff' : 'var(--gg-primary-dark)' ?>;"><?= $ggNum ?></div>
+                  <div class="small" style="color:<?= $ggActive ? 'rgba(255,255,255,.85)' : 'var(--gg-muted)' ?>;"><?= $ggLabel ?></div>
+                </div>
               </div>
-            </div>
-            <div class="col-4 mini-step">
-              <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
-                <div class="fw-bold" style="color:var(--gg-primary-dark);">2</div>
-                <div class="small text-muted">Reserve</div>
-              </div>
-            </div>
-            <div class="col-4 mini-step">
-              <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
-                <div class="fw-bold" style="color:var(--gg-primary-dark);">3</div>
-                <div class="small text-muted">Claim</div>
-              </div>
-            </div>
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
