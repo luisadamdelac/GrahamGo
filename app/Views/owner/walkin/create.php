@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Payment Method</label>
-              <select name="payment_method" class="form-select" required>
+              <select name="payment_method" id="wsPaymentMethod" class="form-select" required>
                 <option value="Cash">Cash</option>
                 <option value="GCash">GCash</option>
               </select>
@@ -39,9 +39,12 @@
             <div class="col-md-6">
               <label class="form-label">Amount Paid</label>
               <input type="number" step="0.01" min="0" name="amount_paid" id="wsAmountPaid" class="form-control" required>
-              <div class="form-text">Defaults to the total — raise it if the customer hands over more, to work out change.</div>
+              <!-- Only Cash has a real "handed over more, give change back"
+                   scenario — GCash is a digital transfer of the exact
+                   amount, so there's nothing to make change for. -->
+              <div class="form-text" id="wsAmountPaidHint">Defaults to the total — raise it if the customer hands over more, to work out change.</div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" id="wsChangeWrap">
               <label class="form-label">Change</label>
               <input type="text" id="wsChangeDisplay" class="form-control" value="₱0.00" disabled>
             </div>
@@ -58,11 +61,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var productSelect = document.getElementById('wsProduct');
+  var productSelect  = document.getElementById('wsProduct');
   var quantityInput  = document.getElementById('wsQuantity');
   var totalDisplay   = document.getElementById('wsTotalDisplay');
   var stockHint      = document.getElementById('wsStockHint');
+  var paymentMethod  = document.getElementById('wsPaymentMethod');
   var amountPaid     = document.getElementById('wsAmountPaid');
+  var amountPaidHint = document.getElementById('wsAmountPaidHint');
+  var changeWrap     = document.getElementById('wsChangeWrap');
   var changeDisplay  = document.getElementById('wsChangeDisplay');
   var currentTotal   = 0;
 
@@ -91,9 +97,28 @@ document.addEventListener('DOMContentLoaded', function () {
     changeDisplay.value = '₱' + (change > 0 ? change : 0).toFixed(2);
   }
 
+  // GCash is a digital transfer of the exact amount owed — there's no
+  // "handed over more, give change back" scenario for it the way there
+  // is for physical Cash, so Amount Paid locks to the total and the
+  // Change field (always ₱0.00 in that case anyway) just isn't shown.
+  function applyPaymentMethod() {
+    var isGcash = paymentMethod.value === 'GCash';
+    amountPaid.readOnly = isGcash;
+    changeWrap.classList.toggle('d-none', isGcash);
+    amountPaidHint.textContent = isGcash
+      ? 'GCash is a transfer of the exact amount — always matches the total.'
+      : 'Defaults to the total — raise it if the customer hands over more, to work out change.';
+    if (isGcash) {
+      amountPaid.value = currentTotal > 0 ? currentTotal.toFixed(2) : '';
+      recalcChange();
+    }
+  }
+
   productSelect.addEventListener('change', recalc);
   quantityInput.addEventListener('input', recalc);
   amountPaid.addEventListener('input', recalcChange);
+  paymentMethod.addEventListener('change', applyPaymentMethod);
+  applyPaymentMethod();
 });
 </script>
 
