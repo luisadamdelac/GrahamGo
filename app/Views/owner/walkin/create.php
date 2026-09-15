@@ -108,7 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function recalc() {
-    var opt = productSelect.options[productSelect.selectedIndex];
+    // Looked up by value (not selectedIndex) — Choices.js manages
+    // selection on the underlying <select> by syncing .value, and
+    // doesn't reliably keep .selectedIndex in step with it.
+    var opt = productSelect.value ? productSelect.querySelector('option[value="' + productSelect.value + '"]') : null;
     var price = opt ? parseFloat(opt.getAttribute('data-price')) || 0 : 0;
     var stock = opt ? parseInt(opt.getAttribute('data-stock'), 10) || 0 : 0;
     var qty   = parseInt(quantityInput.value, 10) || 0;
