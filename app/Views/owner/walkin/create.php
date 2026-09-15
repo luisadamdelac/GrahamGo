@@ -36,13 +36,16 @@
                 <option value="GCash">GCash</option>
               </select>
             </div>
-            <div class="col-md-6">
+            <!-- Only Cash has a real "handed over more, give change back"
+                 scenario — GCash is a digital transfer of the exact
+                 amount, so there's nothing to enter or make change for;
+                 the field stays in the DOM (JS keeps it synced to the
+                 total) so it still submits, just hidden — Total Amount
+                 above already says everything GCash needs to. -->
+            <div class="col-md-6" id="wsAmountPaidWrap">
               <label class="form-label">Amount Paid</label>
               <input type="number" step="0.01" min="0" name="amount_paid" id="wsAmountPaid" class="form-control" required>
-              <!-- Only Cash has a real "handed over more, give change back"
-                   scenario — GCash is a digital transfer of the exact
-                   amount, so there's nothing to make change for. -->
-              <div class="form-text" id="wsAmountPaidHint">Defaults to the total — raise it if the customer hands over more, to work out change.</div>
+              <div class="form-text">Defaults to the total — raise it if the customer hands over more, to work out change.</div>
             </div>
             <div class="col-md-6" id="wsChangeWrap">
               <label class="form-label">Change</label>
@@ -66,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var totalDisplay   = document.getElementById('wsTotalDisplay');
   var stockHint      = document.getElementById('wsStockHint');
   var paymentMethod  = document.getElementById('wsPaymentMethod');
+  var amountPaidWrap = document.getElementById('wsAmountPaidWrap');
   var amountPaid     = document.getElementById('wsAmountPaid');
-  var amountPaidHint = document.getElementById('wsAmountPaidHint');
   var changeWrap     = document.getElementById('wsChangeWrap');
   var changeDisplay  = document.getElementById('wsChangeDisplay');
   var currentTotal   = 0;
@@ -99,15 +102,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // GCash is a digital transfer of the exact amount owed — there's no
   // "handed over more, give change back" scenario for it the way there
-  // is for physical Cash, so Amount Paid locks to the total and the
-  // Change field (always ₱0.00 in that case anyway) just isn't shown.
+  // is for physical Cash, so neither Amount Paid nor Change adds
+  // anything beyond what Total Amount already says; both hide, while
+  // the (still-required) amount_paid input stays synced to the total
+  // in the background so the form still submits it correctly.
   function applyPaymentMethod() {
     var isGcash = paymentMethod.value === 'GCash';
-    amountPaid.readOnly = isGcash;
+    amountPaidWrap.classList.toggle('d-none', isGcash);
     changeWrap.classList.toggle('d-none', isGcash);
-    amountPaidHint.textContent = isGcash
-      ? 'GCash is a transfer of the exact amount — always matches the total.'
-      : 'Defaults to the total — raise it if the customer hands over more, to work out change.';
     if (isGcash) {
       amountPaid.value = currentTotal > 0 ? currentTotal.toFixed(2) : '';
       recalcChange();
