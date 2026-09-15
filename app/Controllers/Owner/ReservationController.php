@@ -194,7 +194,20 @@ class ReservationController extends BaseController
             return redirect()->to('owner/reservations/' . $id)->with('error', 'This reservation cannot be cancelled.');
         }
 
+        $data = ['status' => 'Cancelled'];
+
         if (in_array($reservation['status'], ['Confirmed', 'Ready'], true)) {
+            // The customer was already counting on this one (owner had
+            // confirmed it, maybe even marked it Ready) — cancelling it
+            // now needs a reason on record instead of just silently
+            // disappearing, since it's a step the customer can no longer
+            // take back themselves at this point.
+            $reason = trim((string) $this->request->getPost('cancel_reason'));
+            if ($reason === '') {
+                return redirect()->to('owner/reservations/' . $id)->with('error', 'Please give a reason for cancelling this reservation.');
+            }
+            $data['cancel_reason'] = $reason;
+
             $details = $this->detailModel->forReservation((int) $id);
             foreach ($details as $d) {
                 // Returned stock re-enters as a new batch dated now — it
@@ -204,7 +217,7 @@ class ReservationController extends BaseController
             }
         }
 
-        $this->reservationModel->update($id, ['status' => 'Cancelled']);
+        $this->reservationModel->update($id, $data);
 
         return redirect()->to('owner/reservations/' . $id)->with('success', 'Reservation cancelled.');
     }

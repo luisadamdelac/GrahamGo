@@ -20,6 +20,13 @@ $statusColors = [
           </div>
         </div>
 
+        <?php if ($reservation['status'] === 'Cancelled' && ! empty($reservation['cancel_reason'])): ?>
+          <div class="alert alert-secondary d-flex align-items-start gap-2 mb-4">
+            <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
+            <div><strong>Cancellation reason:</strong> <?= esc($reservation['cancel_reason']) ?></div>
+          </div>
+        <?php endif; ?>
+
         <div class="d-flex align-items-center gap-2 mb-4">
           <?= avatar_chip($reservation['customer_name'], $reservation['customer_avatar'] ?? null, 40) ?>
           <div>
@@ -92,9 +99,7 @@ $statusColors = [
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/ready') ?>
             <button type="submit" class="btn btn-gg-primary w-100 mb-2"><i class="bi bi-bag-check-fill"></i> Mark as Ready</button>
           <?= form_close() ?>
-          <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/cancel') ?>
-            <button type="submit" class="btn btn-outline-danger w-100" data-confirm="Reserved stock will be returned to inventory." data-confirm-title="Cancel this reservation?"><i class="bi bi-x-circle"></i> Cancel</button>
-          <?= form_close() ?>
+          <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#ggCancelReasonModal"><i class="bi bi-x-circle"></i> Cancel</button>
         <?php endif; ?>
 
         <?php if ($reservation['status'] === 'Ready'): ?>
@@ -113,9 +118,7 @@ $statusColors = [
             </div>
             <button type="submit" class="btn btn-gg-primary w-100 mb-2"><i class="bi bi-cash-coin"></i> Record Payment &amp; Mark Claimed</button>
           <?= form_close() ?>
-          <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/cancel') ?>
-            <button type="submit" class="btn btn-outline-danger w-100" data-confirm="Reserved stock will be returned to inventory." data-confirm-title="Cancel this reservation?"><i class="bi bi-x-circle"></i> Cancel</button>
-          <?= form_close() ?>
+          <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#ggCancelReasonModal"><i class="bi bi-x-circle"></i> Cancel</button>
         <?php endif; ?>
 
         <?php if (in_array($reservation['status'], ['Claimed', 'Cancelled'], true)): ?>
@@ -125,5 +128,37 @@ $statusColors = [
     </div>
   </div>
 </div>
+
+<?php if (in_array($reservation['status'], ['Confirmed', 'Ready'], true)): ?>
+  <!-- Cancelling here means undoing something the customer was already
+       counting on (owner had confirmed it, maybe marked it Ready), so —
+       unlike a Pending cancel — this requires a reason on record rather
+       than a plain confirm dialog. -->
+  <div class="modal fade" id="ggCancelReasonModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:var(--gg-radius-lg); border:none;">
+        <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/cancel') ?>
+          <div class="modal-body p-4">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px;background:var(--gg-danger-bg);">
+                <i class="bi bi-x-circle-fill" style="color:var(--gg-danger);"></i>
+              </div>
+              <div>
+                <h6 class="mb-0">Cancel Reservation #<?= $reservation['reservation_id'] ?></h6>
+                <div class="small text-muted">Reserved stock will be returned to inventory.</div>
+              </div>
+            </div>
+            <label class="form-label">Reason for cancelling</label>
+            <textarea name="cancel_reason" class="form-control" rows="3" required placeholder="e.g. Customer requested by phone, product unavailable, mistaken confirmation..."></textarea>
+          </div>
+          <div class="modal-body pt-0 d-flex gap-2">
+            <button type="button" class="btn btn-outline-dark flex-fill" data-bs-dismiss="modal">Never mind</button>
+            <button type="submit" class="btn btn-outline-danger flex-fill"><i class="bi bi-x-circle"></i> Cancel Reservation</button>
+          </div>
+        <?= form_close() ?>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
 
 <?= view('layouts/owner_footer') ?>

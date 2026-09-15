@@ -30,6 +30,13 @@ $currentIndex = array_search($reservation['status'], $steps, true);
       <?php endif; ?>
     </div>
 
+    <?php if ($reservation['status'] === 'Cancelled' && ! empty($reservation['cancel_reason'])): ?>
+      <div class="alert alert-secondary d-flex align-items-start gap-2 mb-4">
+        <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
+        <div><strong>Reason:</strong> <?= esc($reservation['cancel_reason']) ?></div>
+      </div>
+    <?php endif; ?>
+
     <?php if ($reservation['status'] !== 'Cancelled'): ?>
       <div class="progress mb-3" style="height:6px;">
         <?php $pct = $currentIndex !== false ? (($currentIndex + 1) / count($steps)) * 100 : 0; ?>
