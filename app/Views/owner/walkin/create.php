@@ -70,7 +70,14 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Payment Method</label>
-              <select name="payment_method" id="wsPaymentMethod" class="form-select" required>
+              <div class="gg-custom-select" id="wsPaymentMethodCustom">
+                <button type="button" class="form-select text-start" id="wsPaymentMethodTrigger">Cash</button>
+                <div class="gg-custom-select-list d-none" id="wsPaymentMethodList">
+                  <div class="gg-custom-select-option is-active" data-value="Cash">Cash</div>
+                  <div class="gg-custom-select-option" data-value="GCash">GCash</div>
+                </div>
+              </div>
+              <select name="payment_method" id="wsPaymentMethod" class="gg-visually-hidden" required>
                 <option value="Cash">Cash</option>
                 <option value="GCash">GCash</option>
               </select>
@@ -112,35 +119,44 @@ document.addEventListener('DOMContentLoaded', function () {
   var amountPaid     = document.getElementById('wsAmountPaid');
   var changeWrap     = document.getElementById('wsChangeWrap');
   var changeDisplay  = document.getElementById('wsChangeDisplay');
-  var productTrigger = document.getElementById('wsProductTrigger');
-  var productList    = document.getElementById('wsProductList');
   var currentTotal   = 0;
 
-  // Custom dropdown: picking an option sets the real (visually-hidden)
-  // <select>'s value and fires a real 'change' event on it, so
-  // everything below (recalc, form submission) stays exactly as if the
-  // customer had picked it from a native <select> — this div/list is
-  // only ever a display layer on top of that.
-  productTrigger.addEventListener('click', function () {
-    productList.classList.toggle('d-none');
-  });
+  // Hand-rolled dropdown, no library — a native <select>'s OS-rendered
+  // option list can't be sized via CSS at all (especially iOS), but a
+  // third-party JS enhancer (Choices.js) broke real functionality here
+  // three times over before being reverted. Picking a custom option sets
+  // the real (visually-hidden) <select>'s value and fires a real
+  // 'change' event on it, so everything downstream (recalc,
+  // applyPaymentMethod, form submission) behaves exactly as if it had
+  // been picked from a native <select> — the custom div/list is only
+  // ever a display layer on top of that real one.
+  function initCustomSelect(wrapId, selectEl, triggerId, listId) {
+    var wrap    = document.getElementById(wrapId);
+    var trigger = document.getElementById(triggerId);
+    var list    = document.getElementById(listId);
 
-  productList.querySelectorAll('.gg-custom-select-option').forEach(function (optionEl) {
-    optionEl.addEventListener('click', function () {
-      productSelect.value = optionEl.getAttribute('data-value');
-      productTrigger.textContent = optionEl.textContent.trim();
-      productList.querySelectorAll('.gg-custom-select-option').forEach(function (o) { o.classList.remove('is-active'); });
-      optionEl.classList.add('is-active');
-      productList.classList.add('d-none');
-      productSelect.dispatchEvent(new Event('change'));
+    trigger.addEventListener('click', function () {
+      list.classList.toggle('d-none');
     });
-  });
 
-  document.addEventListener('click', function (e) {
-    if (! document.getElementById('wsProductCustom').contains(e.target)) {
-      productList.classList.add('d-none');
-    }
-  });
+    list.querySelectorAll('.gg-custom-select-option').forEach(function (optionEl) {
+      optionEl.addEventListener('click', function () {
+        selectEl.value = optionEl.getAttribute('data-value');
+        trigger.textContent = optionEl.textContent.trim();
+        list.querySelectorAll('.gg-custom-select-option').forEach(function (o) { o.classList.remove('is-active'); });
+        optionEl.classList.add('is-active');
+        list.classList.add('d-none');
+        selectEl.dispatchEvent(new Event('change'));
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (! wrap.contains(e.target)) list.classList.add('d-none');
+    });
+  }
+
+  initCustomSelect('wsProductCustom', productSelect, 'wsProductTrigger', 'wsProductList');
+  initCustomSelect('wsPaymentMethodCustom', paymentMethod, 'wsPaymentMethodTrigger', 'wsPaymentMethodList');
 
   function recalc() {
     var opt = productSelect.options[productSelect.selectedIndex];
