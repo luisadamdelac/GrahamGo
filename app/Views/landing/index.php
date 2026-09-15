@@ -48,7 +48,8 @@
     .hero-lead { text-align: justify; text-justify: inter-word; }
   }
 
-  .landing-nav { background: rgba(255,250,244,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--gg-border); position: sticky; top: 0; z-index: 1030; }
+  .landing-sticky-top { position: sticky; top: 0; z-index: 1030; }
+  .landing-nav { background: rgba(255,250,244,.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--gg-border); }
 
   .step-num {
     width: 32px; height: 32px; border-radius: 50%;
@@ -94,36 +95,45 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand landing-nav py-2 py-md-3">
-  <div class="container flex-nowrap">
-    <a class="navbar-brand d-flex align-items-center gap-2 flex-shrink-0" href="<?= site_url('/') ?>">
-      <img src="<?= base_url('assets/img/logo.png') ?>" alt="GrahamGo" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">
-      <span class="d-none d-sm-inline">GrahamGo</span>
-    </a>
-    <div class="ms-auto d-flex align-items-center gap-1 gap-md-3 flex-wrap justify-content-end">
-      <a href="#contact" class="text-decoration-none small fw-medium d-none d-md-inline" style="color:var(--gg-cocoa-light);">Contact</a>
-      <!-- Intentionally always shown as a guest, logged in or not: on a
-           shared device, a "My Account" / "Admin Dashboard" shortcut
-           sitting here would broadcast that a session is active to
-           anyone who glances at the screen. The safety banner below
-           still tells a signed-in visitor what's going on and gives
-           them a one-click way out — this row just isn't the place
-           for it. -->
-      <a href="<?= site_url('login') ?>" class="btn btn-outline-dark btn-sm text-nowrap">Login</a>
-      <a href="<?= site_url('register') ?>" class="btn btn-gg-primary btn-sm text-nowrap">Register</a>
+<div class="landing-sticky-top">
+  <nav class="navbar navbar-expand landing-nav py-2 py-md-3">
+    <div class="container flex-nowrap">
+      <a class="navbar-brand d-flex align-items-center gap-2 flex-shrink-0" href="<?= site_url('/') ?>">
+        <img src="<?= base_url('assets/img/logo.png') ?>" alt="GrahamGo" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+        <span class="d-none d-sm-inline">GrahamGo</span>
+      </a>
+      <div class="ms-auto d-flex align-items-center gap-1 gap-md-3 flex-wrap justify-content-end">
+        <a href="#contact" class="text-decoration-none small fw-medium d-none d-md-inline" style="color:var(--gg-cocoa-light);">Contact</a>
+        <!-- Intentionally always shown as a guest, logged in or not: on a
+             shared device, a "My Account" / "Admin Dashboard" shortcut
+             sitting here would broadcast that a session is active to
+             anyone who glances at the screen. The safety banner below
+             still tells a signed-in visitor what's going on and gives
+             them a one-click way out — this row just isn't the place
+             for it. -->
+        <a href="<?= site_url('login') ?>" class="btn btn-outline-dark btn-sm text-nowrap">Login</a>
+        <a href="<?= site_url('register') ?>" class="btn btn-gg-primary btn-sm text-nowrap">Register</a>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<?php if ($isCustomer && $isOwner): ?>
-  <div class="container mt-2">
-    <div class="alert alert-warning d-flex align-items-center gap-2 py-2 mb-0 small">
-      <i class="bi bi-shield-exclamation flex-shrink-0"></i>
-      <span>Both a Customer and an Admin account are signed in on this browser. On a shared or public device, use
-        <a href="<?= site_url('logout-all') ?>" class="alert-link">Log out of all accounts</a> when you're done.</span>
+  <?php if ($isCustomer && $isOwner): ?>
+    <!-- Sits inside the same sticky wrapper as the nav (rather than
+         sticky on its own) so it scrolls back into view together with
+         it instead of needing a scroll to the very top to find again —
+         it's the one-click way out of a shared-device session risk, so
+         it should stay reachable the whole time someone's on the page. -->
+    <div class="py-2" style="background: rgba(255,250,244,.98); border-bottom: 1px solid var(--gg-border);">
+      <div class="container">
+        <div class="alert alert-warning d-flex align-items-center gap-2 py-2 mb-0 small">
+          <i class="bi bi-shield-exclamation flex-shrink-0"></i>
+          <span>Both a Customer and an Admin account are signed in on this browser. On a shared or public device, use
+            <a href="<?= site_url('logout-all') ?>" class="alert-link">Log out of all accounts</a> when you're done.</span>
+        </div>
+      </div>
     </div>
-  </div>
-<?php endif; ?>
+  <?php endif; ?>
+</div>
 
 <!-- Hero -->
 <section class="landing-hero">
