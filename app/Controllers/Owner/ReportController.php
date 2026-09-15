@@ -238,7 +238,7 @@ class ReportController extends BaseController
     {
         $options = new Options();
         $options->set('isRemoteEnabled', false);
-        $options->set('defaultFont', 'Helvetica');
+        $options->set('defaultFont', 'DejaVu Sans');
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml(view($viewName, $data));
