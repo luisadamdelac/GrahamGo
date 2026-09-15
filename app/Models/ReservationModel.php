@@ -47,17 +47,16 @@ class ReservationModel extends Model
     }
 
     /**
-     * A customer's own reservation counts, bucketed into the same three
-     * groups the landing page's hero card shows — used to turn its
-     * "1/2/3" step numbers into actual per-status counts. Ready is
-     * folded into "confirmed" (still in progress toward claim, just
-     * further along) since the card only has three slots.
+     * A customer's own reservation counts, one per literal status label
+     * shown on the landing page's hero card — each number is an exact
+     * count of that status alone (no folding/grouping with any other
+     * status), so it matches 1:1 with what the label says.
      */
     public function statusCountsForUser(int $userId): array
     {
         return [
             'pending'   => $this->where('user_id', $userId)->where('status', 'Pending')->countAllResults(),
-            'confirmed' => $this->where('user_id', $userId)->whereIn('status', ['Confirmed', 'Ready'])->countAllResults(),
+            'confirmed' => $this->where('user_id', $userId)->where('status', 'Confirmed')->countAllResults(),
             'claimed'   => $this->where('user_id', $userId)->where('status', 'Claimed')->countAllResults(),
         ];
     }
