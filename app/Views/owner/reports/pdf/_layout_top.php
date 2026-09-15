@@ -53,7 +53,9 @@ $logoDataUri = is_file($logoPath)
   .gg-pdf-header {
     position: fixed; top: -110px; left: 0; right: 0;
     border-bottom: 2px solid #E08A3E; padding-bottom: 10px;
+    text-align: center;
   }
+  .gg-pdf-header table { width: auto; margin: 0 auto; }
   .gg-pdf-logo { width: 34px; height: 34px; }
   .gg-pdf-brand { font-size: 18px; font-weight: bold; color: #4A3324; }
   .gg-pdf-sub { font-size: 10px; color: #7A6858; margin-top: 2px; }
