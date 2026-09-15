@@ -21,7 +21,6 @@ class SettingController extends BaseController
         return view('owner/settings/index', [
             'title'    => 'Settings',
             'settings' => $settings,
-            'hasAppPassword' => (bool) $this->settingModel->getValue('smtp_app_password'),
             'maxReservationDaysAhead' => (int) $this->settingModel->getValue('max_reservation_days_ahead', '7'),
         ]);
     }
@@ -59,12 +58,6 @@ class SettingController extends BaseController
 
         $this->settingModel->setValue('smtp_email', $this->request->getPost('smtp_email'));
         $this->settingModel->setValue('smtp_from_name', $this->request->getPost('smtp_from_name') ?: 'GrahamGo');
-
-        $appPassword = $this->request->getPost('smtp_app_password');
-        if (! empty($appPassword)) {
-            // Gmail app passwords are shown with spaces; SMTP auth needs them removed.
-            $this->settingModel->setValue('smtp_app_password', str_replace(' ', '', $appPassword));
-        }
 
         return redirect()->to('owner/settings')->with('success', 'Email settings updated.');
     }

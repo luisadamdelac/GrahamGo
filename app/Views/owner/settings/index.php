@@ -1,7 +1,7 @@
 <?= view('layouts/owner_header', ['title' => 'Settings']) ?>
 
 <h4 class="mb-1 enter">Settings</h4>
-<p class="text-muted small mb-4">Configure the Gmail account used to send password reset emails.</p>
+<p class="text-muted small mb-4">Configure the sender identity used on emails GrahamGo sends out.</p>
 
 <div class="row g-3 g-lg-4">
   <div class="col-12 col-lg-5">
@@ -27,27 +27,18 @@
   <div class="col-12 col-lg-7">
     <div class="card">
       <div class="card-body p-4">
-        <h6 class="mb-3"><i class="bi bi-envelope-at-fill" style="color:var(--gg-primary-dark);"></i> Email (SMTP) Settings</h6>
+        <h6 class="mb-3"><i class="bi bi-envelope-at-fill" style="color:var(--gg-primary-dark);"></i> Email Settings</h6>
 
         <?= form_open('owner/settings') ?>
           <div class="row g-3 mb-3">
             <div class="col-12 col-md-6">
-              <label class="form-label">Gmail Address</label>
-              <input type="email" name="smtp_email" class="form-control" placeholder="yourname@gmail.com" value="<?= esc(old('smtp_email', $settings['smtp_email'] ?? '')) ?>">
-              <div class="form-text">This Gmail account will appear as the sender of reset-password emails.</div>
+              <label class="form-label">Sender Email</label>
+              <input type="email" name="smtp_email" class="form-control" placeholder="yourname@example.com" value="<?= esc(old('smtp_email', $settings['smtp_email'] ?? '')) ?>">
+              <div class="form-text">Shown as the sender ("From") on every email GrahamGo sends out.</div>
             </div>
             <div class="col-12 col-md-6">
               <label class="form-label">Sender Name</label>
               <input type="text" name="smtp_from_name" class="form-control" placeholder="GrahamGo" value="<?= esc(old('smtp_from_name', $settings['smtp_from_name'] ?? 'GrahamGo')) ?>">
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Gmail App Password</label>
-            <input type="password" name="smtp_app_password" class="form-control" style="max-width:420px;" placeholder="<?= $hasAppPassword ? '•••• •••• •••• •••• (already set — leave blank to keep)' : 'abcd efgh ijkl mnop' ?>">
-            <div class="form-text">
-              16-character App Password from
-              <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a>
-              &mdash; requires 2-Step Verification enabled on the Gmail account. Not your regular Gmail password.
             </div>
           </div>
           <button type="submit" class="btn btn-gg-primary"><i class="bi bi-check2"></i> Save Settings</button>
@@ -56,7 +47,7 @@
         <hr class="my-4">
 
         <h6 class="mb-2"><i class="bi bi-send-check"></i> Test Email</h6>
-        <p class="text-muted small">Send a test email to confirm everything is working. Leave blank to send it to the Gmail address above.</p>
+        <p class="text-muted small">Send a test email to confirm everything is working. Leave blank to send it to the sender email above.</p>
         <?= form_open('owner/settings/test-email') ?>
           <div class="row g-2 align-items-start">
             <div class="col-12 col-md-7">
