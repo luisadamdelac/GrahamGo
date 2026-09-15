@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ProductModel;
+use App\Models\ReservationModel;
 use App\Models\UserModel;
 
 /**
@@ -20,12 +21,22 @@ class LandingController extends BaseController
         // it swaps the Login/Register buttons for "Go to Dashboard"
         // links matching whichever role(s) are currently active.
         $productModel = new ProductModel();
+        $customer     = current_customer();
+
+        // The hero card's Pending/Confirmed/Claimed row shows the
+        // signed-in customer's own reservation counts per status — a
+        // guest (or a customer with no reservations yet) just sees
+        // zeros across the board rather than the query running at all.
+        $statusCounts = $customer
+            ? (new ReservationModel())->statusCountsForUser($customer['user_id'])
+            : ['pending' => 0, 'confirmed' => 0, 'claimed' => 0];
 
         return view('landing/index', [
-            'title'      => 'GrahamGo, Graham Mango & Oreo Graham',
-            'products'   => $productModel->activeProducts(),
-            'isCustomer' => (bool) current_customer(),
-            'isOwner'    => (bool) current_owner(),
+            'title'        => 'GrahamGo, Graham Mango & Oreo Graham',
+            'products'     => $productModel->activeProducts(),
+            'isCustomer'   => (bool) $customer,
+            'isOwner'      => (bool) current_owner(),
+            'statusCounts' => $statusCounts,
         ]);
     }
 

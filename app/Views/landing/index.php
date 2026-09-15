@@ -161,19 +161,19 @@
           <div class="row g-2 text-center">
             <div class="col-4 mini-step">
               <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
-                <div class="fw-bold" style="color:var(--gg-primary-dark);">1</div>
+                <div class="fw-bold" style="color:var(--gg-primary-dark);"><?= $statusCounts['pending'] ?></div>
                 <div class="small text-muted">Pending</div>
               </div>
             </div>
             <div class="col-4 mini-step">
               <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
-                <div class="fw-bold" style="color:var(--gg-primary-dark);">2</div>
+                <div class="fw-bold" style="color:var(--gg-primary-dark);"><?= $statusCounts['confirmed'] ?></div>
                 <div class="small text-muted">Confirmed</div>
               </div>
             </div>
             <div class="col-4 mini-step">
               <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
-                <div class="fw-bold" style="color:var(--gg-primary-dark);">3</div>
+                <div class="fw-bold" style="color:var(--gg-primary-dark);"><?= $statusCounts['claimed'] ?></div>
                 <div class="small text-muted">Claimed</div>
               </div>
             </div>
