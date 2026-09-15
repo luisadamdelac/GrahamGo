@@ -2,7 +2,17 @@
 
 <table class="gg-pdf-table">
   <thead>
-    <tr><th>Reservation</th><th>Claim Date</th><th>Customer</th><th>Type</th><th>Product</th><th>Qty</th><th>Total</th><th>Payment</th><th>Status</th></tr>
+    <tr>
+      <th style="width:8%;">Reservation</th>
+      <th style="width:10%;">Claim Date</th>
+      <th style="width:19%;">Customer</th>
+      <th style="width:8%;">Type</th>
+      <th style="width:19%;">Product</th>
+      <th style="width:6%;">Qty</th>
+      <th style="width:10%;">Total</th>
+      <th style="width:10%;">Payment</th>
+      <th style="width:10%;">Status</th>
+    </tr>
   </thead>
   <tbody>
     <?php foreach ($reservations as $r): ?>

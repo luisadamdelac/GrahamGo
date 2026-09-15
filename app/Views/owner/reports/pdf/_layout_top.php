@@ -61,8 +61,15 @@ $logoDataUri = is_file($logoPath)
   .gg-pdf-sub { font-size: 10px; color: #7A6858; margin-top: 2px; }
   .gg-pdf-title { font-size: 15px; color: #C46F26; margin-top: 8px; font-weight: bold; }
   .gg-pdf-meta { font-size: 10px; color: #7A6858; margin-top: 3px; }
-  .gg-pdf-table th { background: #FBF3EA; color: #4A3324; text-align: left; vertical-align: middle; line-height: 1.5; padding: 7px 8px; border-bottom: 1.5px solid #E08A3E; font-size: 10px; }
-  .gg-pdf-table td { vertical-align: middle; line-height: 1.5; padding: 6px 8px; border-bottom: 1px solid #F0E4D6; font-size: 10px; }
+  /* table-layout:fixed + explicit per-column widths (set once, on each
+     <th>) — without it, dompdf sizes each row's columns from that
+     row's own content independently instead of one consistent width
+     for the whole column, so the header's column boundaries didn't
+     line up with the data rows underneath it. Widths are set per
+     report in each pdf/*.php view's <th style="width:...">. */
+  .gg-pdf-table { table-layout: fixed; }
+  .gg-pdf-table th { background: #FBF3EA; color: #4A3324; text-align: left; vertical-align: middle; line-height: 1.5; padding: 7px 8px; border-bottom: 1.5px solid #E08A3E; font-size: 10px; overflow: hidden; }
+  .gg-pdf-table td { vertical-align: middle; line-height: 1.5; padding: 6px 8px; border-bottom: 1px solid #F0E4D6; font-size: 10px; overflow: hidden; word-wrap: break-word; }
   .gg-pdf-footer {
     position: fixed; bottom: -35px; left: 0; right: 0;
     padding-top: 6px; border-top: 1px solid #F0E4D6;

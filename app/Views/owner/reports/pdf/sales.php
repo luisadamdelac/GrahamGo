@@ -2,7 +2,16 @@
 
 <table class="gg-pdf-table">
   <thead>
-    <tr><th>Date</th><th>Reservation</th><th>Customer</th><th>Product(s)</th><th>Qty</th><th>Amount</th><th>Payment</th><th>Status</th></tr>
+    <tr>
+      <th style="width:16%;">Date</th>
+      <th style="width:9%;">Reservation</th>
+      <th style="width:17%;">Customer</th>
+      <th style="width:23%;">Product(s)</th>
+      <th style="width:6%;">Qty</th>
+      <th style="width:10%;">Amount</th>
+      <th style="width:9%;">Payment</th>
+      <th style="width:10%;">Status</th>
+    </tr>
   </thead>
   <tbody>
     <?php foreach ($sales as $s): ?>

@@ -2,7 +2,13 @@
 
 <table class="gg-pdf-table">
   <thead>
-    <tr><th>Product</th><th>Reserved (to date)</th><th>Sold (to date)</th><th>Currently Available</th><th>Status</th></tr>
+    <tr>
+      <th style="width:35%;">Product</th>
+      <th style="width:18%;">Reserved (to date)</th>
+      <th style="width:15%;">Sold (to date)</th>
+      <th style="width:17%;">Currently Available</th>
+      <th style="width:15%;">Status</th>
+    </tr>
   </thead>
   <tbody>
     <?php foreach ($summary as $row): ?>
