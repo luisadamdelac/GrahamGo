@@ -19,6 +19,12 @@
   }
   .choices__list--dropdown .choices__item--selectable.is-highlighted { background: var(--gg-primary-light) !important; color: var(--gg-cocoa); }
   .choices__list--dropdown .choices__input { margin: 0; }
+  /* Choices' own default item size reads as oversized next to the rest
+     of the page's compact form controls — trimmed down to a normal
+     dropdown-menu-ish row height instead. */
+  .choices__list--dropdown .choices__item { padding: .55rem .9rem; font-size: .9rem; }
+  .choices__list--dropdown { max-height: 260px; }
+  .choices__list--dropdown .choices__list { max-height: 260px; }
 </style>
 
 <h4 class="mb-1 enter"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Walk-in Sale</h4>
