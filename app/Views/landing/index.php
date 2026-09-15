@@ -158,6 +158,13 @@
               <p class="text-muted small mb-0">Reservation &amp; Sales System</p>
             </div>
           </div>
+          <?php if ($isCustomer): ?>
+            <!-- Shared-device safety: without this, whoever opens the
+                 landing page next on the same browser would silently see
+                 the previous customer's own reservation counts below
+                 with no indication it isn't theirs. -->
+            <p class="small text-muted mb-2"><i class="bi bi-person-check-fill"></i> Signed in as <strong><?= esc(current_customer()['name']) ?></strong></p>
+          <?php endif; ?>
           <div class="row g-2 text-center">
             <div class="col-4 mini-step">
               <div class="p-2 rounded-3" style="background:var(--gg-primary-light);">
