@@ -34,7 +34,7 @@ $ggStockText       = $ggLowStockAlerts === 1 ? '1 product is running low on stoc
 $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSignups . ' new customers signed up';
 ?>
 <div class="dropdown">
-  <button class="topbar-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+  <button class="topbar-icon-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" title="Notifications">
     <i class="bi bi-bell-fill"></i>
     <span data-role="notif-bell-badge" class="topbar-badge" style="<?= $ggTotalAlerts > 0 ? '' : 'display:none;' ?>"><?= $ggTotalAlerts ?></span>
   </button>

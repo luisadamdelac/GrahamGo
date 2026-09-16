@@ -529,6 +529,20 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
    instead of looking noticeably narrower. Capped on wider screens
    where 100vw would otherwise make it absurdly wide. */
 .gg-notif-menu { width: calc(100vw - 32px); max-width: 380px; padding: 0; overflow: hidden; }
+/* On mobile, Bootstrap positions the dropdown relative to the bell
+   icon itself (via Popper.js) — since the bell isn't the last/right-
+   most icon in the topbar (the account menu sits after it), that left
+   its right edge short of the page's own right padding, not lined up
+   with the cards below it. data-bs-display="static" on the toggle (see
+   owner_notification_bell.php) turns off Popper for this one so this
+   plain CSS position wins instead, pinned to the same 16px the content
+   area itself uses. */
+@media (max-width: 991.98px) {
+  .owner-topbar .gg-notif-menu {
+    position: fixed !important; inset: auto !important;
+    top: 60px !important; right: 16px !important; left: auto !important;
+  }
+}
 .gg-notif-header { padding: .8rem 1rem; border-bottom: 1px solid var(--gg-border); font-weight: 600; }
 .gg-notif-header i { color: var(--gg-muted); margin-right: .3rem; }
 .notif-mark-all-btn { font-size: .78rem; text-decoration: none; font-weight: 500; }
