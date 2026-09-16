@@ -46,7 +46,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
     <li data-role="notif-overdue-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadOverdue > 0 ? '' : 'display:none;' ?>">
       <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div class="gg-notif-icon"><i class="bi bi-alarm-fill"></i></div>
-        <div style="min-width:0;">
+        <div class="gg-notif-text">
           <div class="fw-semibold" data-role="notif-overdue-text"><?= esc($ggOverdueText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Claim date has already passed. Check on these first.</div>
         </div>
@@ -57,7 +57,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
     <li data-role="notif-reservation-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadReservations > 0 ? '' : 'display:none;' ?>">
       <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div class="gg-notif-icon"><i class="bi bi-bag-check-fill"></i></div>
-        <div style="min-width:0;">
+        <div class="gg-notif-text">
           <div class="fw-semibold" data-role="notif-reservation-text"><?= esc($ggReservationText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Waiting to be confirmed, prepared, or claimed</div>
         </div>
@@ -68,7 +68,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
     <li data-role="notif-stock-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadStock > 0 ? '' : 'display:none;' ?>">
       <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/products') ?>">
         <div class="gg-notif-icon"><i class="bi bi-box-seam-fill"></i></div>
-        <div style="min-width:0;">
+        <div class="gg-notif-text">
           <div class="fw-semibold" data-role="notif-stock-text"><?= esc($ggStockText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Restock soon before it runs out completely</div>
         </div>
@@ -79,7 +79,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
     <li data-role="notif-signup-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadSignups > 0 ? '' : 'display:none;' ?>">
       <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/customers') ?>">
         <div class="gg-notif-icon"><i class="bi bi-person-plus-fill"></i></div>
-        <div style="min-width:0;">
+        <div class="gg-notif-text">
           <div class="fw-semibold" data-role="notif-signup-text"><?= esc($ggSignupText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Joined GrahamGo in the last 48 hours</div>
         </div>

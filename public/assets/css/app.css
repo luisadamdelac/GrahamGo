@@ -528,13 +528,18 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .notif-item:last-of-type { border-bottom: none; }
 .gg-notif-row {
   flex-grow: 1; min-width: 0; display: flex; align-items: flex-start;
-  gap: .7rem; padding: .75rem 1rem; border-radius: 0;
+  gap: .7rem; padding: .75rem 1rem; border-radius: 0; white-space: normal;
 }
 .gg-notif-icon {
   width: 34px; height: 34px; border-radius: 50%; background: var(--gg-bg);
   color: var(--gg-muted); display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; font-size: .95rem;
 }
+/* The title/subtitle block — needs its own flex-grow so it actually
+   fills the row's remaining space; without it the block only takes
+   its content's width, leaving the unread dot sitting right up
+   against the text instead of pushed to the row's far right edge. */
+.gg-notif-text { flex: 1 1 auto; min-width: 0; }
 .gg-notif-dot {
   width: 8px; height: 8px; border-radius: 50%; background: #3B6FB5;
   flex-shrink: 0; margin-top: .4rem;
