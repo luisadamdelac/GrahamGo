@@ -22,7 +22,7 @@ class ReviewController extends BaseController
         // is empty, so reaching this with an existing review means a
         // direct/repeat POST; reject it the same way either way.
         if ($reviewModel->myReview($userId, $productId)) {
-            return redirect()->to('products/' . $productId)->with('error', 'You\'ve already reviewed this product — reviews can\'t be edited once submitted.');
+            return redirect()->to('products/' . $productId)->with('error', 'You\'ve already reviewed this product. Reviews can\'t be edited once submitted.');
         }
 
         $rules = [

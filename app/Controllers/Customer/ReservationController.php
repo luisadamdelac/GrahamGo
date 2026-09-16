@@ -118,10 +118,10 @@ class ReservationController extends BaseController
     {
         $emailService = mailer();
         $emailService->setTo($customer['email']);
-        $emailService->setSubject('Reservation Received — #' . $reservationId);
+        $emailService->setSubject('Reservation Received (#' . $reservationId . ')');
         $emailService->setMessage(email_template($emailService,
             "<p style=\"margin:0 0 16px;\">Hi " . esc($customer['name']) . ",</p>" .
-            "<p style=\"margin:0 0 16px;\">We received your reservation. The owner will review and confirm it soon — you'll get another email once it's ready to claim.</p>" .
+            "<p style=\"margin:0 0 16px;\">We received your reservation. The owner will review and confirm it soon. You'll get another email once it's ready to claim.</p>" .
             "<div style=\"background:#FBF3EA; border-radius:12px; padding:14px 16px;\">" .
             "<strong>" . esc($product['product_name']) . "</strong> &times; {$quantity}<br>" .
             "Claim date: " . esc(date('M j, Y', strtotime($claimDate))) . "<br>" .

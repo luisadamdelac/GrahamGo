@@ -21,7 +21,7 @@
 </style>
 
 <h4 class="mb-1 enter"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Walk-in Sale</h4>
-<p class="text-muted mb-4">For a customer buying and paying on the spot — deducts stock and records the sale immediately, no online reservation needed.</p>
+<p class="text-muted mb-4">For a customer buying and paying on the spot. Deducts stock and records the sale immediately, no online reservation needed.</p>
 
 <div class="row justify-content-center">
   <div class="col-12 col-lg-7">
@@ -45,7 +45,7 @@
                 <div class="gg-custom-select-list d-none" id="wsProductList">
                   <?php foreach ($products as $p): ?>
                     <div class="gg-custom-select-option" data-value="<?= $p['product_id'] ?>">
-                      <?= esc($p['product_name']) ?> — ₱<?= number_format($p['price'], 2) ?> (<?= (int) $p['stock'] ?> in stock)
+                      <?= esc($p['product_name']) ?> (₱<?= number_format($p['price'], 2) ?>, <?= (int) $p['stock'] ?> in stock)
                     </div>
                   <?php endforeach; ?>
                 </div>
@@ -54,7 +54,7 @@
                 <option value="">Select product</option>
                 <?php foreach ($products as $p): ?>
                   <option value="<?= $p['product_id'] ?>" data-price="<?= esc($p['price'], 'attr') ?>" data-stock="<?= (int) $p['stock'] ?>">
-                    <?= esc($p['product_name']) ?> — ₱<?= number_format($p['price'], 2) ?> (<?= (int) $p['stock'] ?> in stock)
+                    <?= esc($p['product_name']) ?> (₱<?= number_format($p['price'], 2) ?>, <?= (int) $p['stock'] ?> in stock)
                   </option>
                 <?php endforeach; ?>
               </select>
@@ -91,7 +91,7 @@
             <div class="col-md-6" id="wsAmountPaidWrap">
               <label class="form-label">Amount Paid</label>
               <input type="number" step="0.01" min="0" name="amount_paid" id="wsAmountPaid" class="form-control" required>
-              <div class="form-text">Defaults to the total — raise it if the customer hands over more, to work out change.</div>
+              <div class="form-text">Defaults to the total. Raise it if the customer hands over more, to work out change.</div>
             </div>
             <div class="col-md-6" id="wsChangeWrap">
               <label class="form-label">Change</label>

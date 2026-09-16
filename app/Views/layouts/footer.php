@@ -1,5 +1,5 @@
   <footer class="text-center py-4 small d-none d-lg-block">
-    <img src="<?= base_url('assets/img/logo.png') ?>" alt="" style="width:16px;height:16px;border-radius:50%;object-fit:cover;vertical-align:-2px;"> &copy; <?= date('Y') ?> GrahamGo &mdash; Graham Mango &amp; Oreo Graham
+    <img src="<?= base_url('assets/img/logo.png') ?>" alt="" style="width:16px;height:16px;border-radius:50%;object-fit:cover;vertical-align:-2px;"> &copy; <?= date('Y') ?> GrahamGo. Graham Mango &amp; Oreo Graham
   </footer>
 </div>
 

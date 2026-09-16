@@ -53,7 +53,7 @@
         <?php if ($canReview): ?>
           <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
             <i class="bi bi-info-circle-fill"></i>
-            You've claimed this product — <a href="<?= site_url('my-reservations') ?>">rate it from My Reservations</a>.
+            You've claimed this product. <a href="<?= site_url('my-reservations') ?>">Rate it from My Reservations</a>.
           </div>
         <?php endif; ?>
 

@@ -113,7 +113,7 @@ class ReservationController extends BaseController
     {
         $emailService = mailer();
         $emailService->setTo($reservation['email']);
-        $emailService->setSubject('Your Order is Ready — #' . $reservation['reservation_id']);
+        $emailService->setSubject('Your Order is Ready (#' . $reservation['reservation_id'] . ')');
 
         $itemsHtml = '';
         foreach ($details as $d) {
@@ -122,7 +122,7 @@ class ReservationController extends BaseController
 
         $emailService->setMessage(email_template($emailService,
             "<p style=\"margin:0 0 16px;\">Hi " . esc($reservation['customer_name']) . ",</p>" .
-            "<p style=\"margin:0 0 16px;\">Good news — your order is ready for pickup!</p>" .
+            "<p style=\"margin:0 0 16px;\">Good news. Your order is ready for pickup!</p>" .
             "<div style=\"background:#FBF3EA; border-radius:12px; padding:14px 16px;\">" .
             $itemsHtml .
             "Total: &#8369;" . number_format($reservation['total_amount'], 2) .

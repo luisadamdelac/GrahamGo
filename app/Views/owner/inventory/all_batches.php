@@ -3,7 +3,7 @@
 <a href="<?= site_url('owner/products') ?>" class="small text-muted text-decoration-none d-inline-block mb-2"><i class="bi bi-arrow-left"></i> Back to Products</a>
 
 <h4 class="mb-3 enter"><i class="bi bi-layers" style="color:var(--gg-primary-dark);"></i> All Stock Batches</h4>
-<p class="text-muted small mb-3">Full batch history across every product, newest first — filter by the date a batch was received.</p>
+<p class="text-muted small mb-3">Full batch history across every product, newest first. Filter by the date a batch was received.</p>
 
 <form method="get" class="row g-2 mb-3">
   <div class="col-12 col-sm-6 col-md-auto">

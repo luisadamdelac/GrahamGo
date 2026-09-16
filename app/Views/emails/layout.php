@@ -16,7 +16,7 @@
         </tr>
         <tr>
           <td align="center" style="padding:16px 24px; background:#FBF3EA; color:#8A7A6A; font-size:11px;">
-            &copy; <?= date('Y') ?> GrahamGo &mdash; this is an automated email, please do not reply directly.
+            &copy; <?= date('Y') ?> GrahamGo. This is an automated email, please do not reply directly.
           </td>
         </tr>
       </table>

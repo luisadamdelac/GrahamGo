@@ -16,7 +16,7 @@
               <input type="number" name="max_reservation_days_ahead" class="form-control" min="1" max="90" value="<?= esc(old('max_reservation_days_ahead', $maxReservationDaysAhead)) ?>" required>
               <span class="input-group-text">days</span>
             </div>
-            <div class="form-text">Customers can only pick a claim date up to this many days from today — keeps reservations within the product's shelf life.</div>
+            <div class="form-text">Customers can only pick a claim date up to this many days from today. This keeps reservations within the product's shelf life.</div>
           </div>
           <button type="submit" class="btn btn-gg-primary"><i class="bi bi-check2"></i> Save Rule</button>
         <?= form_close() ?>

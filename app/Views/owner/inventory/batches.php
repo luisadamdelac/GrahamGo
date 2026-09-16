@@ -6,7 +6,7 @@
   <h4 class="mb-0 enter"><?= esc($product['product_name']) ?></h4>
   <span class="fw-bold fs-5" style="color:var(--gg-primary-dark);"><?= $product['stock'] ?> <span class="fs-6 fw-normal text-muted">in stock</span></span>
 </div>
-<p class="text-muted small mb-3">FIFO queue — oldest batch is consumed first when a reservation is confirmed or stock is manually removed.</p>
+<p class="text-muted small mb-3">FIFO queue. Oldest batch is consumed first when a reservation is confirmed or stock is manually removed.</p>
 <button type="button" class="btn btn-gg-primary mb-4" data-bs-toggle="modal" data-bs-target="#ggRestockModal"><i class="bi bi-box-arrow-in-down"></i> Restock</button>
 
 <?php

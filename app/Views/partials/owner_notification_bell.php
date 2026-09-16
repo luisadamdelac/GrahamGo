@@ -45,7 +45,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div>
           <div class="fw-semibold" data-role="notif-overdue-text"><?= esc($ggOverdueText) ?></div>
-          <div class="text-muted" style="font-size:.78rem;">Claim date has already passed — check on these first</div>
+          <div class="text-muted" style="font-size:.78rem;">Claim date has already passed. Check on these first.</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="overdue" title="Mark as read"><i class="bi bi-check2"></i></button>

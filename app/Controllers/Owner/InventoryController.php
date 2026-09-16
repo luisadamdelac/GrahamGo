@@ -52,7 +52,7 @@ class InventoryController extends BaseController
         }
 
         return view('owner/inventory/batches', [
-            'title'   => 'Stock Batches — ' . $product['product_name'],
+            'title'   => 'Stock Batches (' . $product['product_name'] . ')',
             'product' => $product,
             'batches' => $this->stockBatchModel->breakdown((int) $id),
         ]);

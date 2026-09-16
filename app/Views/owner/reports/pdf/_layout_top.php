@@ -87,7 +87,7 @@ $logoDataUri = is_file($logoPath)
       <?php endif; ?>
       <td style="border:none; padding:0; vertical-align:top;">
         <div class="gg-pdf-brand">GrahamGo</div>
-        <div class="gg-pdf-sub">Graham Mango &amp; Oreo Graham &mdash; Reservation &amp; Sales System</div>
+        <div class="gg-pdf-sub">Graham Mango &amp; Oreo Graham. Reservation &amp; Sales System</div>
       </td>
     </tr>
   </table>
