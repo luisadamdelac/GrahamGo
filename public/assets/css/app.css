@@ -523,7 +523,12 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
    square edges — safe now that the row's flex-grow bug (below) no
    longer lets content push wider than the menu itself, which is what
    made this same rule clip the mark-as-read button before. */
-.gg-notif-menu { width: 300px; max-width: calc(100vw - 24px); padding: 0; overflow: hidden; }
+/* Matches the dashboard content area's own side padding (.p-3 = 16px
+   each side on mobile, see owner_header.php's "owner-content" wrapper)
+   so the dropdown lines up with the width of the cards underneath it
+   instead of looking noticeably narrower. Capped on wider screens
+   where 100vw would otherwise make it absurdly wide. */
+.gg-notif-menu { width: calc(100vw - 32px); max-width: 380px; padding: 0; overflow: hidden; }
 .gg-notif-header { padding: .8rem 1rem; border-bottom: 1px solid var(--gg-border); font-weight: 600; }
 .gg-notif-header i { color: var(--gg-muted); margin-right: .3rem; }
 .notif-mark-all-btn { font-size: .78rem; text-decoration: none; font-weight: 500; }
