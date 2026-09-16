@@ -22,6 +22,19 @@
             <input type="text" id="claimDateInput" name="claim_date" class="form-control" value="<?= esc(old('claim_date', date('Y-m-d'))) ?>" required readonly>
             <div class="form-text">Must be on or before <?= esc(date('M j, Y', strtotime($maxClaimDate))) ?>.</div>
           </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="bi bi-truck"></i> Pickup or Delivery</label>
+            <div class="d-flex gap-2">
+              <input type="radio" class="btn-check" name="fulfillment_type" id="fulfillmentPickup" value="Pickup" autocomplete="off" <?= old('fulfillment_type', 'Pickup') === 'Pickup' ? 'checked' : '' ?>>
+              <label class="btn btn-outline-dark flex-fill" for="fulfillmentPickup"><i class="bi bi-shop"></i> Pickup</label>
+              <input type="radio" class="btn-check" name="fulfillment_type" id="fulfillmentDelivery" value="Delivery" autocomplete="off" <?= old('fulfillment_type') === 'Delivery' ? 'checked' : '' ?>>
+              <label class="btn btn-outline-dark flex-fill" for="fulfillmentDelivery"><i class="bi bi-bicycle"></i> Delivery</label>
+            </div>
+          </div>
+          <div class="mb-3" id="deliveryAddressWrap">
+            <label class="form-label"><i class="bi bi-geo-alt"></i> Delivery Address</label>
+            <textarea name="delivery_address" class="form-control" rows="2" placeholder="House/unit no., street, barangay..."><?= esc(old('delivery_address')) ?></textarea>
+          </div>
           <button type="submit" class="btn btn-gg-primary w-100 mt-2" id="reserveSubmitBtn"><i class="bi bi-send-check-fill"></i> Submit Reservation</button>
         <?= form_close() ?>
 
@@ -45,6 +58,19 @@
             defaultDate: '<?= esc(old('claim_date', date('Y-m-d'))) ?>',
             disableMobile: true,
           });
+
+          var deliveryAddressWrap  = document.getElementById('deliveryAddressWrap');
+          var deliveryAddressInput = deliveryAddressWrap.querySelector('textarea');
+          var fulfillmentRadios    = document.querySelectorAll('input[name="fulfillment_type"]');
+
+          function applyFulfillmentType() {
+            var isDelivery = document.getElementById('fulfillmentDelivery').checked;
+            deliveryAddressWrap.classList.toggle('d-none', ! isDelivery);
+            deliveryAddressInput.required = isDelivery;
+          }
+
+          fulfillmentRadios.forEach(function (r) { r.addEventListener('change', applyFulfillmentType); });
+          applyFulfillmentType();
         });
         </script>
       </div>

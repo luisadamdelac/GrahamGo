@@ -56,7 +56,7 @@ class ReportController extends BaseController
         return $this->streamExcel(
             'reservation-report_' . $from . '_to_' . $to . '.xlsx',
             'Reservations',
-            ['Reservation #', 'Claim Date', 'Customer', 'Customer Type', 'Product', 'Qty', 'Total Amount', 'Payment Status', 'Status'],
+            ['Reservation #', 'Claim Date', 'Customer', 'Customer Type', 'Product', 'Qty', 'Fulfillment', 'Total Amount', 'Payment Status', 'Status'],
             array_map(static fn ($r) => [
                 '#' . $r['reservation_id'],
                 date('M d, Y', strtotime($r['claim_date'])),
@@ -64,6 +64,7 @@ class ReportController extends BaseController
                 $r['customer_type'],
                 $r['product_name'],
                 (int) $r['quantity'],
+                $r['fulfillment_type'],
                 (float) $r['total_amount'],
                 $r['payment_status'],
                 $r['status'],
@@ -80,7 +81,7 @@ class ReportController extends BaseController
     private function reservationRows(string $from, string $to): array
     {
         $builder = db_connect()->table('reservations r')
-            ->select('r.reservation_id, r.claim_date, r.total_amount, r.payment_status, r.status, u.name AS customer_name, u.customer_type, p.product_name, rd.quantity')
+            ->select('r.reservation_id, r.claim_date, r.fulfillment_type, r.total_amount, r.payment_status, r.status, u.name AS customer_name, u.customer_type, p.product_name, rd.quantity')
             ->join('users u', 'u.user_id = r.user_id')
             ->join('reservation_details rd', 'rd.reservation_id = r.reservation_id')
             ->join('products p', 'p.product_id = rd.product_id')

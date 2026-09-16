@@ -39,8 +39,12 @@ $statusColors = [
           <div class="col-6"><p class="mb-1 small text-muted">Customer Type</p><p class="mb-0 small"><?= esc($reservation['customer_type']) ?></p></div>
           <div class="col-6"><p class="mb-1 small text-muted">Reservation Date</p><p class="mb-0 small"><?= date('M d, Y g:i A', strtotime($reservation['reservation_date'])) ?></p></div>
           <div class="col-6"><p class="mb-1 small text-muted">Claim Date</p><p class="mb-0 small"><?= date('M d, Y', strtotime($reservation['claim_date'])) ?></p></div>
+          <div class="col-6"><p class="mb-1 small text-muted">Fulfillment</p><p class="mb-0 small"><i class="bi bi-<?= $reservation['fulfillment_type'] === 'Delivery' ? 'bicycle' : 'shop' ?>"></i> <?= esc($reservation['fulfillment_type']) ?></p></div>
           <div class="col-6"><p class="mb-1 small text-muted">Payment Status</p><p class="mb-0 small"><?= esc($reservation['payment_status']) ?></p></div>
           <div class="col-6"><p class="mb-1 small text-muted">Total Amount</p><p class="mb-0 fw-bold">₱<?= number_format($reservation['total_amount'], 2) ?></p></div>
+          <?php if ($reservation['fulfillment_type'] === 'Delivery' && ! empty($reservation['delivery_address'])): ?>
+            <div class="col-12"><p class="mb-1 small text-muted">Delivery Address</p><p class="mb-0 small"><?= esc($reservation['delivery_address']) ?></p></div>
+          <?php endif; ?>
         </div>
 
         <h6><i class="bi bi-basket-fill"></i> Items</h6>

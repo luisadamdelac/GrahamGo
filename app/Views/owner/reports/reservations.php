@@ -36,6 +36,7 @@
         <span class="badge bg-secondary"><?= esc($r['status']) ?></span>
       </div>
       <div class="small text-muted"><?= esc($r['product_name']) ?> (x<?= $r['quantity'] ?>) &middot; <?= esc($r['customer_type']) ?></div>
+      <div class="small text-muted"><i class="bi bi-<?= $r['fulfillment_type'] === 'Delivery' ? 'bicycle' : 'shop' ?>"></i> <?= esc($r['fulfillment_type']) ?></div>
       <div class="d-flex justify-content-between mt-1">
         <span class="small text-muted"><?= date('M d, Y', strtotime($r['claim_date'])) ?></span>
         <span class="fw-bold">₱<?= number_format($r['total_amount'], 2) ?></span>
@@ -51,7 +52,7 @@
 <div class="table-responsive d-none d-lg-block">
   <table class="table align-middle mb-0 dg-table">
     <thead class="table-light">
-      <tr><th>#</th><th>Customer</th><th>Type</th><th>Product</th><th>Qty</th><th>Claim Date</th><th>Total</th><th>Payment</th><th>Status</th></tr>
+      <tr><th>#</th><th>Customer</th><th>Type</th><th>Product</th><th>Qty</th><th>Claim Date</th><th>Fulfillment</th><th>Total</th><th>Payment</th><th>Status</th></tr>
     </thead>
     <tbody>
       <?php foreach ($reservations as $r): ?>
@@ -62,13 +63,14 @@
           <td><?= esc($r['product_name']) ?></td>
           <td><?= $r['quantity'] ?></td>
           <td><?= date('M d, Y', strtotime($r['claim_date'])) ?></td>
+          <td><i class="bi bi-<?= $r['fulfillment_type'] === 'Delivery' ? 'bicycle' : 'shop' ?>"></i> <?= esc($r['fulfillment_type']) ?></td>
           <td>₱<?= number_format($r['total_amount'], 2) ?></td>
           <td><?= esc($r['payment_status']) ?></td>
           <td><?= esc($r['status']) ?></td>
         </tr>
       <?php endforeach; ?>
       <?php if (empty($reservations)): ?>
-        <tr><td colspan="9" class="text-center text-muted py-4">No records found.</td></tr>
+        <tr><td colspan="10" class="text-center text-muted py-4">No records found.</td></tr>
       <?php endif; ?>
     </tbody>
   </table>

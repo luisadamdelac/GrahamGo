@@ -31,7 +31,7 @@ $statuses = ['Pending', 'Confirmed', 'Ready', 'Claimed', 'Cancelled'];
           <?= avatar_chip($r['customer_name'], $r['customer_avatar'], 24) ?>
           <?= esc($r['customer_name']) ?> <span class="text-muted">(<?= esc($r['customer_type']) ?>)</span>
         </div>
-        <div class="small text-muted mb-2"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($r['claim_date'])) ?></div>
+        <div class="small text-muted mb-2"><i class="bi bi-calendar-event"></i> <?= date('M d, Y', strtotime($r['claim_date'])) ?> &middot; <i class="bi bi-<?= $r['fulfillment_type'] === 'Delivery' ? 'bicycle' : 'shop' ?>"></i> <?= esc($r['fulfillment_type']) ?></div>
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <span class="fw-bold">₱<?= number_format($r['total_amount'], 2) ?></span>
@@ -50,13 +50,14 @@ $statuses = ['Pending', 'Confirmed', 'Ready', 'Claimed', 'Cancelled'];
 <!-- Desktop: table -->
 <div class="table-responsive d-none d-lg-block">
   <table class="table align-middle mb-0 dg-table">
-    <thead class="table-light"><tr><th>#</th><th>Customer</th><th>Claim Date</th><th>Total</th><th>Payment</th><th>Status</th><th class="no-sort"></th></tr></thead>
+    <thead class="table-light"><tr><th>#</th><th>Customer</th><th>Claim Date</th><th>Fulfillment</th><th>Total</th><th>Payment</th><th>Status</th><th class="no-sort"></th></tr></thead>
     <tbody>
       <?php foreach ($reservations as $r): ?>
         <tr>
           <td>#<?= $r['reservation_id'] ?></td>
           <td><div class="d-flex align-items-center gap-2"><?= avatar_chip($r['customer_name'], $r['customer_avatar'], 30) ?> <?= esc($r['customer_name']) ?> <span class="text-muted small">(<?= esc($r['customer_type']) ?>)</span></div></td>
           <td><?= date('M d, Y', strtotime($r['claim_date'])) ?></td>
+          <td><i class="bi bi-<?= $r['fulfillment_type'] === 'Delivery' ? 'bicycle' : 'shop' ?>"></i> <?= esc($r['fulfillment_type']) ?></td>
           <td>₱<?= number_format($r['total_amount'], 2) ?></td>
           <td><?= esc($r['payment_status']) ?></td>
           <td><span class="badge bg-<?= $statusColors[$r['status']] ?? 'secondary' ?>"><?= esc($r['status']) ?></span></td>
@@ -64,7 +65,7 @@ $statuses = ['Pending', 'Confirmed', 'Ready', 'Claimed', 'Cancelled'];
         </tr>
       <?php endforeach; ?>
       <?php if (empty($reservations)): ?>
-        <tr><td colspan="7" class="text-center text-muted py-4">No reservations found.</td></tr>
+        <tr><td colspan="8" class="text-center text-muted py-4">No reservations found.</td></tr>
       <?php endif; ?>
     </tbody>
   </table>

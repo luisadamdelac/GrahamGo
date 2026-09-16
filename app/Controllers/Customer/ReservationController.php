@@ -58,16 +58,23 @@ class ReservationController extends BaseController
         }
 
         $rules = [
-            'quantity'   => 'required|integer|greater_than[0]',
-            'claim_date' => 'required|valid_date',
+            'quantity'         => 'required|integer|greater_than[0]',
+            'claim_date'       => 'required|valid_date',
+            'fulfillment_type' => 'required|in_list[Pickup,Delivery]',
         ];
 
         if (! $this->validate($rules)) {
             return redirect()->back()->withInput()->with('error', implode(' ', $this->validator->getErrors()));
         }
 
-        $quantity  = (int) $this->request->getPost('quantity');
-        $claimDate = $this->request->getPost('claim_date');
+        $quantity        = (int) $this->request->getPost('quantity');
+        $claimDate       = $this->request->getPost('claim_date');
+        $fulfillmentType = $this->request->getPost('fulfillment_type');
+        $deliveryAddress = trim((string) $this->request->getPost('delivery_address'));
+
+        if ($fulfillmentType === 'Delivery' && $deliveryAddress === '') {
+            return redirect()->back()->withInput()->with('error', 'Please enter a delivery address.');
+        }
 
         if (strtotime($claimDate) < strtotime(date('Y-m-d'))) {
             return redirect()->back()->withInput()->with('error', 'Claim date cannot be in the past.');
@@ -88,6 +95,8 @@ class ReservationController extends BaseController
             'user_id'          => current_customer()['user_id'],
             'reservation_date' => date('Y-m-d H:i:s'),
             'claim_date'       => $claimDate,
+            'fulfillment_type' => $fulfillmentType,
+            'delivery_address' => $fulfillmentType === 'Delivery' ? $deliveryAddress : null,
             'total_amount'     => $subtotal,
             'payment_status'   => 'Unpaid',
             'status'           => 'Pending',
@@ -101,7 +110,7 @@ class ReservationController extends BaseController
             'subtotal'       => $subtotal,
         ]);
 
-        $this->sendReservationSubmittedEmail(current_customer(), $product, $quantity, $claimDate, $subtotal, $reservationId);
+        $this->sendReservationSubmittedEmail(current_customer(), $product, $quantity, $claimDate, $fulfillmentType, $deliveryAddress, $subtotal, $reservationId);
 
         return redirect()->to('my-reservations/' . $reservationId)
             ->with('success', 'Reservation submitted. The owner will review and confirm it soon.');
@@ -114,8 +123,12 @@ class ReservationController extends BaseController
      * the customer should never lose their spot just because Gmail SMTP
      * had a hiccup.
      */
-    private function sendReservationSubmittedEmail(array $customer, array $product, int $quantity, string $claimDate, float $subtotal, int $reservationId): void
+    private function sendReservationSubmittedEmail(array $customer, array $product, int $quantity, string $claimDate, string $fulfillmentType, string $deliveryAddress, float $subtotal, int $reservationId): void
     {
+        $fulfillmentLine = $fulfillmentType === 'Delivery'
+            ? "Delivery to: " . esc($deliveryAddress) . "<br>"
+            : "Pickup at the shop<br>";
+
         $emailService = mailer();
         $emailService->setTo($customer['email']);
         $emailService->setSubject('Reservation Received (#' . $reservationId . ')');
@@ -125,6 +138,7 @@ class ReservationController extends BaseController
             "<div style=\"background:#FBF3EA; border-radius:12px; padding:14px 16px;\">" .
             "<strong>" . esc($product['product_name']) . "</strong> &times; {$quantity}<br>" .
             "Claim date: " . esc(date('M j, Y', strtotime($claimDate))) . "<br>" .
+            $fulfillmentLine .
             "Total: &#8369;" . number_format($subtotal, 2) .
             "</div>" .
             "<p style=\"margin:16px 0 0; color:#8A7A6A; font-size:13px;\">Reservation #{$reservationId} &middot; Status: Pending</p>"
