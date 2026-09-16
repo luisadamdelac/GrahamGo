@@ -101,7 +101,12 @@ $statusColors = [
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/confirm') ?>
             <div class="mb-2">
               <label class="form-label small">Note to Customer (optional)</label>
-              <textarea name="owner_note" class="form-control" rows="2" placeholder="e.g. Pick up sa school ako today, text me before coming..."><?= esc($reservation['owner_note'] ?? '') ?></textarea>
+              <div class="d-flex flex-wrap gap-1 mb-2" data-role="gg-note-chips" data-target="ggNoteConfirm">
+                <button type="button" class="gg-note-chip" data-text="Nasa bahay ako, text/tawag niyo muna bago pumunta.">Nasa Bahay</button>
+                <button type="button" class="gg-note-chip" data-text="Nasa school ako ngayon, text/tawag niyo muna bago pumunta.">Nasa School</button>
+                <button type="button" class="gg-note-chip" data-text="Tawagan niyo muna ako bago pumunta.">Tawagan Muna</button>
+              </div>
+              <textarea name="owner_note" id="ggNoteConfirm" class="form-control" rows="2" placeholder="e.g. Pick up sa school ako today, text me before coming..."><?= esc($reservation['owner_note'] ?? '') ?></textarea>
             </div>
             <button type="submit" class="btn btn-gg-primary w-100 mb-2"><i class="bi bi-check2-circle"></i> Confirm Reservation</button>
           <?= form_close() ?>
@@ -114,7 +119,12 @@ $statusColors = [
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/ready') ?>
             <div class="mb-2">
               <label class="form-label small">Note to Customer (optional)</label>
-              <textarea name="owner_note" class="form-control" rows="2" placeholder="e.g. Pick up sa school ako today, text me before coming..."><?= esc($reservation['owner_note'] ?? '') ?></textarea>
+              <div class="d-flex flex-wrap gap-1 mb-2" data-role="gg-note-chips" data-target="ggNoteReady">
+                <button type="button" class="gg-note-chip" data-text="Nasa bahay ako, text/tawag niyo muna bago pumunta.">Nasa Bahay</button>
+                <button type="button" class="gg-note-chip" data-text="Nasa school ako ngayon, text/tawag niyo muna bago pumunta.">Nasa School</button>
+                <button type="button" class="gg-note-chip" data-text="Tawagan niyo muna ako bago pumunta.">Tawagan Muna</button>
+              </div>
+              <textarea name="owner_note" id="ggNoteReady" class="form-control" rows="2" placeholder="e.g. Pick up sa school ako today, text me before coming..."><?= esc($reservation['owner_note'] ?? '') ?></textarea>
             </div>
             <button type="submit" class="btn btn-gg-primary w-100 mb-2"><i class="bi bi-bag-check-fill"></i> Mark as Ready</button>
           <?= form_close() ?>
@@ -126,7 +136,14 @@ $statusColors = [
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/claim') ?>
             <div class="mb-2">
               <label class="form-label small">Payment Method</label>
-              <select name="payment_method" class="form-select">
+              <div class="gg-custom-select" id="ggClaimPaymentCustom">
+                <button type="button" class="form-select text-start" id="ggClaimPaymentTrigger">Cash</button>
+                <div class="gg-custom-select-list d-none" id="ggClaimPaymentList">
+                  <div class="gg-custom-select-option is-active" data-value="Cash">Cash</div>
+                  <div class="gg-custom-select-option" data-value="GCash">GCash</div>
+                </div>
+              </div>
+              <select name="payment_method" id="ggClaimPayment" class="gg-visually-hidden">
                 <option value="Cash">Cash</option>
                 <option value="GCash">GCash</option>
               </select>
@@ -179,5 +196,25 @@ $statusColors = [
     </div>
   </div>
 <?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var claimPayment = document.getElementById('ggClaimPayment');
+  if (claimPayment) {
+    ggInitCustomSelect('ggClaimPaymentCustom', claimPayment, 'ggClaimPaymentTrigger', 'ggClaimPaymentList');
+  }
+
+  document.querySelectorAll('[data-role="gg-note-chips"]').forEach(function (chipRow) {
+    var target = document.getElementById(chipRow.getAttribute('data-target'));
+    if (! target) return;
+    chipRow.querySelectorAll('.gg-note-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        target.value = chip.getAttribute('data-text');
+        target.focus();
+      });
+    });
+  });
+});
+</script>
 
 <?= view('layouts/owner_footer') ?>

@@ -1,25 +1,5 @@
 <?= view('layouts/owner_header', ['title' => 'Walk-in Sale']) ?>
 
-<style>
-  /* Standard "hidden but still a real, focusable/validatable form
-     field" pattern — position:absolute + a 1x1 box instead of
-     display:none, so the browser's own required-field validation still
-     works on it (a display:none required field can silently block
-     submit in some browsers with no visible error to explain why). */
-  .gg-visually-hidden {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-  }
-  .gg-custom-select { position: relative; }
-  .gg-custom-select-list {
-    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20;
-    background: #fff; border: 1.5px solid var(--gg-border); border-radius: var(--gg-radius-sm);
-    box-shadow: var(--gg-shadow); max-height: 260px; overflow-y: auto;
-  }
-  .gg-custom-select-option { padding: .6rem .9rem; font-size: .9rem; cursor: pointer; }
-  .gg-custom-select-option:hover, .gg-custom-select-option.is-active { background: var(--gg-primary-light); color: var(--gg-cocoa); }
-</style>
-
 <h4 class="mb-1 enter"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Walk-in Sale</h4>
 <p class="text-muted mb-4">For a customer buying and paying on the spot. Deducts stock and records the sale immediately, no online reservation needed.</p>
 
@@ -129,34 +109,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // 'change' event on it, so everything downstream (recalc,
   // applyPaymentMethod, form submission) behaves exactly as if it had
   // been picked from a native <select> — the custom div/list is only
-  // ever a display layer on top of that real one.
-  function initCustomSelect(wrapId, selectEl, triggerId, listId) {
-    var wrap    = document.getElementById(wrapId);
-    var trigger = document.getElementById(triggerId);
-    var list    = document.getElementById(listId);
-
-    trigger.addEventListener('click', function () {
-      list.classList.toggle('d-none');
-    });
-
-    list.querySelectorAll('.gg-custom-select-option').forEach(function (optionEl) {
-      optionEl.addEventListener('click', function () {
-        selectEl.value = optionEl.getAttribute('data-value');
-        trigger.textContent = optionEl.textContent.trim();
-        list.querySelectorAll('.gg-custom-select-option').forEach(function (o) { o.classList.remove('is-active'); });
-        optionEl.classList.add('is-active');
-        list.classList.add('d-none');
-        selectEl.dispatchEvent(new Event('change'));
-      });
-    });
-
-    document.addEventListener('click', function (e) {
-      if (! wrap.contains(e.target)) list.classList.add('d-none');
-    });
-  }
-
-  initCustomSelect('wsProductCustom', productSelect, 'wsProductTrigger', 'wsProductList');
-  initCustomSelect('wsPaymentMethodCustom', paymentMethod, 'wsPaymentMethodTrigger', 'wsPaymentMethodList');
+  // ever a display layer on top of that real one. ggInitCustomSelect()
+  // itself lives in owner_footer.php, shared with every other page that
+  // needs this same compact-dropdown treatment.
+  ggInitCustomSelect('wsProductCustom', productSelect, 'wsProductTrigger', 'wsProductList');
+  ggInitCustomSelect('wsPaymentMethodCustom', paymentMethod, 'wsPaymentMethodTrigger', 'wsPaymentMethodList');
 
   function recalc() {
     var opt = productSelect.options[productSelect.selectedIndex];

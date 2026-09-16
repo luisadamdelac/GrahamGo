@@ -533,6 +533,37 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .notif-mark-read-btn:hover { background: var(--gg-success-bg); color: var(--gg-success); }
 .notif-mark-read-btn:disabled { opacity: .4; }
 
+/* Compact custom dropdown (Walk-in Sale's Product/Payment Method,
+   Dashboard's Sales Trend range, the reservation Claim form's Payment
+   Method, etc.) — see ggInitCustomSelect() in owner_footer.php for the
+   JS half. The real <select> is kept as the actual form field/event
+   source, just visually hidden (not display:none, so the browser's own
+   required-field validation still applies) behind this div/list, which
+   exists purely because a native <select>'s OS-rendered option list
+   can't be sized via CSS at all (especially iOS/Android). */
+.gg-visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.gg-custom-select { position: relative; }
+.gg-custom-select-list {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20;
+  background: #fff; border: 1.5px solid var(--gg-border); border-radius: var(--gg-radius-sm);
+  box-shadow: var(--gg-shadow); max-height: 260px; overflow-y: auto;
+}
+.gg-custom-select-option { padding: .6rem .9rem; font-size: .9rem; cursor: pointer; }
+.gg-custom-select-option:hover, .gg-custom-select-option.is-active { background: var(--gg-primary-light); color: var(--gg-cocoa); }
+
+/* Quick-fill chips above a note/message textarea — clicking one fills
+   in a canned phrase (still editable after) instead of always typing
+   from scratch. */
+.gg-note-chip {
+  border: 1px solid var(--gg-border); background: #fff; color: var(--gg-primary-dark);
+  font-size: .78rem; padding: .3rem .7rem; border-radius: 999px;
+  transition: background-color .15s var(--gg-ease), border-color .15s var(--gg-ease);
+}
+.gg-note-chip:hover { background: var(--gg-primary-light); border-color: var(--gg-primary); }
+
 /* Product review star picker — radios in reverse DOM order so a plain
    sibling selector can light up "this star and everything before it"
    on hover/checked without any JS. */

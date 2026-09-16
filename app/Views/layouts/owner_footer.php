@@ -263,6 +263,42 @@
   ggInitTopbarSearch('ggTopbarSearchInput', 'ggTopbarSearchResults', 'ggTopbarSearchForm');
   ggInitTopbarSearch('ggMobileSearchInput', 'ggMobileSearchResults', 'ggMobileSearchForm');
 </script>
+<script>
+  // Shared by every page with a compact dropdown (Walk-in Sale, Sales
+  // Trend range, Payment Method, etc.) — a native <select>'s OS-rendered
+  // option list can't be sized via CSS at all (especially iOS/Android),
+  // so the real <select> stays the actual form field and event source
+  // (kept working via .gg-visually-hidden, not display:none, so the
+  // browser's own required-field validation still applies to it), just
+  // visually hidden behind a compact div/list built from its own
+  // <option>s (see .gg-custom-select* in app.css). One global function
+  // instead of a copy per page since three+ pages now need this exact
+  // same behavior.
+  function ggInitCustomSelect(wrapId, selectEl, triggerId, listId) {
+    var wrap    = document.getElementById(wrapId);
+    var trigger = document.getElementById(triggerId);
+    var list    = document.getElementById(listId);
+
+    trigger.addEventListener('click', function () {
+      list.classList.toggle('d-none');
+    });
+
+    list.querySelectorAll('.gg-custom-select-option').forEach(function (optionEl) {
+      optionEl.addEventListener('click', function () {
+        selectEl.value = optionEl.getAttribute('data-value');
+        trigger.textContent = optionEl.textContent.trim();
+        list.querySelectorAll('.gg-custom-select-option').forEach(function (o) { o.classList.remove('is-active'); });
+        optionEl.classList.add('is-active');
+        list.classList.add('d-none');
+        selectEl.dispatchEvent(new Event('change'));
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (! wrap.contains(e.target)) list.classList.add('d-none');
+    });
+  }
+</script>
 <?= view('partials/datatables_init') ?>
 <?= view('partials/confirm_modal') ?>
 <?= view('partials/auto_dismiss_alerts') ?>

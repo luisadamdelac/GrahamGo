@@ -79,7 +79,15 @@
     <div class="card h-100"><div class="card-body p-3 p-md-4">
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
         <h6 class="mb-0">Sales Trend</h6>
-        <select class="form-select form-select-sm" id="ggSalesTrendRange" style="width:auto;">
+        <div class="gg-custom-select" id="ggSalesTrendCustom" style="width:110px;">
+          <button type="button" class="form-select form-select-sm text-start" id="ggSalesTrendTrigger">Week</button>
+          <div class="gg-custom-select-list d-none" id="ggSalesTrendList">
+            <div class="gg-custom-select-option is-active" data-value="week">Week</div>
+            <div class="gg-custom-select-option" data-value="month">Month</div>
+            <div class="gg-custom-select-option" data-value="year">Year</div>
+          </div>
+        </div>
+        <select id="ggSalesTrendRange" class="gg-visually-hidden">
           <option value="week">Week</option>
           <option value="month">Month</option>
           <option value="year">Year</option>
@@ -225,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // it, so the transition animates instead of flashing blank.
     var rangeSelect = document.getElementById('ggSalesTrendRange');
     if (rangeSelect) {
+      ggInitCustomSelect('ggSalesTrendCustom', rangeSelect, 'ggSalesTrendTrigger', 'ggSalesTrendList');
       rangeSelect.addEventListener('change', function () {
         fetch('<?= site_url('owner/dashboard/sales-trend') ?>?range=' + rangeSelect.value, { credentials: 'same-origin' })
           .then(function (res) { return res.ok ? res.json() : null; })
