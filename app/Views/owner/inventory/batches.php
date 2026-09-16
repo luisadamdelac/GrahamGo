@@ -1,7 +1,5 @@
 <?= view('layouts/owner_header', ['title' => 'Stock Batches']) ?>
 
-<a href="<?= site_url('owner/products') ?>" class="small text-muted text-decoration-none d-inline-block mb-2"><i class="bi bi-arrow-left"></i> Back to Products</a>
-
 <div class="d-flex justify-content-between align-items-start mb-1">
   <h4 class="mb-0 enter"><?= esc($product['product_name']) ?></h4>
   <span class="fw-bold fs-5" style="color:var(--gg-primary-dark);"><?= $product['stock'] ?> <span class="fs-6 fw-normal text-muted">in stock</span></span>
