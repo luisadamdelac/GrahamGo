@@ -109,7 +109,7 @@ class DashboardController extends BaseController
             'overdue'      => $overdue,
             'newSignups'   => $newSignups,
             'unread'       => $unread,
-            'total'        => $unread['reservations'] + $unread['stock'] + $unread['signup'],
+            'total'        => $unread['overdue'] + $unread['reservations'] + $unread['stock'] + $unread['signup'],
         ]);
     }
 

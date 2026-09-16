@@ -45,7 +45,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div>
           <div class="fw-semibold" data-role="notif-overdue-text"><?= esc($ggOverdueText) ?></div>
-          <div class="text-muted" style="font-size:.78rem;">Claim date has already passed. Check on these first.</div>
+          <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Claim date has already passed. Check on these first.</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="overdue" title="Mark as read"><i class="bi bi-check2"></i></button>
@@ -54,7 +54,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
         <div>
           <div class="fw-semibold" data-role="notif-reservation-text"><?= esc($ggReservationText) ?></div>
-          <div class="text-muted" style="font-size:.78rem;">Waiting to be confirmed, prepared, or claimed</div>
+          <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Waiting to be confirmed, prepared, or claimed</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="reservations" title="Mark as read"><i class="bi bi-check2"></i></button>
@@ -63,7 +63,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/products') ?>">
         <div>
           <div class="fw-semibold" data-role="notif-stock-text"><?= esc($ggStockText) ?></div>
-          <div class="text-muted" style="font-size:.78rem;">Restock soon before it runs out completely</div>
+          <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Restock soon before it runs out completely</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="stock" title="Mark as read"><i class="bi bi-check2"></i></button>
@@ -72,7 +72,7 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
       <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/customers') ?>">
         <div>
           <div class="fw-semibold" data-role="notif-signup-text"><?= esc($ggSignupText) ?></div>
-          <div class="text-muted" style="font-size:.78rem;">Joined GrahamGo in the last 48 hours</div>
+          <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Joined GrahamGo in the last 48 hours</div>
         </div>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="signup" title="Mark as read"><i class="bi bi-check2"></i></button>

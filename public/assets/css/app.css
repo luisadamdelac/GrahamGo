@@ -521,23 +521,12 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
    clicking it doesn't navigate anywhere. */
 .notif-mark-all-btn { font-size: .78rem; text-decoration: none; font-weight: 500; }
 .notif-mark-all-btn:disabled { opacity: .5; }
-/* Every notif-item shown here is, by construction, unread (read ones
-   are hidden entirely — see owner_notification_bell.php's docblock),
-   so all of them get this "new" highlight: a tinted background + left
-   accent bar, so admin's eye catches them the instant the bell opens
-   instead of reading like a plain, easy-to-skim list. */
-.notif-item {
-  background: var(--gg-warning-bg);
-  border-left: 3px solid var(--gg-primary);
-  border-radius: var(--gg-radius-sm);
-  margin-bottom: .35rem;
-}
+.notif-item { margin-bottom: .15rem; }
 .notif-item:last-of-type { margin-bottom: 0; }
-.notif-item .dropdown-item { flex-grow: 1; min-width: 0; background: transparent; }
-.notif-item .dropdown-item:hover, .notif-item .dropdown-item:focus { background: #FBE3B8; color: inherit; }
+.notif-item .dropdown-item { flex-grow: 1; min-width: 0; }
 .notif-mark-read-btn {
   border: none; background: none; color: var(--gg-muted);
-  width: 30px; flex-shrink: 0; border-radius: var(--gg-radius-sm);
+  width: 28px; height: 28px; margin: auto 0; flex-shrink: 0; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   transition: background-color .15s var(--gg-ease), color .15s var(--gg-ease);
 }

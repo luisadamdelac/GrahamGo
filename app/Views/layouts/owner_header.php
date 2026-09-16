@@ -25,7 +25,7 @@
   $ggUnreadReservations = max(0, $ggReservationAlerts - (int) ($ggDismissed['notif_dismissed_reservations'] ?? 0));
   $ggUnreadStock        = max(0, $ggLowStockAlerts - (int) ($ggDismissed['notif_dismissed_stock'] ?? 0));
   $ggUnreadSignups      = max(0, $ggNewSignups - (int) ($ggDismissed['notif_dismissed_signup'] ?? 0));
-  $ggTotalAlerts        = $ggUnreadReservations + $ggUnreadStock + $ggUnreadSignups;
+  $ggTotalAlerts        = $ggUnreadOverdue + $ggUnreadReservations + $ggUnreadStock + $ggUnreadSignups;
 ?>
 <title id="ggPageTitle" data-base-title="<?= esc($title ?? 'GrahamGo Admin') ?>"><?= $ggTotalAlerts > 0 ? "({$ggTotalAlerts}) " : '' ?><?= esc($title ?? 'GrahamGo Admin') ?></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
