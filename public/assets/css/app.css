@@ -523,7 +523,7 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
    square edges — safe now that the row's flex-grow bug (below) no
    longer lets content push wider than the menu itself, which is what
    made this same rule clip the mark-as-read button before. */
-.gg-notif-menu { width: 320px; max-width: calc(100vw - 24px); padding: 0; overflow: hidden; }
+.gg-notif-menu { width: 300px; max-width: calc(100vw - 24px); padding: 0; overflow: hidden; }
 .gg-notif-header { padding: .8rem 1rem; border-bottom: 1px solid var(--gg-border); font-weight: 600; }
 .gg-notif-header i { color: var(--gg-muted); margin-right: .3rem; }
 .notif-mark-all-btn { font-size: .78rem; text-decoration: none; font-weight: 500; }
@@ -532,7 +532,7 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .notif-item:last-of-type { border-bottom: none; }
 .gg-notif-row {
   flex-grow: 1; min-width: 0; display: flex; align-items: flex-start;
-  gap: .7rem; padding: .75rem 1rem; border-radius: 0; white-space: normal;
+  gap: .7rem; padding: .75rem .5rem .75rem 1rem; border-radius: 0; white-space: normal;
 }
 .gg-notif-icon {
   width: 34px; height: 34px; border-radius: 50%; background: var(--gg-bg);
@@ -550,7 +550,7 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 }
 .notif-mark-read-btn {
   border: none; background: none; color: var(--gg-muted);
-  width: 28px; height: 28px; margin: auto .5rem; flex-shrink: 0; border-radius: 50%;
+  width: 28px; height: 28px; margin: auto .5rem auto .1rem; flex-shrink: 0; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   transition: background-color .15s var(--gg-ease), color .15s var(--gg-ease);
 }
