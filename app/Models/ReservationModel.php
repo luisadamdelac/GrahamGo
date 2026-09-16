@@ -11,7 +11,7 @@ class ReservationModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = [
-        'user_id', 'reservation_date', 'claim_date', 'fulfillment_type', 'delivery_address', 'total_amount', 'payment_status', 'status', 'cancel_reason',
+        'user_id', 'reservation_date', 'claim_date', 'fulfillment_type', 'delivery_address', 'total_amount', 'payment_status', 'status', 'cancel_reason', 'owner_note',
     ];
 
     protected $useTimestamps = true;

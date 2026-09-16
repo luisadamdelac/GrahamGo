@@ -37,6 +37,13 @@ $currentIndex = array_search($reservation['status'], $steps, true);
       </div>
     <?php endif; ?>
 
+    <?php if (in_array($reservation['status'], ['Confirmed', 'Ready', 'Claimed'], true) && ! empty($reservation['owner_note'])): ?>
+      <div class="alert alert-info d-flex align-items-start gap-2 mb-4">
+        <i class="bi bi-chat-left-text-fill flex-shrink-0 mt-1"></i>
+        <div><strong>Note from the shop:</strong> <?= esc($reservation['owner_note']) ?></div>
+      </div>
+    <?php endif; ?>
+
     <?php if ($reservation['status'] !== 'Cancelled'): ?>
       <div class="progress mb-3" style="height:6px;">
         <?php $pct = $currentIndex !== false ? (($currentIndex + 1) / count($steps)) * 100 : 0; ?>

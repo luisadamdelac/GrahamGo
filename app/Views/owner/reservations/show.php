@@ -27,6 +27,13 @@ $statusColors = [
           </div>
         <?php endif; ?>
 
+        <?php if (in_array($reservation['status'], ['Confirmed', 'Ready', 'Claimed'], true) && ! empty($reservation['owner_note'])): ?>
+          <div class="alert alert-info d-flex align-items-start gap-2 mb-4">
+            <i class="bi bi-chat-left-text-fill flex-shrink-0 mt-1"></i>
+            <div><strong>Your note to the customer:</strong> <?= esc($reservation['owner_note']) ?></div>
+          </div>
+        <?php endif; ?>
+
         <div class="d-flex align-items-center gap-2 mb-4">
           <?= avatar_chip($reservation['customer_name'], $reservation['customer_avatar'] ?? null, 40) ?>
           <div>
@@ -92,6 +99,10 @@ $statusColors = [
 
         <?php if ($reservation['status'] === 'Pending'): ?>
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/confirm') ?>
+            <div class="mb-2">
+              <label class="form-label small">Note to Customer (optional)</label>
+              <textarea name="owner_note" class="form-control" rows="2" placeholder="e.g. Pick up sa school ako today, text me before coming..."><?= esc($reservation['owner_note'] ?? '') ?></textarea>
+            </div>
             <button type="submit" class="btn btn-gg-primary w-100 mb-2"><i class="bi bi-check2-circle"></i> Confirm Reservation</button>
           <?= form_close() ?>
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/cancel') ?>
@@ -101,6 +112,10 @@ $statusColors = [
 
         <?php if ($reservation['status'] === 'Confirmed'): ?>
           <?= form_open('owner/reservations/' . $reservation['reservation_id'] . '/ready') ?>
+            <div class="mb-2">
+              <label class="form-label small">Note to Customer (optional)</label>
+              <textarea name="owner_note" class="form-control" rows="2" placeholder="e.g. Pick up sa school ako today, text me before coming..."><?= esc($reservation['owner_note'] ?? '') ?></textarea>
+            </div>
             <button type="submit" class="btn btn-gg-primary w-100 mb-2"><i class="bi bi-bag-check-fill"></i> Mark as Ready</button>
           <?= form_close() ?>
           <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#ggCancelReasonModal"><i class="bi bi-x-circle"></i> Cancel</button>

@@ -85,7 +85,13 @@ class ReservationController extends BaseController
             $this->stockBatchModel->deplete($d['product_id'], $d['quantity'], 'Reserved', 'Reservation #' . $id . ' confirmed');
         }
 
-        $this->reservationModel->update($id, ['status' => 'Confirmed']);
+        $data = ['status' => 'Confirmed'];
+        $note = trim((string) $this->request->getPost('owner_note'));
+        if ($note !== '') {
+            $data['owner_note'] = $note;
+        }
+
+        $this->reservationModel->update($id, $data);
 
         return redirect()->to('owner/reservations/' . $id)->with('success', 'Reservation confirmed and stock reserved.');
     }
@@ -97,9 +103,15 @@ class ReservationController extends BaseController
             return redirect()->to('owner/reservations/' . $id)->with('error', 'Only confirmed reservations can be marked ready.');
         }
 
-        $this->reservationModel->update($id, ['status' => 'Ready']);
+        $data = ['status' => 'Ready'];
+        $note = trim((string) $this->request->getPost('owner_note'));
+        if ($note !== '') {
+            $data['owner_note'] = $note;
+        }
 
-        $this->sendReadyForPickupEmail($reservation, $this->detailModel->forReservation((int) $id));
+        $this->reservationModel->update($id, $data);
+
+        $this->sendReadyForPickupEmail($reservation, $this->detailModel->forReservation((int) $id), $note !== '' ? $note : ($reservation['owner_note'] ?? ''));
 
         return redirect()->to('owner/reservations/' . $id)->with('success', 'Order marked as ready for claiming.');
     }
@@ -109,7 +121,7 @@ class ReservationController extends BaseController
      * emails — a failed send is logged but never rolls back or blocks
      * the status change itself.
      */
-    private function sendReadyForPickupEmail(array $reservation, array $details): void
+    private function sendReadyForPickupEmail(array $reservation, array $details, string $ownerNote = ''): void
     {
         $emailService = mailer();
         $emailService->setTo($reservation['email']);
@@ -120,6 +132,10 @@ class ReservationController extends BaseController
             $itemsHtml .= '<strong>' . esc($d['product_name']) . '</strong> &times; ' . $d['quantity'] . '<br>';
         }
 
+        $noteHtml = $ownerNote !== ''
+            ? "<p style=\"margin:16px 0 0;\"><strong>Note from the owner:</strong> " . esc($ownerNote) . "</p>"
+            : "";
+
         $emailService->setMessage(email_template($emailService,
             "<p style=\"margin:0 0 16px;\">Hi " . esc($reservation['customer_name']) . ",</p>" .
             "<p style=\"margin:0 0 16px;\">Good news. Your order is ready for pickup!</p>" .
@@ -127,6 +143,7 @@ class ReservationController extends BaseController
             $itemsHtml .
             "Total: &#8369;" . number_format($reservation['total_amount'], 2) .
             "</div>" .
+            $noteHtml .
             "<p style=\"margin:16px 0 0; color:#8A7A6A; font-size:13px;\">Reservation #{$reservation['reservation_id']} &middot; Please bring your name or this confirmation when claiming.</p>"
         ));
 
