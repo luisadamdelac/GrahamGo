@@ -15,6 +15,12 @@
     <label class="form-label small mb-1 d-md-none">To</label>
     <input type="text" name="to" class="form-control gg-date-picker" value="<?= esc($to) ?>">
   </div>
+  <div class="col-12 col-md-auto d-flex align-items-center align-self-md-end">
+    <div class="form-check">
+      <input type="checkbox" name="walkin_only" value="1" id="ggWalkInOnly" class="form-check-input" <?= $walkInOnly ? 'checked' : '' ?>>
+      <label class="form-check-label small" for="ggWalkInOnly">Walk-ins only</label>
+    </div>
+  </div>
   <div class="col-12 col-md-auto d-flex gap-2 align-self-md-end">
     <button type="submit" class="btn btn-dark flex-fill">Filter</button>
     <a href="<?= site_url('owner/reports/sales') ?>" class="btn btn-outline-secondary flex-fill">Reset</a>
@@ -25,9 +31,10 @@
      (flex-fill) to fill whatever width they're given, which was
      pushing these off-screen on narrow phones instead of just
      wrapping to a visible second line. -->
+<?php $ggWalkInParam = $walkInOnly ? '&walkin_only=1' : ''; ?>
 <div class="d-flex gap-2 mb-3">
-  <a href="<?= site_url('owner/reports/sales/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
-  <a href="<?= site_url('owner/reports/sales/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+  <a href="<?= site_url('owner/reports/sales/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggWalkInParam ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
+  <a href="<?= site_url('owner/reports/sales/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggWalkInParam ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
 </div>
 
 <div class="mb-3"><span class="fw-bold fs-5">Total: ₱<?= number_format($total, 2) ?></span></div>

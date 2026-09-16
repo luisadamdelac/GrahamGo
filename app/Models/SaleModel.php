@@ -14,7 +14,14 @@ class SaleModel extends Model
         'reservation_id', 'payment_id', 'sale_date', 'total_amount',
     ];
 
-    public function withDetails(?string $from = null, ?string $to = null): array
+    /**
+     * $walkInOnly restricts to over-the-counter sales — those are all
+     * attributed to the one shared "Walk-in Customer" account (see
+     * UserModel::getOrCreateWalkInCustomer()), identified by its fixed
+     * email rather than its display name (which is just a label, not
+     * guaranteed unique/stable the way the email is).
+     */
+    public function withDetails(?string $from = null, ?string $to = null, bool $walkInOnly = false): array
     {
         $builder = $this->select('sales.*, reservations.claim_date, reservations.user_id, reservations.status AS reservation_status, users.name AS customer_name, users.customer_type, users.avatar AS customer_avatar, payments.payment_method, GROUP_CONCAT(products.product_name SEPARATOR ", ") AS product_names, SUM(reservation_details.quantity) AS total_quantity')
             ->join('reservations', 'reservations.reservation_id = sales.reservation_id')
@@ -30,6 +37,9 @@ class SaleModel extends Model
         }
         if ($to) {
             $builder->where('sales.sale_date <=', $to . ' 23:59:59');
+        }
+        if ($walkInOnly) {
+            $builder->where('users.email', 'walkin@grahamgo.local');
         }
 
         return $builder->findAll();

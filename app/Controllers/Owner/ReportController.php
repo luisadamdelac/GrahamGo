@@ -103,38 +103,43 @@ class ReportController extends BaseController
 
     public function sales()
     {
-        $from = $this->request->getGet('from') ?: date('Y-m-01');
-        $to   = $this->request->getGet('to') ?: date('Y-m-d');
-        $sales = $this->salesRows($from, $to);
+        $from       = $this->request->getGet('from') ?: date('Y-m-01');
+        $to         = $this->request->getGet('to') ?: date('Y-m-d');
+        $walkInOnly = (bool) $this->request->getGet('walkin_only');
+        $sales      = $this->salesRows($from, $to, $walkInOnly);
 
         return view('owner/reports/sales', [
-            'title' => 'Sales Report',
-            'sales' => $sales,
-            'total' => array_sum(array_column($sales, 'total_amount')),
-            'from'  => $from,
-            'to'    => $to,
+            'title'      => 'Sales Report',
+            'sales'      => $sales,
+            'total'      => array_sum(array_column($sales, 'total_amount')),
+            'from'       => $from,
+            'to'         => $to,
+            'walkInOnly' => $walkInOnly,
         ]);
     }
 
     public function salesPdf()
     {
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
-        $sales = $this->salesRows($from, $to);
+        $from       = $this->request->getGet('from') ?: date('Y-m-01');
+        $to         = $this->request->getGet('to') ?: date('Y-m-d');
+        $walkInOnly = (bool) $this->request->getGet('walkin_only');
+        $sales      = $this->salesRows($from, $to, $walkInOnly);
 
         return $this->renderPdf('owner/reports/pdf/sales', [
-            'sales' => $sales,
-            'total' => array_sum(array_column($sales, 'total_amount')),
-            'from'  => $from,
-            'to'    => $to,
+            'reportTitle' => $walkInOnly ? 'Sales Report (Walk-ins Only)' : 'Sales Report',
+            'sales'       => $sales,
+            'total'       => array_sum(array_column($sales, 'total_amount')),
+            'from'        => $from,
+            'to'          => $to,
         ], 'sales-report_' . $from . '_to_' . $to . '.pdf');
     }
 
     public function salesExcel()
     {
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
-        $sales = $this->salesRows($from, $to);
+        $from       = $this->request->getGet('from') ?: date('Y-m-01');
+        $to         = $this->request->getGet('to') ?: date('Y-m-d');
+        $walkInOnly = (bool) $this->request->getGet('walkin_only');
+        $sales      = $this->salesRows($from, $to, $walkInOnly);
 
         return $this->streamExcel(
             'sales-report_' . $from . '_to_' . $to . '.xlsx',
@@ -153,9 +158,9 @@ class ReportController extends BaseController
         );
     }
 
-    private function salesRows(string $from, string $to): array
+    private function salesRows(string $from, string $to, bool $walkInOnly = false): array
     {
-        return (new SaleModel())->withDetails($from ?: null, $to ?: null);
+        return (new SaleModel())->withDetails($from ?: null, $to ?: null, $walkInOnly);
     }
 
     // -----------------------------------------------------------------
