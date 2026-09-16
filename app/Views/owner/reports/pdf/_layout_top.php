@@ -1,18 +1,20 @@
 <?php
 /**
- * Shared top/bottom of every report PDF — dompdf's CSS support is much
- * more limited than a real browser (no CSS custom properties/var(),
- * no flexbox), so this is plain HTML/table layout with literal colors
+ * Shared top of every report PDF — dompdf's CSS support is much more
+ * limited than a real browser (no CSS custom properties/var(), no
+ * flexbox), so this is plain HTML/table layout with literal colors
  * instead of reusing app.css's --gg-* variables or Bootstrap classes.
  *
- * The header/footer use position:fixed, offset above/below the visible
- * page (into @page's own top/bottom margin) rather than sitting at
- * top:0/bottom:0 — the latter rendered cleanly on some pages but
- * interleaved/overlapped with the table's own rows on others, a dompdf
- * quirk that couldn't be fully resolved. The tradeoff: header/footer
- * are guaranteed to render cleanly, but (another dompdf limitation)
- * don't reliably repeat on every page of a multi-page report — most
- * reliably present on page 1 and the footer, less so mid-document.
+ * This header uses position:fixed, offset entirely above y=0 (into
+ * @page's own top margin) rather than sitting at top:0 — the latter
+ * rendered cleanly on some pages but interleaved/overlapped with the
+ * table's own rows on others, a dompdf quirk that couldn't be fully
+ * resolved. The tradeoff: it renders cleanly, but (another dompdf
+ * limitation) only reliably shows on page 1, not every page of a
+ * multi-page report. The footer doesn't have this problem — it's
+ * drawn per-page via dompdf's canvas page_script() API instead (see
+ * ReportController::renderPdf()), which repeats correctly and is also
+ * how the "Page X of Y" count is done (impossible from pure CSS).
  *
  * Params: $reportTitle (string), $from/$to (optional date strings —
  * omit both for a report with no date-range filter, e.g. Inventory).
@@ -35,32 +37,31 @@ $logoDataUri = is_file($logoPath)
 <head>
 <meta charset="UTF-8">
 <style>
-  @page { margin: 118px 32px 50px 32px; }
+  /* Bottom margin just needs to clear the canvas-drawn footer bar
+     (~26px tall, see ReportController::renderPdf) with a bit of air. */
+  @page { margin: 160px 32px 45px 32px; }
   /* DejaVu Sans, not Helvetica — dompdf's built-in DejaVu Sans is a
      full-Unicode font it bundles by default; Helvetica (a base PDF
      font) only covers Latin-1, so the peso sign (?) was rendering as a
      missing glyph. */
   body { font-family: 'DejaVu Sans', sans-serif; color: #2C2116; font-size: 11px; }
   table { border-collapse: collapse; width: 100%; }
-  /* dompdf only ever reliably repeats a position:fixed element that's
-     offset entirely above y=0 (into the page's own top margin) — top:0
-     (or top+width:100%) rendered it overlapping/interleaved with the
-     table's own first rows instead of sitting cleanly above them. The
-     -110px offset trades "repeats on every page" (a dompdf quirk this
-     couldn't get fully working — see ReportController) for "always
-     renders cleanly", which matters more for a document meant to be
-     read. */
-  .gg-pdf-header {
-    position: fixed; top: -110px; left: 0; right: 0;
-    border-bottom: 2px solid #E08A3E; padding-bottom: 10px;
-    text-align: center;
-  }
-  .gg-pdf-header table { width: auto; margin: 0 auto; }
-  .gg-pdf-logo { width: 34px; height: 34px; }
-  .gg-pdf-brand { font-size: 18px; font-weight: bold; color: #4A3324; }
-  .gg-pdf-sub { font-size: 10px; color: #7A6858; margin-top: 2px; }
-  .gg-pdf-title { font-size: 15px; color: #C46F26; margin-top: 8px; font-weight: bold; }
-  .gg-pdf-meta { font-size: 10px; color: #7A6858; margin-top: 3px; }
+  .gg-pdf-header { position: fixed; top: -150px; left: 0; right: 0; }
+  .gg-pdf-header-row td { border: none; padding: 0; vertical-align: top; }
+  .gg-pdf-brand-cell table { width: auto; }
+  .gg-pdf-brand-cell table td { border: none; padding: 0; vertical-align: middle; }
+  .gg-pdf-logo { width: 38px; height: 38px; border-radius: 50%; }
+  .gg-pdf-brand { font-size: 18px; font-weight: bold; color: #2C2116; }
+  .gg-pdf-brand-sub { font-size: 10px; color: #C46F26; margin-top: 1px; }
+  .gg-pdf-title-cell { text-align: right; }
+  .gg-pdf-title { font-size: 19px; font-weight: bold; color: #2C2116; text-transform: uppercase; letter-spacing: 1px; }
+  .gg-pdf-title-sub { font-size: 10px; color: #8A7A6A; margin-top: 2px; }
+  .gg-pdf-hr { border-top: 1px solid #F0E4D6; margin: 9px 0; font-size: 0; line-height: 0; }
+  .gg-pdf-hr-thick { border-top: 2px solid #E08A3E; margin: 9px 0 0; }
+  .gg-pdf-meta-row td { border: none; padding: 0; font-size: 10px; white-space: nowrap; }
+  .gg-pdf-meta-label { color: #C46F26; font-weight: bold; letter-spacing: .5px; padding-right: 6px !important; }
+  .gg-pdf-meta-value { color: #4A3324; padding-right: 22px !important; }
+  .gg-pdf-meta-sep { border-left: 1px solid #E5D6C5 !important; width: 1px; padding: 0 !important; }
   /* table-layout:fixed + explicit per-column widths (set once, on each
      <th>) — without it, dompdf sizes each row's columns from that
      row's own content independently instead of one consistent width
@@ -68,32 +69,51 @@ $logoDataUri = is_file($logoPath)
      line up with the data rows underneath it. Widths are set per
      report in each pdf/*.php view's <th style="width:...">. */
   .gg-pdf-table { table-layout: fixed; }
-  .gg-pdf-table th { background: #FBF3EA; color: #4A3324; text-align: left; vertical-align: middle; line-height: 1.5; padding: 7px 8px; border-bottom: 1.5px solid #E08A3E; font-size: 10px; overflow: hidden; }
+  .gg-pdf-table th { background: #C46F26; color: #FFFFFF; text-align: left; vertical-align: middle; line-height: 1.5; padding: 7px 8px; font-size: 10px; overflow: hidden; }
   .gg-pdf-table td { vertical-align: middle; line-height: 1.5; padding: 6px 8px; border-bottom: 1px solid #F0E4D6; font-size: 10px; overflow: hidden; word-wrap: break-word; }
-  .gg-pdf-footer {
-    position: fixed; bottom: -35px; left: 0; right: 0;
-    padding-top: 6px; border-top: 1px solid #F0E4D6;
-    font-size: 9px; color: #7A6858; text-align: center;
-  }
+  .gg-pdf-table tbody tr:nth-child(even) td { background: #FBF3EA; }
+  .gg-pdf-link { color: #3B6FB5; }
+  .gg-status-claimed, .gg-status-ok { color: #2E7D32; font-weight: bold; }
+  .gg-status-cancelled, .gg-status-low { color: #C0392B; font-weight: bold; }
+  .gg-status-pending, .gg-status-confirmed, .gg-status-ready { color: #C46F26; font-weight: bold; }
 </style>
 </head>
 <body>
 
 <div class="gg-pdf-header">
-  <table style="border:none;">
+  <table class="gg-pdf-header-row">
     <tr>
-      <?php if ($logoDataUri): ?>
-        <td style="width:40px; border:none; padding:0; vertical-align:top;"><img src="<?= $logoDataUri ?>" class="gg-pdf-logo"></td>
-      <?php endif; ?>
-      <td style="border:none; padding:0; vertical-align:top;">
-        <div class="gg-pdf-brand">GrahamGo</div>
-        <div class="gg-pdf-sub">Graham Mango &amp; Oreo Graham. Reservation &amp; Sales System</div>
+      <td class="gg-pdf-brand-cell">
+        <table><tr>
+          <?php if ($logoDataUri): ?>
+            <td style="width:44px;"><img src="<?= $logoDataUri ?>" class="gg-pdf-logo"></td>
+          <?php endif; ?>
+          <td>
+            <div class="gg-pdf-brand">GrahamGo</div>
+            <div class="gg-pdf-brand-sub">Graham Mango &amp; Oreo Graham</div>
+          </td>
+        </tr></table>
+      </td>
+      <td class="gg-pdf-title-cell">
+        <div class="gg-pdf-title"><?= esc($reportTitle) ?></div>
+        <div class="gg-pdf-title-sub">Reservation &amp; Sales System</div>
       </td>
     </tr>
   </table>
-  <div class="gg-pdf-title"><?= esc($reportTitle) ?></div>
-  <?php if ($from || $to): ?>
-    <div class="gg-pdf-meta">Period: <?= esc($from ? date('M j, Y', strtotime($from)) : 'the beginning') ?> to <?= esc($to ? date('M j, Y', strtotime($to)) : 'today') ?></div>
-  <?php endif; ?>
-  <div class="gg-pdf-meta">Generated: <?= date('M j, Y g:i A') ?></div>
+  <div class="gg-pdf-hr"></div>
+  <table class="gg-pdf-meta-row">
+    <tr>
+      <?php if ($from || $to): ?>
+        <td class="gg-pdf-meta-label">PERIOD</td>
+        <td class="gg-pdf-meta-value"><?= esc($from ? date('M j, Y', strtotime($from)) : 'the beginning') ?> &ndash; <?= esc($to ? date('M j, Y', strtotime($to)) : 'today') ?></td>
+        <td class="gg-pdf-meta-sep">&nbsp;</td>
+        <td style="width:22px;">&nbsp;</td>
+      <?php endif; ?>
+      <td class="gg-pdf-meta-label">GENERATED</td>
+      <td class="gg-pdf-meta-value"><?= date('M j, Y') ?> &middot; <?= date('g:i A') ?></td>
+      <td></td>
+    </tr>
+  </table>
+  <div class="gg-pdf-hr gg-pdf-hr-thick"></div>
 </div>
+

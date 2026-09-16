@@ -246,10 +246,53 @@ class ReportController extends BaseController
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
+        $this->drawPdfFooter($dompdf);
+
         return $this->response
             ->setHeader('Content-Type', 'application/pdf')
             ->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"')
             ->setBody($dompdf->output());
+    }
+
+    /**
+     * Draws the branded footer bar (dark background, orange top border,
+     * "GrahamGo · Reservation & Sales System" on the left, "Page X of Y"
+     * on the right) on every single page, via dompdf's low-level canvas
+     * API rather than an HTML position:fixed element. This must run
+     * after render() (the canvas has no pages yet before that) — unlike
+     * CSS position:fixed, which this codebase found only reliably shows
+     * on page 1 of a multi-page document, page_script()'s callback runs
+     * once per already-rendered page, so this genuinely repeats on all
+     * of them and is also the only way to get a real "Page X of Y"
+     * count (dompdf has no CSS counter(page) support).
+     */
+    private function drawPdfFooter(Dompdf $dompdf): void
+    {
+        $canvas      = $dompdf->getCanvas();
+        $fontMetrics = $dompdf->getFontMetrics();
+        $font        = $fontMetrics->getFont('DejaVu Sans', 'normal');
+
+        $pageWidth  = $canvas->get_width();
+        $pageHeight = $canvas->get_height();
+        $barHeight  = 26;
+        $barTop     = $pageHeight - $barHeight;
+        $margin     = 32;
+
+        $darkBrown = [0x2C / 255, 0x21 / 255, 0x16 / 255];
+        $orange    = [0xE0 / 255, 0x8A / 255, 0x3E / 255];
+        $lightText = [0xEA / 255, 0xDD / 255, 0xCF / 255];
+
+        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) use ($font, $pageWidth, $barHeight, $barTop, $margin, $darkBrown, $orange, $lightText) {
+            $canvas->filled_rectangle(0, $barTop, $pageWidth, $barHeight, $darkBrown);
+            $canvas->line(0, $barTop, $pageWidth, $barTop, $orange, 2);
+
+            $leftText = 'GrahamGo · Reservation & Sales System';
+            $canvas->text($margin, $barTop + 8, $leftText, $font, 9, $lightText);
+
+            $rightText      = 'Page ' . $pageNumber . ' of ' . $pageCount;
+            $rightTextWidth = $fontMetrics->getTextWidth($rightText, $font, 9);
+            $canvas->text($pageWidth - $margin - $rightTextWidth, $barTop + 8, $rightText, $font, 9, $lightText);
+        });
     }
 
     /**

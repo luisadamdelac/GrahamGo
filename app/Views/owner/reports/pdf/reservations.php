@@ -18,16 +18,16 @@
   <tbody>
     <?php foreach ($reservations as $r): ?>
       <tr>
-        <td>#<?= (int) $r['reservation_id'] ?></td>
+        <td class="gg-pdf-link">#<?= (int) $r['reservation_id'] ?></td>
         <td><?= esc(date('M d, Y', strtotime($r['claim_date']))) ?></td>
-        <td><?= esc($r['customer_name']) ?></td>
+        <td class="gg-pdf-link"><?= esc($r['customer_name']) ?></td>
         <td><?= esc($r['customer_type']) ?></td>
         <td><?= esc($r['product_name']) ?></td>
         <td><?= (int) $r['quantity'] ?></td>
         <td><?= esc($r['fulfillment_type']) ?></td>
         <td>&#8369;<?= number_format($r['total_amount'], 2) ?></td>
         <td><?= esc($r['payment_status']) ?></td>
-        <td><?= esc($r['status']) ?></td>
+        <td class="gg-status-<?= strtolower($r['status']) ?>"><?= esc($r['status']) ?></td>
       </tr>
     <?php endforeach; ?>
     <?php if (empty($reservations)): ?>
