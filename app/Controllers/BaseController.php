@@ -39,6 +39,12 @@ abstract class BaseController extends Controller
         // Caution: Do not edit this line.
         parent::initController($request, $response, $logger);
 
+        // Every page here is dynamic, session-specific data (reservations,
+        // stock counts, notifications) — never safe for a browser or any
+        // proxy in between to cache and reuse for a later request, which
+        // would show stale counts/state that no longer match the database.
+        $response->noCache();
+
         // Preload any models, libraries, etc, here.
         // $this->session = service('session');
     }
