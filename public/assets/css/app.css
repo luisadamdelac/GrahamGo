@@ -516,17 +516,32 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .dropdown-item.text-danger:hover, .dropdown-item.text-danger:focus { background: var(--gg-danger-bg); color: var(--gg-danger) !important; }
 .dropdown-divider { border-color: var(--gg-border); margin: .4rem 0; }
 
-/* Notification dropdown: header's "Mark all as read" + each item's own
-   small "Mark as read" button, sitting outside the item's <a> so
-   clicking it doesn't navigate anywhere. */
+/* Notification dropdown: icon badge + title/subtitle + unread dot per
+   row, thin divider between rows, "Mark all as read" in the header —
+   a plain, scannable list rather than colored/boxed alert cards. */
+.gg-notif-menu { min-width: 320px; padding: 0; overflow: hidden; }
+.gg-notif-header { padding: .8rem 1rem; border-bottom: 1px solid var(--gg-border); font-weight: 600; }
+.gg-notif-header i { color: var(--gg-muted); margin-right: .3rem; }
 .notif-mark-all-btn { font-size: .78rem; text-decoration: none; font-weight: 500; }
 .notif-mark-all-btn:disabled { opacity: .5; }
-.notif-item { margin-bottom: .15rem; }
-.notif-item:last-of-type { margin-bottom: 0; }
-.notif-item .dropdown-item { flex-grow: 1; min-width: 0; }
+.notif-item { border-bottom: 1px solid var(--gg-border); border-radius: 0; }
+.notif-item:last-of-type { border-bottom: none; }
+.gg-notif-row {
+  flex-grow: 1; min-width: 0; display: flex; align-items: flex-start;
+  gap: .7rem; padding: .75rem 1rem; border-radius: 0;
+}
+.gg-notif-icon {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--gg-bg);
+  color: var(--gg-muted); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: .95rem;
+}
+.gg-notif-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #3B6FB5;
+  flex-shrink: 0; margin-top: .4rem;
+}
 .notif-mark-read-btn {
   border: none; background: none; color: var(--gg-muted);
-  width: 28px; height: 28px; margin: auto 0; flex-shrink: 0; border-radius: 50%;
+  width: 28px; height: 28px; margin: auto .5rem; flex-shrink: 0; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   transition: background-color .15s var(--gg-ease), color .15s var(--gg-ease);
 }

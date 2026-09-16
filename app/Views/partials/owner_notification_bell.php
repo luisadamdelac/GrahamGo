@@ -15,6 +15,8 @@
  * DashboardController::markNotificationsRead) — the counts themselves
  * always display the true live number so the text stays accurate even
  * right after it's been dismissed once and something new adds to it.
+ * Every item shown here is therefore unread by construction, so each
+ * one gets the small blue "unread" dot unconditionally.
  *
  * Each item's whole sentence (not just the number) is rebuilt with
  * correct singular/plural — see the matching phrasing in
@@ -36,44 +38,52 @@ $ggSignupText      = $ggNewSignups === 1 ? '1 new customer signed up' : $ggNewSi
     <i class="bi bi-bell-fill"></i>
     <span data-role="notif-bell-badge" class="topbar-badge" style="<?= $ggTotalAlerts > 0 ? '' : 'display:none;' ?>"><?= $ggTotalAlerts ?></span>
   </button>
-  <ul class="dropdown-menu dropdown-menu-end" style="min-width:290px;">
-    <li class="dropdown-header d-flex align-items-center justify-content-between">
-      <span>Notifications</span>
+  <ul class="dropdown-menu dropdown-menu-end gg-notif-menu">
+    <li class="dropdown-header d-flex align-items-center justify-content-between gg-notif-header">
+      <span><i class="bi bi-bell"></i> Notifications</span>
       <button type="button" class="btn btn-link btn-sm p-0 notif-mark-all-btn" data-role="notif-mark-all-btn" style="<?= $ggTotalAlerts > 0 ? '' : 'display:none;' ?>">Mark all as read</button>
     </li>
     <li data-role="notif-overdue-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadOverdue > 0 ? '' : 'display:none;' ?>">
-      <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
-        <div>
+      <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/reservations') ?>">
+        <div class="gg-notif-icon"><i class="bi bi-alarm-fill"></i></div>
+        <div style="min-width:0;">
           <div class="fw-semibold" data-role="notif-overdue-text"><?= esc($ggOverdueText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Claim date has already passed. Check on these first.</div>
         </div>
+        <span class="gg-notif-dot"></span>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="overdue" title="Mark as read"><i class="bi bi-check2"></i></button>
     </li>
     <li data-role="notif-reservation-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadReservations > 0 ? '' : 'display:none;' ?>">
-      <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/reservations') ?>">
-        <div>
+      <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/reservations') ?>">
+        <div class="gg-notif-icon"><i class="bi bi-bag-check-fill"></i></div>
+        <div style="min-width:0;">
           <div class="fw-semibold" data-role="notif-reservation-text"><?= esc($ggReservationText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Waiting to be confirmed, prepared, or claimed</div>
         </div>
+        <span class="gg-notif-dot"></span>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="reservations" title="Mark as read"><i class="bi bi-check2"></i></button>
     </li>
     <li data-role="notif-stock-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadStock > 0 ? '' : 'display:none;' ?>">
-      <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/products') ?>">
-        <div>
+      <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/products') ?>">
+        <div class="gg-notif-icon"><i class="bi bi-box-seam-fill"></i></div>
+        <div style="min-width:0;">
           <div class="fw-semibold" data-role="notif-stock-text"><?= esc($ggStockText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Restock soon before it runs out completely</div>
         </div>
+        <span class="gg-notif-dot"></span>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="stock" title="Mark as read"><i class="bi bi-check2"></i></button>
     </li>
     <li data-role="notif-signup-item" class="notif-item d-flex align-items-stretch" style="<?= $ggUnreadSignups > 0 ? '' : 'display:none;' ?>">
-      <a class="dropdown-item flex-grow-1" href="<?= site_url('owner/customers') ?>">
-        <div>
+      <a class="dropdown-item gg-notif-row flex-grow-1" href="<?= site_url('owner/customers') ?>">
+        <div class="gg-notif-icon"><i class="bi bi-person-plus-fill"></i></div>
+        <div style="min-width:0;">
           <div class="fw-semibold" data-role="notif-signup-text"><?= esc($ggSignupText) ?></div>
           <div class="text-muted" style="font-size:.78rem; margin-top:2px;">Joined GrahamGo in the last 48 hours</div>
         </div>
+        <span class="gg-notif-dot"></span>
       </a>
       <button type="button" class="notif-mark-read-btn" data-role="notif-mark-read-btn" data-notif-type="signup" title="Mark as read"><i class="bi bi-check2"></i></button>
     </li>
