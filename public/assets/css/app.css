@@ -519,7 +519,7 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 /* Notification dropdown: icon badge + title/subtitle + unread dot per
    row, thin divider between rows, "Mark all as read" in the header —
    a plain, scannable list rather than colored/boxed alert cards. */
-.gg-notif-menu { min-width: 320px; padding: 0; overflow: hidden; }
+.gg-notif-menu { width: 320px; max-width: calc(100vw - 24px); padding: 0; }
 .gg-notif-header { padding: .8rem 1rem; border-bottom: 1px solid var(--gg-border); font-weight: 600; }
 .gg-notif-header i { color: var(--gg-muted); margin-right: .3rem; }
 .notif-mark-all-btn { font-size: .78rem; text-decoration: none; font-weight: 500; }
