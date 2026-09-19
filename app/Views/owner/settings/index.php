@@ -5,7 +5,7 @@
 
 <div class="row g-3 g-lg-4">
   <div class="col-12 col-lg-5">
-    <div class="card">
+    <div class="card mb-3 mb-lg-4">
       <div class="card-body p-4">
         <h6 class="mb-3"><i class="bi bi-calendar-range-fill" style="color:var(--gg-primary-dark);"></i> Reservation Rules</h6>
 
@@ -19,6 +19,21 @@
             <div class="form-text">Customers can only pick a claim date up to this many days from today. This keeps reservations within the product's shelf life.</div>
           </div>
           <button type="submit" class="btn btn-gg-primary"><i class="bi bi-check2"></i> Save Rule</button>
+        <?= form_close() ?>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4">
+        <h6 class="mb-3"><i class="bi bi-chat-heart-fill" style="color:var(--gg-primary-dark);"></i> Customer Contact</h6>
+
+        <?= form_open('owner/settings/contact') ?>
+          <div class="mb-2">
+            <label class="form-label">Facebook / Messenger Link</label>
+            <input type="url" name="contact_facebook_url" class="form-control" placeholder="https://facebook.com/yourpage" value="<?= esc(old('contact_facebook_url', $settings['contact_facebook_url'] ?? '')) ?>">
+            <div class="form-text">Shown to customers on their reservation page so they know how to reach you. Your phone number is set on <a href="<?= site_url('owner/profile') ?>">your Profile</a>.</div>
+          </div>
+          <button type="submit" class="btn btn-gg-primary"><i class="bi bi-check2"></i> Save Contact</button>
         <?= form_close() ?>
       </div>
     </div>

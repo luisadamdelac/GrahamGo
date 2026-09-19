@@ -16,13 +16,32 @@ class SettingController extends BaseController
 
     public function index()
     {
-        $settings = $this->settingModel->getMany(['smtp_email', 'smtp_from_name']);
+        $settings = $this->settingModel->getMany(['smtp_email', 'smtp_from_name', 'contact_facebook_url']);
 
         return view('owner/settings/index', [
             'title'    => 'Settings',
             'settings' => $settings,
             'maxReservationDaysAhead' => (int) $this->settingModel->getValue('max_reservation_days_ahead', '7'),
         ]);
+    }
+
+    /**
+     * Facebook/Messenger link customers can reach the shop through —
+     * shown on the customer's reservation detail page alongside the
+     * owner's phone number (that one's edited on Owner\ProfileController,
+     * it's just a normal field on the owner's own user row already).
+     */
+    public function updateContact()
+    {
+        $rules = ['contact_facebook_url' => 'permit_empty|valid_url_strict[http,https]'];
+
+        if (! $this->validate($rules)) {
+            return redirect()->to('owner/settings')->with('error', implode(' ', $this->validator->getErrors()));
+        }
+
+        $this->settingModel->setValue('contact_facebook_url', $this->request->getPost('contact_facebook_url'));
+
+        return redirect()->to('owner/settings')->with('success', 'Contact settings updated.');
     }
 
     /**

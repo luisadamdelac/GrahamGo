@@ -44,6 +44,18 @@ $currentIndex = array_search($reservation['status'], $steps, true);
       </div>
     <?php endif; ?>
 
+    <?php if ($reservation['status'] !== 'Cancelled' && (! empty($ownerContact) || ! empty($ownerFacebook))): ?>
+      <div class="d-flex flex-wrap gap-3 small text-muted mb-4">
+        <span><i class="bi bi-headset"></i> Need to reach the shop?</span>
+        <?php if (! empty($ownerContact)): ?>
+          <a href="tel:<?= esc($ownerContact, 'attr') ?>" class="text-decoration-none"><i class="bi bi-telephone-fill"></i> <?= esc($ownerContact) ?></a>
+        <?php endif; ?>
+        <?php if (! empty($ownerFacebook)): ?>
+          <a href="<?= esc($ownerFacebook, 'attr') ?>" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-messenger"></i> Message us on Facebook</a>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
+
     <?php if ($reservation['status'] !== 'Cancelled'): ?>
       <div class="progress mb-3" style="height:6px;">
         <?php $pct = $currentIndex !== false ? (($currentIndex + 1) / count($steps)) * 100 : 0; ?>

@@ -116,4 +116,5 @@ $routes->group('owner', ['filter' => 'ownerAuth'], static function ($routes) {
     $routes->post('settings', 'Owner\SettingController::update');
     $routes->post('settings/test-email', 'Owner\SettingController::sendTest');
     $routes->post('settings/reservation-rules', 'Owner\SettingController::updateReservationRules');
+    $routes->post('settings/contact', 'Owner\SettingController::updateContact');
 });

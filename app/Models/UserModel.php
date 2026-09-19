@@ -95,6 +95,17 @@ class UserModel extends Model
     }
 
     /**
+     * The single owner account — used where a customer-facing page
+     * needs the owner's own contact_number (e.g. so the customer knows
+     * who to call/text), since current_owner() only works within an
+     * owner-authenticated session.
+     */
+    public function getOwner(): ?array
+    {
+        return $this->where('role', 'owner')->first();
+    }
+
+    /**
      * Keeps `name` (used everywhere — sessions, emails, reservation/sales
      * listings, reports) in sync with the structured last_name /
      * first_name / middle_name fields, so those callers never had to

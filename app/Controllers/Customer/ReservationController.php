@@ -9,6 +9,7 @@ use App\Models\ReservationDetailModel;
 use App\Models\ReservationModel;
 use App\Models\ReviewModel;
 use App\Models\SettingModel;
+use App\Models\UserModel;
 
 class ReservationController extends BaseController
 {
@@ -183,10 +184,14 @@ class ReservationController extends BaseController
             unset($d);
         }
 
+        $owner = (new UserModel())->getOwner();
+
         return view('customer/reservations/show', [
-            'title'       => 'Reservation #' . $reservation['reservation_id'],
-            'reservation' => $reservation,
-            'details'     => $details,
+            'title'          => 'Reservation #' . $reservation['reservation_id'],
+            'reservation'    => $reservation,
+            'details'        => $details,
+            'ownerContact'   => $owner['contact_number'] ?? null,
+            'ownerFacebook'  => $this->settingModel->getValue('contact_facebook_url'),
         ]);
     }
 
