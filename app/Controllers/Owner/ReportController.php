@@ -53,6 +53,13 @@ class ReportController extends BaseController
         return (bool) $this->request->getGet('daily_breakdown');
     }
 
+    private function inventoryProductFilter(): ?int
+    {
+        $productId = $this->request->getGet('product');
+
+        return $productId ? (int) $productId : null;
+    }
+
     public function reservations()
     {
         $from     = $this->request->getGet('from') ?: date('Y-m-01');
@@ -263,41 +270,55 @@ class ReportController extends BaseController
 
     public function inventory()
     {
-        $byDay = $this->inventoryByDayFilter();
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay     = $this->inventoryByDayFilter();
+        $from      = $this->request->getGet('from') ?: date('Y-m-01');
+        $to        = $this->request->getGet('to') ?: date('Y-m-d');
+        $productId = $this->inventoryProductFilter();
 
         return view('owner/reports/inventory', [
-            'title'     => 'Inventory Report',
-            'summary'   => $this->inventorySummary(),
-            'byDay'     => $byDay,
-            'from'      => $from,
-            'to'        => $to,
-            'dayGroups' => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to), 'transaction_date', 'quantity') : [],
+            'title'           => 'Inventory Report',
+            'summary'         => $this->inventorySummary($productId),
+            'byDay'           => $byDay,
+            'from'            => $from,
+            'to'              => $to,
+            'dayGroups'       => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity') : [],
+            'products'        => (new ProductModel())->orderBy('product_name', 'ASC')->findAll(),
+            'selectedProduct' => $productId,
         ]);
     }
 
     public function inventoryPdf()
     {
-        $byDay = $this->inventoryByDayFilter();
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay     = $this->inventoryByDayFilter();
+        $from      = $this->request->getGet('from') ?: date('Y-m-01');
+        $to        = $this->request->getGet('to') ?: date('Y-m-d');
+        $productId = $this->inventoryProductFilter();
+        $product   = $productId ? (new ProductModel())->find($productId) : null;
+
+        $titleParts = [];
+        if ($byDay) {
+            $titleParts[] = 'Daily Breakdown';
+        }
+        if ($product) {
+            $titleParts[] = $product['product_name'];
+        }
 
         return $this->renderPdf('owner/reports/pdf/inventory', [
-            'reportTitle' => $byDay ? 'Inventory Report (Daily Breakdown)' : 'Inventory Report',
-            'summary'     => $this->inventorySummary(),
+            'reportTitle' => 'Inventory Report' . ($titleParts ? ' (' . implode(' · ', $titleParts) . ')' : ''),
+            'summary'     => $this->inventorySummary($productId),
             'byDay'       => $byDay,
             'from'        => $byDay ? $from : null,
             'to'          => $byDay ? $to : null,
-            'dayGroups'   => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to), 'transaction_date', 'quantity') : [],
+            'dayGroups'   => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity') : [],
         ], 'inventory-report_' . date('Y-m-d') . '.pdf');
     }
 
     public function inventoryExcel()
     {
-        $byDay = $this->inventoryByDayFilter();
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay     = $this->inventoryByDayFilter();
+        $from      = $this->request->getGet('from') ?: date('Y-m-01');
+        $to        = $this->request->getGet('to') ?: date('Y-m-d');
+        $productId = $this->inventoryProductFilter();
 
         if ($byDay) {
             $headers = ['Date', 'Product', 'Type', 'Qty', 'Notes'];
@@ -310,7 +331,7 @@ class ReportController extends BaseController
             ];
 
             [$excelRows, $boldRows] = $this->buildDailyBreakdownExcelRows(
-                $this->groupRowsByDate($this->inventoryTransactionRows($from, $to), 'transaction_date', 'quantity'),
+                $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity'),
                 $toRow,
                 count($headers),
                 static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' transaction(s) · Stock Change: ' . sprintf('%+d', (int) round($group['total']))
@@ -325,7 +346,7 @@ class ReportController extends BaseController
             );
         }
 
-        $summary = $this->inventorySummary();
+        $summary = $this->inventorySummary($productId);
 
         return $this->streamExcel(
             'inventory-report_' . date('Y-m-d') . '.xlsx',
@@ -347,7 +368,7 @@ class ReportController extends BaseController
      * so the owner can see which day stock actually moved, not just the
      * all-time Reserved/Sold/Available numbers.
      */
-    private function inventoryTransactionRows(string $from, string $to): array
+    private function inventoryTransactionRows(string $from, string $to, ?int $productId = null): array
     {
         $builder = db_connect()->table('inventory_transactions it')
             ->select('it.transaction_id, it.transaction_date, it.transaction_type, it.quantity, it.notes, p.product_name')
@@ -360,14 +381,21 @@ class ReportController extends BaseController
         if ($to) {
             $builder->where('it.transaction_date <=', $to . ' 23:59:59');
         }
+        if ($productId) {
+            $builder->where('it.product_id', $productId);
+        }
 
         return $builder->get()->getResultArray();
     }
 
-    private function inventorySummary(): array
+    private function inventorySummary(?int $productId = null): array
     {
         $productModel = new ProductModel();
-        $products     = $productModel->orderBy('product_name', 'ASC')->findAll();
+        $query        = $productModel->orderBy('product_name', 'ASC');
+        if ($productId) {
+            $query->where('product_id', $productId);
+        }
+        $products = $query->findAll();
 
         $summary = [];
         foreach ($products as $p) {

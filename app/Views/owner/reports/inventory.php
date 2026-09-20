@@ -13,6 +13,33 @@
     <label class="form-label small mb-1 d-md-none">To</label>
     <input type="text" name="to" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($to) ?>">
   </div>
+  <?php
+    $ggInvSelectedProductName = 'All Products';
+    foreach ($products as $p) {
+        if ($selectedProduct === (int) $p['product_id']) {
+            $ggInvSelectedProductName = $p['product_name'];
+            break;
+        }
+    }
+  ?>
+  <div class="col-12 col-sm-6 col-md-auto">
+    <label class="form-label small mb-1 d-md-none">Product</label>
+    <div class="gg-custom-select" id="ggInvProductCustom" style="width:180px;">
+      <button type="button" class="form-select text-start" id="ggInvProductTrigger"><?= esc($ggInvSelectedProductName) ?></button>
+      <div class="gg-custom-select-list d-none" id="ggInvProductList">
+        <div class="gg-custom-select-option <?= ! $selectedProduct ? 'is-active' : '' ?>" data-value="">All Products</div>
+        <?php foreach ($products as $p): ?>
+          <div class="gg-custom-select-option <?= $selectedProduct === (int) $p['product_id'] ? 'is-active' : '' ?>" data-value="<?= esc($p['product_id'], 'attr') ?>"><?= esc($p['product_name']) ?></div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <select name="product" id="ggInvProduct" class="gg-visually-hidden" data-role="gg-auto-filter">
+      <option value="" <?= ! $selectedProduct ? 'selected' : '' ?>>All Products</option>
+      <?php foreach ($products as $p): ?>
+        <option value="<?= esc($p['product_id'], 'attr') ?>" <?= $selectedProduct === (int) $p['product_id'] ? 'selected' : '' ?>><?= esc($p['product_name']) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
   <div class="col-12 col-md-auto d-flex align-items-center align-self-md-end">
     <div class="form-check">
       <input type="checkbox" name="daily_breakdown" value="1" id="ggInvDailyBreakdown" class="form-check-input" data-role="gg-auto-filter" <?= $byDay ? 'checked' : '' ?>>
@@ -25,12 +52,15 @@
   </div>
 </form>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+  ggInitCustomSelect('ggInvProductCustom', document.getElementById('ggInvProduct'), 'ggInvProductTrigger', 'ggInvProductList');
+});
 document.querySelectorAll('#ggInvFilterForm [data-role="gg-auto-filter"]').forEach(function (el) {
   el.addEventListener('change', function () { document.getElementById('ggInvFilterForm').submit(); });
 });
 </script>
 
-<?php $ggInvLinkParams = 'filtered=1&from=' . esc($from, 'url') . '&to=' . esc($to, 'url') . '&daily_breakdown=' . ($byDay ? '1' : '0'); ?>
+<?php $ggInvLinkParams = 'filtered=1&from=' . esc($from, 'url') . '&to=' . esc($to, 'url') . '&daily_breakdown=' . ($byDay ? '1' : '0') . ($selectedProduct ? '&product=' . $selectedProduct : ''); ?>
 <div class="d-flex gap-2 mb-3">
   <a href="<?= site_url('owner/reports/inventory/pdf') ?>?<?= $ggInvLinkParams ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
   <a href="<?= site_url('owner/reports/inventory/excel') ?>?<?= $ggInvLinkParams ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
