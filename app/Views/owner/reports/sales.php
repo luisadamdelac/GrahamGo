@@ -4,11 +4,11 @@
 <h4 class="mb-3"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Sales Report</h4>
 
 <form method="get" class="row g-2 mb-2" id="ggSalesFilterForm">
-  <div class="col-12 col-sm-6 col-md-auto">
+  <div class="col-12 col-sm-6 col-md-auto gg-date-col">
     <label class="form-label small mb-1 d-md-none">From</label>
     <input type="text" name="from" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($from) ?>">
   </div>
-  <div class="col-12 col-sm-6 col-md-auto">
+  <div class="col-12 col-sm-6 col-md-auto gg-date-col">
     <label class="form-label small mb-1 d-md-none">To</label>
     <input type="text" name="to" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($to) ?>">
   </div>

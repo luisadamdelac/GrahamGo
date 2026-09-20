@@ -597,6 +597,14 @@ body.has-bottomnav { padding-bottom: calc(var(--gg-bottomnav-h) + 1rem); }
 .gg-custom-select-option { padding: .6rem .9rem; font-size: .9rem; cursor: pointer; }
 .gg-custom-select-option:hover, .gg-custom-select-option.is-active { background: var(--gg-primary-light); color: var(--gg-cocoa); }
 
+/* Report filter forms' From/To date fields — full width on mobile
+   (where a wide tap target actually helps), but on desktop the
+   flatpickr altInput (a "Month Day, Year" string) doesn't need nearly
+   the full col-auto growth it was getting, so it's capped there. */
+@media (min-width: 768px) {
+  .gg-date-col { max-width: 170px; }
+}
+
 /* Quick-fill chips above a note/message textarea — clicking one fills
    in a canned phrase (still editable after) instead of always typing
    from scratch. */

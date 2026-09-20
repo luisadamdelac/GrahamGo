@@ -4,17 +4,17 @@
 <h4 class="mb-3"><i class="bi bi-journal-text" style="color:var(--gg-primary-dark);"></i> Reservation Report</h4>
 
 <form method="get" class="row g-2 mb-2" id="ggResFilterForm">
-  <div class="col-12 col-sm-6 col-md-auto">
+  <div class="col-12 col-sm-6 col-md-auto gg-date-col">
     <label class="form-label small mb-1 d-md-none">From</label>
     <input type="text" name="from" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($from) ?>">
   </div>
-  <div class="col-12 col-sm-6 col-md-auto">
+  <div class="col-12 col-sm-6 col-md-auto gg-date-col">
     <label class="form-label small mb-1 d-md-none">To</label>
     <input type="text" name="to" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($to) ?>">
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
-    <div class="gg-custom-select" id="ggResStatusCustom">
+    <div class="gg-custom-select" id="ggResStatusCustom" style="width:150px;">
       <button type="button" class="form-select text-start" id="ggResStatusTrigger"><?= $status === 'All' ? 'All Statuses' : esc($status) ?></button>
       <div class="gg-custom-select-list d-none" id="ggResStatusList">
         <div class="gg-custom-select-option <?= $status === 'All' ? 'is-active' : '' ?>" data-value="All">All Statuses</div>
