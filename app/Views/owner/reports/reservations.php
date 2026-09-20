@@ -13,6 +13,10 @@
     <input type="text" name="to" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($to) ?>">
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
+    <label class="form-label small mb-1 d-md-none">Customer</label>
+    <input type="text" name="customer" class="form-control" data-role="gg-auto-filter" placeholder="Search customer name" value="<?= esc($customer) ?>">
+  </div>
+  <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
     <div class="gg-custom-select" id="ggResStatusCustom" style="width:150px;">
       <button type="button" class="form-select text-start" id="ggResStatusTrigger"><?= $status === 'All' ? 'All Statuses' : esc($status) ?></button>
@@ -54,7 +58,7 @@ document.querySelectorAll('#ggResFilterForm [data-role="gg-auto-filter"]').forEa
      (flex-fill) to fill whatever width they're given, which was
      pushing these off-screen on narrow phones instead of just
      wrapping to a visible second line. -->
-<?php $ggResLinkParams = ($byDay ? '&daily_breakdown=1' : '') . '&status=' . esc($status, 'url'); ?>
+<?php $ggResLinkParams = ($byDay ? '&daily_breakdown=1' : '') . '&status=' . esc($status, 'url') . ($customer !== '' ? '&customer=' . esc($customer, 'url') : ''); ?>
 <div class="d-flex gap-2 mb-3">
   <a href="<?= site_url('owner/reports/reservations/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggResLinkParams ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
   <a href="<?= site_url('owner/reports/reservations/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggResLinkParams ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>

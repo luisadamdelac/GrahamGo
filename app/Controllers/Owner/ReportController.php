@@ -44,7 +44,8 @@ class ReportController extends BaseController
         $to       = $this->request->getGet('to') ?: date('Y-m-d');
         $byDay    = (bool) $this->request->getGet('daily_breakdown');
         $status   = $this->reservationStatusFilter();
-        $rows     = $this->reservationRows($from, $to, $status);
+        $customer = trim((string) $this->request->getGet('customer'));
+        $rows     = $this->reservationRows($from, $to, $status, $customer);
 
         return view('owner/reports/reservations', [
             'title'        => 'Reservation Report',
@@ -54,16 +55,18 @@ class ReportController extends BaseController
             'from'         => $from,
             'to'           => $to,
             'status'       => $status,
+            'customer'     => $customer,
         ]);
     }
 
     public function reservationsPdf()
     {
-        $from   = $this->request->getGet('from') ?: date('Y-m-01');
-        $to     = $this->request->getGet('to') ?: date('Y-m-d');
-        $byDay  = (bool) $this->request->getGet('daily_breakdown');
-        $status = $this->reservationStatusFilter();
-        $rows   = $this->reservationRows($from, $to, $status);
+        $from     = $this->request->getGet('from') ?: date('Y-m-01');
+        $to       = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay    = (bool) $this->request->getGet('daily_breakdown');
+        $status   = $this->reservationStatusFilter();
+        $customer = trim((string) $this->request->getGet('customer'));
+        $rows     = $this->reservationRows($from, $to, $status, $customer);
 
         return $this->renderPdf('owner/reports/pdf/reservations', [
             'reportTitle'  => $status !== 'All' ? 'Reservation Report (' . $status . ')' : 'Reservation Report',
@@ -77,11 +80,12 @@ class ReportController extends BaseController
 
     public function reservationsExcel()
     {
-        $from   = $this->request->getGet('from') ?: date('Y-m-01');
-        $to     = $this->request->getGet('to') ?: date('Y-m-d');
-        $byDay  = (bool) $this->request->getGet('daily_breakdown');
-        $status = $this->reservationStatusFilter();
-        $rows   = $this->reservationRows($from, $to, $status);
+        $from     = $this->request->getGet('from') ?: date('Y-m-01');
+        $to       = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay    = (bool) $this->request->getGet('daily_breakdown');
+        $status   = $this->reservationStatusFilter();
+        $customer = trim((string) $this->request->getGet('customer'));
+        $rows     = $this->reservationRows($from, $to, $status, $customer);
 
         $headers = ['Reservation #', 'Claim Date', 'Customer', 'Customer Type', 'Product', 'Qty', 'Fulfillment', 'Total Amount', 'Payment Status', 'Status'];
         $toRow   = static fn ($r) => [
@@ -124,7 +128,7 @@ class ReportController extends BaseController
      * one row per product line item (a reservation with several
      * products appears as several rows).
      */
-    private function reservationRows(string $from, string $to, string $status = 'All'): array
+    private function reservationRows(string $from, string $to, string $status = 'All', string $customer = ''): array
     {
         $builder = db_connect()->table('reservations r')
             ->select('r.reservation_id, r.claim_date, r.fulfillment_type, r.total_amount, r.payment_status, r.status, u.name AS customer_name, u.customer_type, p.product_name, rd.quantity')
@@ -141,6 +145,9 @@ class ReportController extends BaseController
         }
         if ($status !== 'All' && in_array($status, ReservationModel::STATUSES, true)) {
             $builder->where('r.status', $status);
+        }
+        if ($customer !== '') {
+            $builder->like('u.name', $customer);
         }
 
         return $builder->get()->getResultArray();
