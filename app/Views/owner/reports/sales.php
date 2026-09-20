@@ -1,10 +1,7 @@
 <?= view('layouts/owner_header', ['title' => 'Sales Report']) ?>
 
 <nav class="small mb-3 text-muted"><a href="<?= site_url('owner/reports') ?>">Reports</a> <i class="bi bi-chevron-right small"></i> Sales Report</nav>
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-  <h4 class="mb-0"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Sales Report</h4>
-  <a href="<?= site_url('owner/walk-in-sale') ?>" class="btn btn-gg-primary btn-sm"><i class="bi bi-cash-coin"></i> Walk-in Sale</a>
-</div>
+<h4 class="mb-3"><i class="bi bi-cash-coin" style="color:var(--gg-primary-dark);"></i> Sales Report</h4>
 
 <form method="get" class="row g-2 mb-2" id="ggSalesFilterForm">
   <div class="col-12 col-sm-6 col-md-auto">
