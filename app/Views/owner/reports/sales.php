@@ -6,7 +6,7 @@
   <a href="<?= site_url('owner/walk-in-sale') ?>" class="btn btn-gg-primary btn-sm"><i class="bi bi-cash-coin"></i> Walk-in Sale</a>
 </div>
 
-<form method="get" class="row g-2 mb-2">
+<form method="get" class="row g-2 mb-2" id="ggSalesFilterForm">
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">From</label>
     <input type="text" name="from" class="form-control gg-date-picker" value="<?= esc($from) ?>">
@@ -17,13 +17,13 @@
   </div>
   <div class="col-12 col-md-auto d-flex align-items-center align-self-md-end">
     <div class="form-check">
-      <input type="checkbox" name="walkin_only" value="1" id="ggWalkInOnly" class="form-check-input" <?= $walkInOnly ? 'checked' : '' ?>>
+      <input type="checkbox" name="walkin_only" value="1" id="ggWalkInOnly" class="form-check-input" data-role="gg-auto-filter" <?= $walkInOnly ? 'checked' : '' ?>>
       <label class="form-check-label small" for="ggWalkInOnly">Walk-ins only</label>
     </div>
   </div>
   <div class="col-12 col-md-auto d-flex align-items-center align-self-md-end">
     <div class="form-check">
-      <input type="checkbox" name="daily_breakdown" value="1" id="ggSalesDailyBreakdown" class="form-check-input" <?= $byDay ? 'checked' : '' ?>>
+      <input type="checkbox" name="daily_breakdown" value="1" id="ggSalesDailyBreakdown" class="form-check-input" data-role="gg-auto-filter" <?= $byDay ? 'checked' : '' ?>>
       <label class="form-check-label small" for="ggSalesDailyBreakdown">Show daily breakdown</label>
     </div>
   </div>
@@ -32,6 +32,11 @@
     <a href="<?= site_url('owner/reports/sales') ?>" class="btn btn-outline-secondary flex-fill">Reset</a>
   </div>
 </form>
+<script>
+document.querySelectorAll('#ggSalesFilterForm [data-role="gg-auto-filter"]').forEach(function (el) {
+  el.addEventListener('change', function () { document.getElementById('ggSalesFilterForm').submit(); });
+});
+</script>
 
 <!-- Own row, not squeezed alongside Filter/Reset — those two grow
      (flex-fill) to fill whatever width they're given, which was

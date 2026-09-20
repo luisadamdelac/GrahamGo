@@ -3,7 +3,7 @@
 <nav class="small mb-3 text-muted"><a href="<?= site_url('owner/reports') ?>">Reports</a> <i class="bi bi-chevron-right small"></i> Reservation Report</nav>
 <h4 class="mb-3"><i class="bi bi-journal-text" style="color:var(--gg-primary-dark);"></i> Reservation Report</h4>
 
-<form method="get" class="row g-2 mb-2">
+<form method="get" class="row g-2 mb-2" id="ggResFilterForm">
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">From</label>
     <input type="text" name="from" class="form-control gg-date-picker" value="<?= esc($from) ?>">
@@ -14,7 +14,7 @@
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
-    <select name="status" class="form-select">
+    <select name="status" class="form-select" data-role="gg-auto-filter">
       <option value="All" <?= $status === 'All' ? 'selected' : '' ?>>All Statuses</option>
       <?php foreach (\App\Models\ReservationModel::STATUSES as $s): ?>
         <option value="<?= esc($s, 'attr') ?>" <?= $status === $s ? 'selected' : '' ?>><?= esc($s) ?></option>
@@ -23,7 +23,7 @@
   </div>
   <div class="col-12 col-md-auto d-flex align-items-center align-self-md-end">
     <div class="form-check">
-      <input type="checkbox" name="daily_breakdown" value="1" id="ggResDailyBreakdown" class="form-check-input" <?= $byDay ? 'checked' : '' ?>>
+      <input type="checkbox" name="daily_breakdown" value="1" id="ggResDailyBreakdown" class="form-check-input" data-role="gg-auto-filter" <?= $byDay ? 'checked' : '' ?>>
       <label class="form-check-label small" for="ggResDailyBreakdown">Show daily breakdown</label>
     </div>
   </div>
@@ -32,6 +32,11 @@
     <a href="<?= site_url('owner/reports/reservations') ?>" class="btn btn-outline-secondary flex-fill">Reset</a>
   </div>
 </form>
+<script>
+document.querySelectorAll('#ggResFilterForm [data-role="gg-auto-filter"]').forEach(function (el) {
+  el.addEventListener('change', function () { document.getElementById('ggResFilterForm').submit(); });
+});
+</script>
 
 <!-- Own row, not squeezed alongside Filter/Reset — those two grow
      (flex-fill) to fill whatever width they're given, which was
