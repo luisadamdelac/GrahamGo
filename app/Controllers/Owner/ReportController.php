@@ -131,7 +131,7 @@ class ReportController extends BaseController
             ->join('users u', 'u.user_id = r.user_id')
             ->join('reservation_details rd', 'rd.reservation_id = r.reservation_id')
             ->join('products p', 'p.product_id = rd.product_id')
-            ->orderBy('r.claim_date', 'DESC');
+            ->orderBy('r.claim_date', 'ASC');
 
         if ($from) {
             $builder->where('r.claim_date >=', $from);
