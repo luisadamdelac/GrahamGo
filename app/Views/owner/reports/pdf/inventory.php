@@ -16,7 +16,7 @@
         <tr class="gg-pdf-daygroup">
           <td colspan="5">
             <?= esc(date('l, F j, Y', strtotime($day))) ?>
-            <span style="float:right;"><?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; Net: <?= sprintf('%+d', (int) round($group['total'])) ?></span>
+            <span style="float:right;"><?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; Stock Change: <?= sprintf('%+d', (int) round($group['total'])) ?></span>
           </td>
         </tr>
         <?php foreach ($group['rows'] as $t): ?>
