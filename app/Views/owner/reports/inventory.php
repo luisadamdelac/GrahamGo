@@ -4,6 +4,7 @@
 <h4 class="mb-3"><i class="bi bi-clipboard-data-fill" style="color:var(--gg-primary-dark);"></i> Inventory Report</h4>
 
 <form method="get" class="row g-2 mb-2" id="ggInvFilterForm">
+  <input type="hidden" name="filtered" value="1">
   <div class="col-12 col-sm-6 col-md-auto gg-date-col">
     <label class="form-label small mb-1 d-md-none">From</label>
     <input type="text" name="from" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($from) ?>">
@@ -29,10 +30,10 @@ document.querySelectorAll('#ggInvFilterForm [data-role="gg-auto-filter"]').forEa
 });
 </script>
 
-<?php $ggInvLinkParams = $byDay ? ('daily_breakdown=1&from=' . esc($from, 'url') . '&to=' . esc($to, 'url')) : ''; ?>
+<?php $ggInvLinkParams = 'filtered=1&from=' . esc($from, 'url') . '&to=' . esc($to, 'url') . '&daily_breakdown=' . ($byDay ? '1' : '0'); ?>
 <div class="d-flex gap-2 mb-3">
-  <a href="<?= site_url('owner/reports/inventory/pdf') ?><?= $ggInvLinkParams ? '?' . $ggInvLinkParams : '' ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
-  <a href="<?= site_url('owner/reports/inventory/excel') ?><?= $ggInvLinkParams ? '?' . $ggInvLinkParams : '' ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+  <a href="<?= site_url('owner/reports/inventory/pdf') ?>?<?= $ggInvLinkParams ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
+  <a href="<?= site_url('owner/reports/inventory/excel') ?>?<?= $ggInvLinkParams ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
 </div>
 
 <?php if ($byDay): ?>

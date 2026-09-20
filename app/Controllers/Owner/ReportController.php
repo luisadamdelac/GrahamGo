@@ -38,6 +38,21 @@ class ReportController extends BaseController
         return $status === null ? 'Claimed' : $status;
     }
 
+    /**
+     * Defaults to the Daily Breakdown view until the owner has actually
+     * touched the filter form (the 'filtered' marker), since an unchecked
+     * checkbox is simply absent from the query string, indistinguishable
+     * from a fresh page load without this marker.
+     */
+    private function inventoryByDayFilter(): bool
+    {
+        if ($this->request->getGet('filtered') === null) {
+            return true;
+        }
+
+        return (bool) $this->request->getGet('daily_breakdown');
+    }
+
     public function reservations()
     {
         $from     = $this->request->getGet('from') ?: date('Y-m-01');
@@ -248,7 +263,7 @@ class ReportController extends BaseController
 
     public function inventory()
     {
-        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $byDay = $this->inventoryByDayFilter();
         $from  = $this->request->getGet('from') ?: date('Y-m-01');
         $to    = $this->request->getGet('to') ?: date('Y-m-d');
 
@@ -264,7 +279,7 @@ class ReportController extends BaseController
 
     public function inventoryPdf()
     {
-        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $byDay = $this->inventoryByDayFilter();
         $from  = $this->request->getGet('from') ?: date('Y-m-01');
         $to    = $this->request->getGet('to') ?: date('Y-m-d');
 
@@ -280,7 +295,7 @@ class ReportController extends BaseController
 
     public function inventoryExcel()
     {
-        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $byDay = $this->inventoryByDayFilter();
         $from  = $this->request->getGet('from') ?: date('Y-m-01');
         $to    = $this->request->getGet('to') ?: date('Y-m-d');
 
