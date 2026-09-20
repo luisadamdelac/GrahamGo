@@ -102,7 +102,7 @@ class ReportController extends BaseController
                 $this->groupRowsByDate($rows, 'claim_date', 'total_amount', 'reservation_id'),
                 $toRow,
                 count($headers),
-                'reservation(s)'
+                static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' reservation(s), ₱' . number_format($group['total'], 2)
             );
         } else {
             $excelRows = array_map($toRow, $rows);
@@ -214,7 +214,7 @@ class ReportController extends BaseController
                 $this->groupRowsByDate($sales, 'sale_date', 'total_amount'),
                 $toRow,
                 count($headers),
-                'sale(s)'
+                static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' sale(s), ₱' . number_format($group['total'], 2)
             );
         } else {
             $excelRows = array_map($toRow, $sales);
@@ -241,21 +241,68 @@ class ReportController extends BaseController
 
     public function inventory()
     {
+        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $from  = $this->request->getGet('from') ?: date('Y-m-01');
+        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+
         return view('owner/reports/inventory', [
-            'title'   => 'Inventory Report',
-            'summary' => $this->inventorySummary(),
+            'title'     => 'Inventory Report',
+            'summary'   => $this->inventorySummary(),
+            'byDay'     => $byDay,
+            'from'      => $from,
+            'to'        => $to,
+            'dayGroups' => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to), 'transaction_date', 'quantity') : [],
         ]);
     }
 
     public function inventoryPdf()
     {
+        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $from  = $this->request->getGet('from') ?: date('Y-m-01');
+        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+
         return $this->renderPdf('owner/reports/pdf/inventory', [
-            'summary' => $this->inventorySummary(),
+            'reportTitle' => $byDay ? 'Inventory Report (Daily Breakdown)' : 'Inventory Report',
+            'summary'     => $this->inventorySummary(),
+            'byDay'       => $byDay,
+            'from'        => $byDay ? $from : null,
+            'to'          => $byDay ? $to : null,
+            'dayGroups'   => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to), 'transaction_date', 'quantity') : [],
         ], 'inventory-report_' . date('Y-m-d') . '.pdf');
     }
 
     public function inventoryExcel()
     {
+        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $from  = $this->request->getGet('from') ?: date('Y-m-01');
+        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+
+        if ($byDay) {
+            $headers = ['Date', 'Product', 'Type', 'Qty', 'Notes'];
+            $toRow   = static fn ($t) => [
+                date('M d, Y g:i A', strtotime($t['transaction_date'])),
+                $t['product_name'],
+                $t['transaction_type'],
+                $t['quantity'],
+                $t['notes'],
+            ];
+
+            [$excelRows, $boldRows] = $this->buildDailyBreakdownExcelRows(
+                $this->groupRowsByDate($this->inventoryTransactionRows($from, $to), 'transaction_date', 'quantity'),
+                $toRow,
+                count($headers),
+                static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' transaction(s)'
+            );
+
+            return $this->streamExcel(
+                'inventory-report_' . $from . '_to_' . $to . '.xlsx',
+                'Inventory',
+                $headers,
+                $excelRows,
+                $boldRows
+            );
+        }
+
         $summary = $this->inventorySummary();
 
         return $this->streamExcel(
@@ -270,6 +317,29 @@ class ReportController extends BaseController
                 $row['available'] <= $row['product']['reorder_level'] ? 'Low Stock' : 'OK',
             ], $summary)
         );
+    }
+
+    /**
+     * The raw transaction log behind inventorySummary()'s lifetime
+     * totals — feeds the "Daily Breakdown" view (see groupRowsByDate())
+     * so the owner can see which day stock actually moved, not just the
+     * all-time Reserved/Sold/Available numbers.
+     */
+    private function inventoryTransactionRows(string $from, string $to): array
+    {
+        $builder = db_connect()->table('inventory_transactions it')
+            ->select('it.transaction_id, it.transaction_date, it.transaction_type, it.quantity, it.notes, p.product_name')
+            ->join('products p', 'p.product_id = it.product_id')
+            ->orderBy('it.transaction_date', 'ASC');
+
+        if ($from) {
+            $builder->where('it.transaction_date >=', $from . ' 00:00:00');
+        }
+        if ($to) {
+            $builder->where('it.transaction_date <=', $to . ' 23:59:59');
+        }
+
+        return $builder->get()->getResultArray();
     }
 
     private function inventorySummary(): array
@@ -349,19 +419,23 @@ class ReportController extends BaseController
 
     /**
      * Turns a groupRowsByDate() result into a flat row list for
-     * streamExcel(), inserting a single-cell "date — count, total" row
-     * ahead of each day's data rows. Returns [rows, boldRowIndexes] so
-     * the caller can bold just those day-header rows.
+     * streamExcel(), inserting a single-cell date-header row ahead of
+     * each day's data rows. $labelFn builds that header's text from
+     * (string $day, array $group) — callers decide what to show after
+     * the date (a ₱ total makes sense for Sales/Reservations, but not
+     * Inventory, whose "quantity" can be positive or negative depending
+     * on transaction_type, so a plain sum wouldn't read as meaningful).
+     * Returns [rows, boldRowIndexes] so the caller can bold just those
+     * day-header rows.
      */
-    private function buildDailyBreakdownExcelRows(array $dayGroups, callable $toRow, int $columnCount, string $unitLabel): array
+    private function buildDailyBreakdownExcelRows(array $dayGroups, callable $toRow, int $columnCount, callable $labelFn): array
     {
         $excelRows = [];
         $boldRows  = [];
 
         foreach ($dayGroups as $day => $group) {
-            $boldRows[] = count($excelRows);
-            $label      = date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' ' . $unitLabel . ', ₱' . number_format($group['total'], 2);
-            $excelRows[] = array_pad([$label], $columnCount, '');
+            $boldRows[]  = count($excelRows);
+            $excelRows[] = array_pad([$labelFn($day, $group)], $columnCount, '');
 
             foreach ($group['rows'] as $row) {
                 $excelRows[] = $toRow($row);
