@@ -70,7 +70,10 @@ document.querySelectorAll('#ggInvFilterForm [data-role="gg-auto-filter"]').forEa
   <?php foreach ($dayGroups as $day => $group): ?>
     <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
       <h6 class="mb-0"><i class="bi bi-calendar-event" style="color:var(--gg-primary-dark);"></i> <?= esc(date('l, F j, Y', strtotime($day))) ?></h6>
-      <span class="small text-muted"><?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; <?= esc(stock_change_label($group['total'])) ?></span>
+      <span class="small text-muted">
+        <?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; <?= esc(stock_change_label($group['total'])) ?>
+        <?php if (isset($group['ending_stock'])): ?> &middot; Ending Stock: <strong><?= (int) $group['ending_stock'] ?></strong><?php endif; ?>
+      </span>
     </div>
 
     <!-- Mobile: card list -->

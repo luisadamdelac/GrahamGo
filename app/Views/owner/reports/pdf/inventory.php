@@ -16,7 +16,10 @@
         <tr class="gg-pdf-daygroup">
           <td colspan="5">
             <?= esc(date('l, F j, Y', strtotime($day))) ?>
-            <span style="float:right;"><?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; <?= esc(stock_change_label($group['total'])) ?></span>
+            <span style="float:right;">
+              <?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; <?= esc(stock_change_label($group['total'])) ?>
+              <?php if (isset($group['ending_stock'])): ?> &middot; Ending Stock: <?= (int) $group['ending_stock'] ?><?php endif; ?>
+            </span>
           </td>
         </tr>
         <?php foreach ($group['rows'] as $t): ?>

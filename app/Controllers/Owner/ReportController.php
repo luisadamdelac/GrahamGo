@@ -60,6 +60,55 @@ class ReportController extends BaseController
         return $productId ? (int) $productId : null;
     }
 
+    /**
+     * Day groups for the Daily Breakdown, annotated with 'ending_stock'
+     * (the product's available stock at the end of that day) when a
+     * single product is selected — only meaningful per-product, since
+     * "ending stock" for a mix of products has no single number.
+     *
+     * Computed by walking the live current stock backward: 'ending_stock'
+     * for the day before the range starts is derived from
+     * productStockAsOf(), then each day's own total is added forward.
+     */
+    private function inventoryDayGroups(string $from, string $to, ?int $productId): array
+    {
+        $dayGroups = $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity');
+
+        if ($productId) {
+            $runningBalance = $this->productStockAsOf($productId, date('Y-m-d 23:59:59', strtotime($from . ' -1 day')));
+
+            foreach ($dayGroups as $day => &$group) {
+                $runningBalance += $group['total'];
+                $group['ending_stock'] = $runningBalance;
+            }
+            unset($group);
+        }
+
+        return $dayGroups;
+    }
+
+    /**
+     * A product's available stock as of a past moment, derived from the
+     * live current stock (products.stock) by undoing every transaction
+     * that happened after that moment — there's no stored historical
+     * snapshot, so this walks backward from "now" instead.
+     */
+    private function productStockAsOf(int $productId, string $asOfDateTime): int
+    {
+        $product = (new ProductModel())->find($productId);
+        if (! $product) {
+            return 0;
+        }
+
+        $undoSince = (float) (db_connect()->table('inventory_transactions')
+            ->selectSum('quantity', 'total')
+            ->where('product_id', $productId)
+            ->where('transaction_date >', $asOfDateTime)
+            ->get()->getRowArray()['total'] ?? 0);
+
+        return (int) round($product['stock'] - $undoSince);
+    }
+
     public function reservations()
     {
         $from     = $this->request->getGet('from') ?: date('Y-m-01');
@@ -281,7 +330,7 @@ class ReportController extends BaseController
             'byDay'           => $byDay,
             'from'            => $from,
             'to'              => $to,
-            'dayGroups'       => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity') : [],
+            'dayGroups'       => $byDay ? $this->inventoryDayGroups($from, $to, $productId) : [],
             'products'        => (new ProductModel())->orderBy('product_name', 'ASC')->findAll(),
             'selectedProduct' => $productId,
         ]);
@@ -309,7 +358,7 @@ class ReportController extends BaseController
             'byDay'       => $byDay,
             'from'        => $byDay ? $from : null,
             'to'          => $byDay ? $to : null,
-            'dayGroups'   => $byDay ? $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity') : [],
+            'dayGroups'   => $byDay ? $this->inventoryDayGroups($from, $to, $productId) : [],
         ], 'inventory-report_' . date('Y-m-d') . '.pdf');
     }
 
@@ -331,10 +380,11 @@ class ReportController extends BaseController
             ];
 
             [$excelRows, $boldRows] = $this->buildDailyBreakdownExcelRows(
-                $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity'),
+                $this->inventoryDayGroups($from, $to, $productId),
                 $toRow,
                 count($headers),
                 static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' transaction(s) · ' . stock_change_label($group['total'])
+                    . (isset($group['ending_stock']) ? ' · Ending Stock: ' . $group['ending_stock'] : '')
             );
 
             return $this->streamExcel(
