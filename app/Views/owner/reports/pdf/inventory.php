@@ -4,29 +4,6 @@
   <table class="gg-pdf-table" style="margin-bottom: 14px;">
     <thead>
       <tr>
-        <th style="width:60%;">Current Stock</th>
-        <th style="width:20%;">Available</th>
-        <th style="width:20%;">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($summary as $row): ?>
-        <?php $ggLowStock = $row['available'] <= $row['product']['reorder_level']; ?>
-        <tr>
-          <td><?= esc($row['product']['product_name']) ?></td>
-          <td><?= (int) $row['available'] ?></td>
-          <td class="gg-status-<?= $ggLowStock ? 'low' : 'ok' ?>"><?= $ggLowStock ? 'Low Stock' : 'OK' ?></td>
-        </tr>
-      <?php endforeach; ?>
-      <?php if (empty($summary)): ?>
-        <tr><td colspan="3" style="text-align:center; color:#7A6858;">No products yet.</td></tr>
-      <?php endif; ?>
-    </tbody>
-  </table>
-
-  <table class="gg-pdf-table">
-    <thead>
-      <tr>
         <th style="width:13%;">Time</th>
         <th style="width:30%;">Product</th>
         <th style="width:17%;">Type</th>
@@ -54,6 +31,29 @@
       <?php endforeach; ?>
       <?php if (empty($dayGroups)): ?>
         <tr><td colspan="5" style="text-align:center; color:#7A6858;">No stock activity for this period.</td></tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+
+  <table class="gg-pdf-table">
+    <thead>
+      <tr>
+        <th style="width:60%;">Current Stock</th>
+        <th style="width:20%;">Available</th>
+        <th style="width:20%;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($summary as $row): ?>
+        <?php $ggLowStock = $row['available'] <= $row['product']['reorder_level']; ?>
+        <tr>
+          <td><?= esc($row['product']['product_name']) ?></td>
+          <td><?= (int) $row['available'] ?></td>
+          <td class="gg-status-<?= $ggLowStock ? 'low' : 'ok' ?>"><?= $ggLowStock ? 'Low Stock' : 'OK' ?></td>
+        </tr>
+      <?php endforeach; ?>
+      <?php if (empty($summary)): ?>
+        <tr><td colspan="3" style="text-align:center; color:#7A6858;">No products yet.</td></tr>
       <?php endif; ?>
     </tbody>
   </table>
