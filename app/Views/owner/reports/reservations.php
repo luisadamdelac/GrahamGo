@@ -14,7 +14,7 @@
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
-    <div class="gg-custom-select" id="ggResStatusCustom" style="width:150px;">
+    <div class="gg-custom-select" id="ggResStatusCustom">
       <button type="button" class="form-select text-start" id="ggResStatusTrigger"><?= $status === 'All' ? 'All Statuses' : esc($status) ?></button>
       <div class="gg-custom-select-list d-none" id="ggResStatusList">
         <div class="gg-custom-select-option <?= $status === 'All' ? 'is-active' : '' ?>" data-value="All">All Statuses</div>
