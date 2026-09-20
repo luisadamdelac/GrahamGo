@@ -48,6 +48,29 @@ if (! function_exists('product_image_url')) {
     }
 }
 
+if (! function_exists('stock_change_label')) {
+    /**
+     * Plain-language version of a signed daily stock total for the
+     * Inventory Report's Daily Breakdown — spelled out ("Stock decreased
+     * by 28") rather than a bare "+/-28", which owners found confusing
+     * to read at a glance.
+     */
+    function stock_change_label(float $net): string
+    {
+        $net = (int) round($net);
+
+        if ($net > 0) {
+            return 'Stock increased by ' . $net;
+        }
+
+        if ($net < 0) {
+            return 'Stock decreased by ' . abs($net);
+        }
+
+        return 'No stock change';
+    }
+}
+
 if (! function_exists('product_chip')) {
     /**
      * A small rounded thumbnail for product list rows — the uploaded

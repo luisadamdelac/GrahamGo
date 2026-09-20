@@ -334,7 +334,7 @@ class ReportController extends BaseController
                 $this->groupRowsByDate($this->inventoryTransactionRows($from, $to, $productId), 'transaction_date', 'quantity'),
                 $toRow,
                 count($headers),
-                static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' transaction(s) · Stock Change: ' . sprintf('%+d', (int) round($group['total']))
+                static fn ($day, $group) => date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' transaction(s) · ' . stock_change_label($group['total'])
             );
 
             return $this->streamExcel(
