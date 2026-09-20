@@ -6,11 +6,11 @@
 <form method="get" class="row g-2 mb-2" id="ggResFilterForm">
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">From</label>
-    <input type="text" name="from" class="form-control gg-date-picker" value="<?= esc($from) ?>">
+    <input type="text" name="from" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($from) ?>">
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">To</label>
-    <input type="text" name="to" class="form-control gg-date-picker" value="<?= esc($to) ?>">
+    <input type="text" name="to" class="form-control gg-date-picker" data-role="gg-auto-filter" value="<?= esc($to) ?>">
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
