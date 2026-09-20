@@ -40,7 +40,7 @@ document.querySelectorAll('#ggInvFilterForm [data-role="gg-auto-filter"]').forEa
   <?php foreach ($dayGroups as $day => $group): ?>
     <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
       <h6 class="mb-0"><i class="bi bi-calendar-event" style="color:var(--gg-primary-dark);"></i> <?= esc(date('l, F j, Y', strtotime($day))) ?></h6>
-      <span class="small text-muted"><?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?></span>
+      <span class="small text-muted"><?= $group['count'] ?> transaction<?= $group['count'] === 1 ? '' : 's' ?> &middot; Net: <?= sprintf('%+d', (int) round($group['total'])) ?></span>
     </div>
 
     <!-- Mobile: card list -->
