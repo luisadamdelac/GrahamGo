@@ -11,12 +11,17 @@
   // flatpickr always shows the same unambiguous "Month Day, Year" for
   // everyone and only lets you pick from the calendar, while the actual
   // input still submits a plain Y-m-d value underneath.
+  //
+  // Abbreviated month ("Sep 1, 2026"), not the full name ("September 1,
+  // 2026") — the reports' From/To fields are capped narrow (.gg-date-col,
+  // max-width 170px), and the full month name overflowed/got clipped
+  // inside that width.
   document.addEventListener('DOMContentLoaded', function () {
     if (typeof flatpickr === 'undefined') return;
     document.querySelectorAll('.gg-date-picker').forEach(function (el) {
       flatpickr(el, {
         altInput: true,
-        altFormat: 'F j, Y',
+        altFormat: 'M j, Y',
         altInputClass: 'form-control',
         dateFormat: 'Y-m-d',
         disableMobile: true,
