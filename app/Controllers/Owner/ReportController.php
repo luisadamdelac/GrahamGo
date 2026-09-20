@@ -4,6 +4,7 @@ namespace App\Controllers\Owner;
 
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
+use App\Models\ReservationModel;
 use App\Models\SaleModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -22,12 +23,28 @@ class ReportController extends BaseController
     // Reservations
     // -----------------------------------------------------------------
 
+    /**
+     * "Claimed" by default rather than "All" — a report is normally
+     * pulled to look at completed business (what was actually sold and
+     * picked up/delivered), not the still-in-progress Pending/Confirmed/
+     * Ready reservations the owner already tracks live on the
+     * Reservations list page. An explicit ?status=All (or any other
+     * status) overrides it.
+     */
+    private function reservationStatusFilter(): string
+    {
+        $status = $this->request->getGet('status');
+
+        return $status === null ? 'Claimed' : $status;
+    }
+
     public function reservations()
     {
         $from     = $this->request->getGet('from') ?: date('Y-m-01');
         $to       = $this->request->getGet('to') ?: date('Y-m-d');
         $byDay    = (bool) $this->request->getGet('daily_breakdown');
-        $rows     = $this->reservationRows($from, $to);
+        $status   = $this->reservationStatusFilter();
+        $rows     = $this->reservationRows($from, $to, $status);
 
         return view('owner/reports/reservations', [
             'title'        => 'Reservation Report',
@@ -36,17 +53,20 @@ class ReportController extends BaseController
             'dayGroups'    => $byDay ? $this->groupRowsByDate($rows, 'claim_date', 'total_amount', 'reservation_id') : [],
             'from'         => $from,
             'to'           => $to,
+            'status'       => $status,
         ]);
     }
 
     public function reservationsPdf()
     {
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
-        $byDay = (bool) $this->request->getGet('daily_breakdown');
-        $rows  = $this->reservationRows($from, $to);
+        $from   = $this->request->getGet('from') ?: date('Y-m-01');
+        $to     = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay  = (bool) $this->request->getGet('daily_breakdown');
+        $status = $this->reservationStatusFilter();
+        $rows   = $this->reservationRows($from, $to, $status);
 
         return $this->renderPdf('owner/reports/pdf/reservations', [
+            'reportTitle'  => $status !== 'All' ? 'Reservation Report (' . $status . ')' : 'Reservation Report',
             'reservations' => $rows,
             'byDay'        => $byDay,
             'dayGroups'    => $byDay ? $this->groupRowsByDate($rows, 'claim_date', 'total_amount', 'reservation_id') : [],
@@ -57,10 +77,11 @@ class ReportController extends BaseController
 
     public function reservationsExcel()
     {
-        $from  = $this->request->getGet('from') ?: date('Y-m-01');
-        $to    = $this->request->getGet('to') ?: date('Y-m-d');
-        $byDay = (bool) $this->request->getGet('daily_breakdown');
-        $rows  = $this->reservationRows($from, $to);
+        $from   = $this->request->getGet('from') ?: date('Y-m-01');
+        $to     = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay  = (bool) $this->request->getGet('daily_breakdown');
+        $status = $this->reservationStatusFilter();
+        $rows   = $this->reservationRows($from, $to, $status);
 
         $headers = ['Reservation #', 'Claim Date', 'Customer', 'Customer Type', 'Product', 'Qty', 'Fulfillment', 'Total Amount', 'Payment Status', 'Status'];
         $toRow   = static fn ($r) => [
@@ -103,7 +124,7 @@ class ReportController extends BaseController
      * one row per product line item (a reservation with several
      * products appears as several rows).
      */
-    private function reservationRows(string $from, string $to): array
+    private function reservationRows(string $from, string $to, string $status = 'All'): array
     {
         $builder = db_connect()->table('reservations r')
             ->select('r.reservation_id, r.claim_date, r.fulfillment_type, r.total_amount, r.payment_status, r.status, u.name AS customer_name, u.customer_type, p.product_name, rd.quantity')
@@ -117,6 +138,9 @@ class ReportController extends BaseController
         }
         if ($to) {
             $builder->where('r.claim_date <=', $to);
+        }
+        if ($status !== 'All' && in_array($status, ReservationModel::STATUSES, true)) {
+            $builder->where('r.status', $status);
         }
 
         return $builder->get()->getResultArray();

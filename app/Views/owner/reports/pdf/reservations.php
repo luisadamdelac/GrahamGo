@@ -1,4 +1,4 @@
-<?= view('owner/reports/pdf/_layout_top', ['reportTitle' => 'Reservation Report', 'from' => $from, 'to' => $to]) ?>
+<?= view('owner/reports/pdf/_layout_top', ['reportTitle' => $reportTitle ?? 'Reservation Report', 'from' => $from, 'to' => $to]) ?>
 
 <table class="gg-pdf-table">
   <thead>

@@ -12,6 +12,15 @@
     <label class="form-label small mb-1 d-md-none">To</label>
     <input type="text" name="to" class="form-control gg-date-picker" value="<?= esc($to) ?>">
   </div>
+  <div class="col-12 col-sm-6 col-md-auto">
+    <label class="form-label small mb-1 d-md-none">Status</label>
+    <select name="status" class="form-select">
+      <option value="All" <?= $status === 'All' ? 'selected' : '' ?>>All Statuses</option>
+      <?php foreach (\App\Models\ReservationModel::STATUSES as $s): ?>
+        <option value="<?= esc($s, 'attr') ?>" <?= $status === $s ? 'selected' : '' ?>><?= esc($s) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
   <div class="col-12 col-md-auto d-flex align-items-center align-self-md-end">
     <div class="form-check">
       <input type="checkbox" name="daily_breakdown" value="1" id="ggResDailyBreakdown" class="form-check-input" <?= $byDay ? 'checked' : '' ?>>
@@ -28,10 +37,10 @@
      (flex-fill) to fill whatever width they're given, which was
      pushing these off-screen on narrow phones instead of just
      wrapping to a visible second line. -->
-<?php $ggDailyParam = $byDay ? '&daily_breakdown=1' : ''; ?>
+<?php $ggResLinkParams = ($byDay ? '&daily_breakdown=1' : '') . '&status=' . esc($status, 'url'); ?>
 <div class="d-flex gap-2 mb-3">
-  <a href="<?= site_url('owner/reports/reservations/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggDailyParam ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
-  <a href="<?= site_url('owner/reports/reservations/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggDailyParam ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+  <a href="<?= site_url('owner/reports/reservations/pdf') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggResLinkParams ?>" target="_blank" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> Preview PDF</a>
+  <a href="<?= site_url('owner/reports/reservations/excel') ?>?from=<?= esc($from, 'url') ?>&to=<?= esc($to, 'url') ?><?= $ggResLinkParams ?>" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
 </div>
 
 <?php if ($byDay): ?>
