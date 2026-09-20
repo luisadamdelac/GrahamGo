@@ -14,7 +14,7 @@
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Customer</label>
-    <input type="text" name="customer" class="form-control" data-role="gg-auto-filter" placeholder="Search customer name" value="<?= esc($customer) ?>">
+    <input type="text" name="customer" id="ggResCustomer" class="form-control" placeholder="Search customer name" value="<?= esc($customer) ?>" autocomplete="off">
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
@@ -52,6 +52,22 @@ document.addEventListener('DOMContentLoaded', function () {
 document.querySelectorAll('#ggResFilterForm [data-role="gg-auto-filter"]').forEach(function (el) {
   el.addEventListener('change', function () { document.getElementById('ggResFilterForm').submit(); });
 });
+
+(function () {
+  var customerInput = document.getElementById('ggResCustomer');
+  if (! customerInput) { return; }
+  var debounceTimer = null;
+  customerInput.addEventListener('input', function () {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function () { document.getElementById('ggResFilterForm').submit(); }, 600);
+  });
+  if (customerInput.value) {
+    customerInput.focus();
+    var v = customerInput.value;
+    customerInput.value = '';
+    customerInput.value = v;
+  }
+})();
 </script>
 
 <!-- Own row, not squeezed alongside Filter/Reset — those two grow
