@@ -37,19 +37,6 @@ document.querySelectorAll('#ggInvFilterForm [data-role="gg-auto-filter"]').forEa
 </div>
 
 <?php if ($byDay): ?>
-  <h6 class="mb-2 text-muted"><i class="bi bi-box-seam"></i> Current Stock</h6>
-  <div class="d-flex flex-wrap gap-2 mb-3">
-    <?php foreach ($summary as $row): ?>
-      <div class="d-flex align-items-center gap-2 px-3 py-2 border rounded-3 bg-white">
-        <span class="fw-semibold small"><?= esc($row['product']['product_name']) ?></span>
-        <span class="badge <?= $row['available'] <= $row['product']['reorder_level'] ? 'bg-danger' : 'bg-success' ?>"><?= $row['available'] ?> left</span>
-      </div>
-    <?php endforeach; ?>
-    <?php if (empty($summary)): ?>
-      <span class="small text-muted">No products yet.</span>
-    <?php endif; ?>
-  </div>
-
   <?php foreach ($dayGroups as $day => $group): ?>
     <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
       <h6 class="mb-0"><i class="bi bi-calendar-event" style="color:var(--gg-primary-dark);"></i> <?= esc(date('l, F j, Y', strtotime($day))) ?></h6>
