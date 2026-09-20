@@ -14,7 +14,16 @@
   </div>
   <div class="col-12 col-sm-6 col-md-auto">
     <label class="form-label small mb-1 d-md-none">Status</label>
-    <select name="status" class="form-select" data-role="gg-auto-filter">
+    <div class="gg-custom-select" id="ggResStatusCustom" style="width:150px;">
+      <button type="button" class="form-select text-start" id="ggResStatusTrigger"><?= $status === 'All' ? 'All Statuses' : esc($status) ?></button>
+      <div class="gg-custom-select-list d-none" id="ggResStatusList">
+        <div class="gg-custom-select-option <?= $status === 'All' ? 'is-active' : '' ?>" data-value="All">All Statuses</div>
+        <?php foreach (\App\Models\ReservationModel::STATUSES as $s): ?>
+          <div class="gg-custom-select-option <?= $status === $s ? 'is-active' : '' ?>" data-value="<?= esc($s, 'attr') ?>"><?= esc($s) ?></div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <select name="status" id="ggResStatus" class="gg-visually-hidden" data-role="gg-auto-filter">
       <option value="All" <?= $status === 'All' ? 'selected' : '' ?>>All Statuses</option>
       <?php foreach (\App\Models\ReservationModel::STATUSES as $s): ?>
         <option value="<?= esc($s, 'attr') ?>" <?= $status === $s ? 'selected' : '' ?>><?= esc($s) ?></option>
@@ -33,6 +42,9 @@
   </div>
 </form>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+  ggInitCustomSelect('ggResStatusCustom', document.getElementById('ggResStatus'), 'ggResStatusTrigger', 'ggResStatusList');
+});
 document.querySelectorAll('#ggResFilterForm [data-role="gg-auto-filter"]').forEach(function (el) {
   el.addEventListener('change', function () { document.getElementById('ggResFilterForm').submit(); });
 });
