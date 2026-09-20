@@ -16,22 +16,50 @@
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($reservations as $r): ?>
-      <tr>
-        <td class="gg-pdf-link">#<?= (int) $r['reservation_id'] ?></td>
-        <td><?= esc(date('M d, Y', strtotime($r['claim_date']))) ?></td>
-        <td class="gg-pdf-link"><?= esc($r['customer_name']) ?></td>
-        <td><?= esc($r['customer_type']) ?></td>
-        <td><?= esc($r['product_name']) ?></td>
-        <td><?= (int) $r['quantity'] ?></td>
-        <td><?= esc($r['fulfillment_type']) ?></td>
-        <td>&#8369;<?= number_format($r['total_amount'], 2) ?></td>
-        <td><?= esc($r['payment_status']) ?></td>
-        <td class="gg-status-<?= strtolower($r['status']) ?>"><?= esc($r['status']) ?></td>
-      </tr>
-    <?php endforeach; ?>
-    <?php if (empty($reservations)): ?>
-      <tr><td colspan="10" style="text-align:center; color:#7A6858;">No records for this period.</td></tr>
+    <?php if ($byDay ?? false): ?>
+      <?php foreach ($dayGroups as $day => $group): ?>
+        <tr class="gg-pdf-daygroup">
+          <td colspan="10">
+            <?= esc(date('l, F j, Y', strtotime($day))) ?>
+            <span style="float:right;"><?= $group['count'] ?> reservation<?= $group['count'] === 1 ? '' : 's' ?> &middot; &#8369;<?= number_format($group['total'], 2) ?></span>
+          </td>
+        </tr>
+        <?php foreach ($group['rows'] as $r): ?>
+          <tr>
+            <td class="gg-pdf-link">#<?= (int) $r['reservation_id'] ?></td>
+            <td><?= esc(date('M d, Y', strtotime($r['claim_date']))) ?></td>
+            <td class="gg-pdf-link"><?= esc($r['customer_name']) ?></td>
+            <td><?= esc($r['customer_type']) ?></td>
+            <td><?= esc($r['product_name']) ?></td>
+            <td><?= (int) $r['quantity'] ?></td>
+            <td><?= esc($r['fulfillment_type']) ?></td>
+            <td>&#8369;<?= number_format($r['total_amount'], 2) ?></td>
+            <td><?= esc($r['payment_status']) ?></td>
+            <td class="gg-status-<?= strtolower($r['status']) ?>"><?= esc($r['status']) ?></td>
+          </tr>
+        <?php endforeach; ?>
+      <?php endforeach; ?>
+      <?php if (empty($dayGroups)): ?>
+        <tr><td colspan="10" style="text-align:center; color:#7A6858;">No records for this period.</td></tr>
+      <?php endif; ?>
+    <?php else: ?>
+      <?php foreach ($reservations as $r): ?>
+        <tr>
+          <td class="gg-pdf-link">#<?= (int) $r['reservation_id'] ?></td>
+          <td><?= esc(date('M d, Y', strtotime($r['claim_date']))) ?></td>
+          <td class="gg-pdf-link"><?= esc($r['customer_name']) ?></td>
+          <td><?= esc($r['customer_type']) ?></td>
+          <td><?= esc($r['product_name']) ?></td>
+          <td><?= (int) $r['quantity'] ?></td>
+          <td><?= esc($r['fulfillment_type']) ?></td>
+          <td>&#8369;<?= number_format($r['total_amount'], 2) ?></td>
+          <td><?= esc($r['payment_status']) ?></td>
+          <td class="gg-status-<?= strtolower($r['status']) ?>"><?= esc($r['status']) ?></td>
+        </tr>
+      <?php endforeach; ?>
+      <?php if (empty($reservations)): ?>
+        <tr><td colspan="10" style="text-align:center; color:#7A6858;">No records for this period.</td></tr>
+      <?php endif; ?>
     <?php endif; ?>
   </tbody>
 </table>

@@ -24,12 +24,16 @@ class ReportController extends BaseController
 
     public function reservations()
     {
-        $from = $this->request->getGet('from') ?: date('Y-m-01');
-        $to   = $this->request->getGet('to') ?: date('Y-m-d');
+        $from     = $this->request->getGet('from') ?: date('Y-m-01');
+        $to       = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay    = (bool) $this->request->getGet('daily_breakdown');
+        $rows     = $this->reservationRows($from, $to);
 
         return view('owner/reports/reservations', [
             'title'        => 'Reservation Report',
-            'reservations' => $this->reservationRows($from, $to),
+            'reservations' => $rows,
+            'byDay'        => $byDay,
+            'dayGroups'    => $byDay ? $this->groupRowsByDate($rows, 'claim_date', 'total_amount', 'reservation_id') : [],
             'from'         => $from,
             'to'           => $to,
         ]);
@@ -37,11 +41,15 @@ class ReportController extends BaseController
 
     public function reservationsPdf()
     {
-        $from = $this->request->getGet('from') ?: date('Y-m-01');
-        $to   = $this->request->getGet('to') ?: date('Y-m-d');
+        $from  = $this->request->getGet('from') ?: date('Y-m-01');
+        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $rows  = $this->reservationRows($from, $to);
 
         return $this->renderPdf('owner/reports/pdf/reservations', [
-            'reservations' => $this->reservationRows($from, $to),
+            'reservations' => $rows,
+            'byDay'        => $byDay,
+            'dayGroups'    => $byDay ? $this->groupRowsByDate($rows, 'claim_date', 'total_amount', 'reservation_id') : [],
             'from'         => $from,
             'to'           => $to,
         ], 'reservation-report_' . $from . '_to_' . $to . '.pdf');
@@ -49,26 +57,43 @@ class ReportController extends BaseController
 
     public function reservationsExcel()
     {
-        $from = $this->request->getGet('from') ?: date('Y-m-01');
-        $to   = $this->request->getGet('to') ?: date('Y-m-d');
-        $rows = $this->reservationRows($from, $to);
+        $from  = $this->request->getGet('from') ?: date('Y-m-01');
+        $to    = $this->request->getGet('to') ?: date('Y-m-d');
+        $byDay = (bool) $this->request->getGet('daily_breakdown');
+        $rows  = $this->reservationRows($from, $to);
+
+        $headers = ['Reservation #', 'Claim Date', 'Customer', 'Customer Type', 'Product', 'Qty', 'Fulfillment', 'Total Amount', 'Payment Status', 'Status'];
+        $toRow   = static fn ($r) => [
+            '#' . $r['reservation_id'],
+            date('M d, Y', strtotime($r['claim_date'])),
+            $r['customer_name'],
+            $r['customer_type'],
+            $r['product_name'],
+            (int) $r['quantity'],
+            $r['fulfillment_type'],
+            (float) $r['total_amount'],
+            $r['payment_status'],
+            $r['status'],
+        ];
+
+        if ($byDay) {
+            [$excelRows, $boldRows] = $this->buildDailyBreakdownExcelRows(
+                $this->groupRowsByDate($rows, 'claim_date', 'total_amount', 'reservation_id'),
+                $toRow,
+                count($headers),
+                'reservation(s)'
+            );
+        } else {
+            $excelRows = array_map($toRow, $rows);
+            $boldRows  = [];
+        }
 
         return $this->streamExcel(
             'reservation-report_' . $from . '_to_' . $to . '.xlsx',
             'Reservations',
-            ['Reservation #', 'Claim Date', 'Customer', 'Customer Type', 'Product', 'Qty', 'Fulfillment', 'Total Amount', 'Payment Status', 'Status'],
-            array_map(static fn ($r) => [
-                '#' . $r['reservation_id'],
-                date('M d, Y', strtotime($r['claim_date'])),
-                $r['customer_name'],
-                $r['customer_type'],
-                $r['product_name'],
-                (int) $r['quantity'],
-                $r['fulfillment_type'],
-                (float) $r['total_amount'],
-                $r['payment_status'],
-                $r['status'],
-            ], $rows)
+            $headers,
+            $excelRows,
+            $boldRows
         );
     }
 
@@ -106,6 +131,7 @@ class ReportController extends BaseController
         $from       = $this->request->getGet('from') ?: date('Y-m-01');
         $to         = $this->request->getGet('to') ?: date('Y-m-d');
         $walkInOnly = (bool) $this->request->getGet('walkin_only');
+        $byDay      = (bool) $this->request->getGet('daily_breakdown');
         $sales      = $this->salesRows($from, $to, $walkInOnly);
 
         return view('owner/reports/sales', [
@@ -115,6 +141,8 @@ class ReportController extends BaseController
             'from'       => $from,
             'to'         => $to,
             'walkInOnly' => $walkInOnly,
+            'byDay'      => $byDay,
+            'dayGroups'  => $byDay ? $this->groupRowsByDate($sales, 'sale_date', 'total_amount') : [],
         ]);
     }
 
@@ -123,6 +151,7 @@ class ReportController extends BaseController
         $from       = $this->request->getGet('from') ?: date('Y-m-01');
         $to         = $this->request->getGet('to') ?: date('Y-m-d');
         $walkInOnly = (bool) $this->request->getGet('walkin_only');
+        $byDay      = (bool) $this->request->getGet('daily_breakdown');
         $sales      = $this->salesRows($from, $to, $walkInOnly);
 
         return $this->renderPdf('owner/reports/pdf/sales', [
@@ -131,6 +160,8 @@ class ReportController extends BaseController
             'total'       => array_sum(array_column($sales, 'total_amount')),
             'from'        => $from,
             'to'          => $to,
+            'byDay'       => $byDay,
+            'dayGroups'   => $byDay ? $this->groupRowsByDate($sales, 'sale_date', 'total_amount') : [],
         ], 'sales-report_' . $from . '_to_' . $to . '.pdf');
     }
 
@@ -139,22 +170,39 @@ class ReportController extends BaseController
         $from       = $this->request->getGet('from') ?: date('Y-m-01');
         $to         = $this->request->getGet('to') ?: date('Y-m-d');
         $walkInOnly = (bool) $this->request->getGet('walkin_only');
+        $byDay      = (bool) $this->request->getGet('daily_breakdown');
         $sales      = $this->salesRows($from, $to, $walkInOnly);
+
+        $headers = ['Date', 'Reservation #', 'Customer', 'Product(s)', 'Qty', 'Amount', 'Payment Method', 'Status'];
+        $toRow   = static fn ($s) => [
+            date('M d, Y g:i A', strtotime($s['sale_date'])),
+            '#' . $s['reservation_id'],
+            $s['customer_name'],
+            $s['product_names'],
+            (int) $s['total_quantity'],
+            (float) $s['total_amount'],
+            $s['payment_method'],
+            $s['reservation_status'],
+        ];
+
+        if ($byDay) {
+            [$excelRows, $boldRows] = $this->buildDailyBreakdownExcelRows(
+                $this->groupRowsByDate($sales, 'sale_date', 'total_amount'),
+                $toRow,
+                count($headers),
+                'sale(s)'
+            );
+        } else {
+            $excelRows = array_map($toRow, $sales);
+            $boldRows  = [];
+        }
 
         return $this->streamExcel(
             'sales-report_' . $from . '_to_' . $to . '.xlsx',
             'Sales',
-            ['Date', 'Reservation #', 'Customer', 'Product(s)', 'Qty', 'Amount', 'Payment Method', 'Status'],
-            array_map(static fn ($s) => [
-                date('M d, Y g:i A', strtotime($s['sale_date'])),
-                '#' . $s['reservation_id'],
-                $s['customer_name'],
-                $s['product_names'],
-                (int) $s['total_quantity'],
-                (float) $s['total_amount'],
-                $s['payment_method'],
-                $s['reservation_status'],
-            ], $sales)
+            $headers,
+            $excelRows,
+            $boldRows
         );
     }
 
@@ -231,6 +279,75 @@ class ReportController extends BaseController
     }
 
     // -----------------------------------------------------------------
+    // Daily breakdown (Reservation + Sales reports)
+    // -----------------------------------------------------------------
+
+    /**
+     * Groups $rows by calendar day (using $dateField), with a running
+     * count and amount total per day — feeds the screen, PDF, and Excel
+     * outputs so all three agree on exactly how days are split and
+     * totaled. $uniqueKey de-duplicates the count/total by that field
+     * before adding it in: reservation rows are one row per product
+     * line item (see reservationRows()), so a reservation with three
+     * products would otherwise have its total_amount counted three
+     * times over for the same reservation. Sales rows are already one
+     * row per sale (see SaleModel::withDetails()), so $uniqueKey is
+     * left null there — every row counts once.
+     */
+    private function groupRowsByDate(array $rows, string $dateField, string $amountField, ?string $uniqueKey = null): array
+    {
+        $grouped     = [];
+        $seenPerDay  = [];
+
+        foreach ($rows as $row) {
+            $day = date('Y-m-d', strtotime($row[$dateField]));
+            $grouped[$day]['rows'][] = $row;
+            $grouped[$day]['count'] ??= 0;
+            $grouped[$day]['total'] ??= 0.0;
+
+            $isNewUnique = true;
+            if ($uniqueKey !== null) {
+                $seenPerDay[$day] ??= [];
+                $isNewUnique = ! in_array($row[$uniqueKey], $seenPerDay[$day], true);
+                if ($isNewUnique) {
+                    $seenPerDay[$day][] = $row[$uniqueKey];
+                }
+            }
+
+            if ($isNewUnique) {
+                $grouped[$day]['count']++;
+                $grouped[$day]['total'] += (float) $row[$amountField];
+            }
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * Turns a groupRowsByDate() result into a flat row list for
+     * streamExcel(), inserting a single-cell "date — count, total" row
+     * ahead of each day's data rows. Returns [rows, boldRowIndexes] so
+     * the caller can bold just those day-header rows.
+     */
+    private function buildDailyBreakdownExcelRows(array $dayGroups, callable $toRow, int $columnCount, string $unitLabel): array
+    {
+        $excelRows = [];
+        $boldRows  = [];
+
+        foreach ($dayGroups as $day => $group) {
+            $boldRows[] = count($excelRows);
+            $label      = date('l, F j, Y', strtotime($day)) . ' · ' . $group['count'] . ' ' . $unitLabel . ', ₱' . number_format($group['total'], 2);
+            $excelRows[] = array_pad([$label], $columnCount, '');
+
+            foreach ($group['rows'] as $row) {
+                $excelRows[] = $toRow($row);
+            }
+        }
+
+        return [$excelRows, $boldRows];
+    }
+
+    // -----------------------------------------------------------------
     // Shared PDF / Excel rendering
     // -----------------------------------------------------------------
 
@@ -303,9 +420,11 @@ class ReportController extends BaseController
     /**
      * Streams a $headers + $rows table as a real .xlsx workbook — bold
      * header row, auto-sized columns. $rows is a list of plain arrays,
-     * one per line, in the same column order as $headers.
+     * one per line, in the same column order as $headers. $boldRows is
+     * a list of 0-indexed positions within $rows (not counting the
+     * header) to bold — used for the "Daily Breakdown" date rows.
      */
-    private function streamExcel(string $filename, string $sheetTitle, array $headers, array $rows)
+    private function streamExcel(string $filename, string $sheetTitle, array $headers, array $rows, array $boldRows = [])
     {
         $spreadsheet = new Spreadsheet();
         $sheet       = $spreadsheet->getActiveSheet();
@@ -317,6 +436,10 @@ class ReportController extends BaseController
 
         if ($rows !== []) {
             $sheet->fromArray($rows, null, 'A2');
+        }
+
+        foreach ($boldRows as $rowIndex) {
+            $sheet->getStyle('A' . ($rowIndex + 2) . ':' . $lastCol . ($rowIndex + 2))->getFont()->setBold(true);
         }
 
         foreach (range(1, count($headers)) as $colIndex) {

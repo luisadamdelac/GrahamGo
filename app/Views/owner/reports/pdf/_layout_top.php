@@ -72,6 +72,10 @@ $logoDataUri = is_file($logoPath)
   .gg-pdf-table th { background: #C46F26; color: #FFFFFF; text-align: left; vertical-align: middle; line-height: 1.5; padding: 7px 8px; font-size: 10px; overflow: hidden; }
   .gg-pdf-table td { vertical-align: middle; line-height: 1.5; padding: 6px 8px; border-bottom: 1px solid #F0E4D6; font-size: 10px; overflow: hidden; word-wrap: break-word; }
   .gg-pdf-table tbody tr:nth-child(even) td { background: #FBF3EA; }
+  /* "Daily Breakdown" date row — a full-width divider between each
+     day's group of rows, overriding the zebra-stripe rule above since
+     it needs to read clearly as a heading, not just another data row. */
+  .gg-pdf-table tbody tr.gg-pdf-daygroup td { background: #F0E4D6; color: #4A3324; font-weight: bold; border-bottom: 1.5px solid #E08A3E; padding: 6px 8px; }
   .gg-pdf-link { color: #3B6FB5; }
   .gg-status-claimed, .gg-status-ok { color: #2E7D32; font-weight: bold; }
   .gg-status-cancelled, .gg-status-low { color: #C0392B; font-weight: bold; }
