@@ -30,7 +30,7 @@ class SaleModel extends Model
             ->join('reservation_details', 'reservation_details.reservation_id = sales.reservation_id')
             ->join('products', 'products.product_id = reservation_details.product_id')
             ->groupBy('sales.sale_id')
-            ->orderBy('sales.sale_date', 'DESC');
+            ->orderBy('sales.sale_date', 'ASC');
 
         if ($from) {
             $builder->where('sales.sale_date >=', $from . ' 00:00:00');
