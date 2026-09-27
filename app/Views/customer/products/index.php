@@ -29,7 +29,7 @@
           <?php endif; ?>
           <?php
             $ggDesc = $product['description'] ?? '';
-            $ggDesc = mb_strlen($ggDesc) > 70 ? rtrim(character_limiter($ggDesc, 70, ''), " .") . '...' : $ggDesc;
+            $ggDesc = mb_strlen($ggDesc) > 70 ? rtrim(character_limiter($ggDesc, 70, ''), " .") . '.' : $ggDesc;
           ?>
           <p class="card-text text-muted small flex-grow-1 d-none d-sm-block"><?= esc($ggDesc) ?></p>
           <div class="d-flex align-items-center justify-content-between mb-2 mb-md-3">
