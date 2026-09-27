@@ -27,7 +27,7 @@
           <?php if ($ggSum): ?>
             <div class="small mb-1" style="color:var(--gg-star);"><i class="bi bi-star-fill"></i> <?= number_format($ggSum['avg'], 1) ?> <span class="text-muted">(<?= $ggSum['count'] ?>)</span></div>
           <?php endif; ?>
-          <p class="card-text text-muted small flex-grow-1 d-none d-sm-block"><?= esc(character_limiter($product['description'] ?? '', 70)) ?></p>
+          <p class="card-text text-muted small flex-grow-1 d-none d-sm-block"><?= esc(character_limiter($product['description'] ?? '', 70, '...')) ?></p>
           <div class="d-flex align-items-center justify-content-between mb-2 mb-md-3">
             <span class="fw-bold" style="color:var(--gg-primary-dark);">₱<?= number_format($product['price'], 2) ?></span>
             <?php if ($product['stock'] > 0): ?>
